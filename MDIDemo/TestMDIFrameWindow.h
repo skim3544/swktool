@@ -17,8 +17,8 @@
 			swktool::MDIFrameWindow(lpClassName, lpWindowName, hInstance)
 		{
 			hMenu = hMDIMenu;
-			//swktool::ClassLogger::Inst().Register((int)swktool::LogLevel::NONE, __FUNCTION__);
-			swktool::ClassLogger::Inst().Register((int)swktool::LogLevel::DETAIL3, __FUNCTION__);
+			//swktool::LevelLogger::Register((int)swktool::LogLevel::NONE, __FUNCTION__);
+			swktool::LevelLogger::Register((int)swktool::LogLevel::DETAIL3, __FUNCTION__);
 		}
 
 		virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) override {
@@ -33,7 +33,7 @@
 
 			std::ostringstream ss;
 			ss << "HwndClient=" << std::setbase(16) << hwndClient;
-			swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+			//swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
 
 			return TRUE;
 		}

@@ -5,6 +5,7 @@
 #include "RectWindow.h"
 #include "..\SWKBase\Logger.h"
 
+using namespace swktool;
 
 BOOL TestMDIFrameWindow::OnNewHello() {
 
@@ -14,8 +15,8 @@ BOOL TestMDIFrameWindow::OnNewHello() {
 	HWND hChild = CreateMDIClient(this, pWin);
 
 	std::ostringstream ss;
-	ss << "HwndcHILD=" << std::setbase(16) << hChild;
-	swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+	ss << "HwndChild=" << std::setbase(16) << hChild;
+	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
 
 	return TRUE;
 }
@@ -27,8 +28,8 @@ BOOL TestMDIFrameWindow::OnNewRect() {
 	HWND hChild = CreateMDIClient(this, pWin);
 	
 	std::ostringstream ss;
-	ss << "HwndcHILD=" << std::setbase(16) << hChild;
-	swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+	ss << "HwndChild=" << std::setbase(16) << hChild;
+	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
 
 
 	return TRUE;
@@ -41,8 +42,8 @@ BOOL TestMDIFrameWindow::OnFileClose() {
 	}
 
 	std::ostringstream ss;
-	ss << "HwndcHILD=" << std::setbase(16) << hwndChild;
-	swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+	ss << "HwndChild=" << std::setbase(16) << hwndChild;
+	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
 
 	return TRUE;
 }

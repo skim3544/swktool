@@ -52,16 +52,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+    using namespace swktool;
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    //AppLog::Inst().Log(0, "Application Starting...");
-    //swktool::ClassLogger Log2;
-    swktool::ClassLogger::Inst().init(TEXT("DetailedLog.log"));
-    swktool::ClassLogger::Inst().Register(0, __FUNCTION__);
-    swktool::ClassLogger::Inst().Log(__FUNCTION__, 0, " --------------------------- START ---------------------------");
+    LevelLogger::init(TEXT("DetailedLog.log"));
+    LevelLogger::SetLogLevel(2);
+    LevelLogger::Register(0, __FUNCTION__);
+    LevelLogger::Log(__FUNCTION__, 0, " --------------------------- START ---------------------------");
 
 
     // Create default Win registration information
@@ -112,5 +112,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     int rc = App.DoMDIMessageLoop(MDIFrame);
     AppLog::Inst().Log(0, "Application Terminating...");
+
+    LevelLogger::Log(__FUNCTION__, 0, " --------------------------- END ---------------------------");
+
     return rc;
 }

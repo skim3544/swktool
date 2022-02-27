@@ -15,6 +15,26 @@
 
 
 namespace swktool {
+    template <typename T> class Singleton {
+        static T* pInst = nullptr;
+        static CriticalSection _csInstLock;
+
+    private:
+        Singleton() = delete;
+        Singleton(const Singleton& O) = delete;
+
+    public:
+        static T& Inst() {
+            if (pInst == nullptr) {
+                std::lock_guard<CriticalSection> lg(_csInstLock);
+                if (pInst == nullptr) {
+                    pInst = new T();
+                }
+            }
+
+            return *T;
+        }
+    };
 
     //
     // Common Logging Levels
@@ -190,42 +210,36 @@ namespace swktool {
     /// From contstructor of the class, register __function__ with the level.  Depending on level, log message of the class will be logged
     /// When not interested in logging for the class, set log level to 0
     /// </summary>
-    class ClassLogger : public ILogger {
+    class LevelLogger {
+
     protected:
+        // critical section to prevent multiple threads from corrupting the logging process
         static CriticalSection cs_;
-        std::unique_ptr<LoggerStream> pStream;
-        bool            bInitialized;
 
-        LogLevelList    ClassList_;
-        short           DefaultLogLevel_;
+        // output stream
+        static std::unique_ptr<LoggerStream> pStream;
 
-        static ClassLogger*     mInst;
-        LPCTSTR                 LogFileName_;
+        // set to true if initiaized
+        static bool            bInitialized;
+
+        //  list of Class, level pair.
+        static LogLevelList    ClassList_;
+
+        // default logging level
+        static int           DefaultLogLevel_;
+
+        // logging file name
+        static LPCTSTR                 LogFileName_;
+
+        LevelLogger() = delete;
 
     public:
-        ClassLogger() :
-            bInitialized(false),
-            DefaultLogLevel_(0),
-            LogFileName_(nullptr)
-        {
-            LogFileName_ = TEXT("App.log");
-        }
-
-        ClassLogger(LPCTSTR fname) :
-            bInitialized(false),
-            DefaultLogLevel_(0),
-            LogFileName_(fname)
-        {
-
-        }
-
-
-        void SetLogLevel(int nLevel) {
+        
+        static void SetLogLevel(int nLevel) {
             DefaultLogLevel_ = nLevel;
         }
 
-
-         void init(LPCTSTR LogFileName) override  {
+        static void init(LPCTSTR LogFileName)   {
             if (bInitialized == false) {
                 std::lock_guard<CriticalSection> lg(cs_);
                 if (bInitialized == false) {
@@ -235,23 +249,13 @@ namespace swktool {
             }
         }
 
-        static ClassLogger& Inst() {            
-            if (!mInst) {
-                std::lock_guard<CriticalSection> lg(cs_);
-                if (!mInst) {
-                    mInst = new ClassLogger();                    
-                }
-            }
-            return *mInst;
-        }
-
-        virtual void Register(int nLevel, const char* FunctionFullName) {
+        static void Register(int nLevel, const char* FunctionFullName) {
             assert(bInitialized == true);
             std::lock_guard<CriticalSection> lg(cs_);            
 
-            auto ClassNamePair = GetClassName(FunctionFullName);
+            auto ClassNamePair = GetClassNamePair(FunctionFullName);
             auto& ClassName = ClassNamePair.first;
-            //auto MethodName = ClassNamePair.second;
+            //auto& MethodName = ClassNamePair.second;
 
             if (IsClassRegistered(ClassName) == false)
             {
@@ -260,10 +264,10 @@ namespace swktool {
             }
         }
 
-        virtual void Log(const char* FunctionFullName, int Level, LPCSTR msg) {
+        static void Log(const char* FunctionFullName, int Level, LPCSTR msg) {
             std::lock_guard<CriticalSection> lg(cs_);
 
-            auto ClassNamePair = GetClassName(FunctionFullName);
+            auto ClassNamePair = GetClassNamePair(FunctionFullName);
             auto& ClassName = ClassNamePair.first;
             LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const ClassData& Data){ return Data.GetName() == ClassName; });
 
@@ -278,11 +282,11 @@ namespace swktool {
             }                       
         }
 
-        virtual void Log(const char* FunctionFullName, int Level, std::string& msg) {
+        static void Log(const char* FunctionFullName, int Level, std::string& msg) {
             Log(FunctionFullName, Level, msg.c_str());
         }
 
-        virtual void Log(const char* FunctionFullName, int Level, std::ostringstream& msg) {
+        static void Log(const char* FunctionFullName, int Level, std::ostringstream& msg) {
             Log(FunctionFullName, Level, msg.str().c_str());            
         }
 
@@ -291,10 +295,10 @@ namespace swktool {
         //   Used when constructing log data takes long CPU time, no point wastimg time
         //   when data will not even be logged
         //
-        bool WillBeLogged(const char* FunctionFullName, int Level) {
+        static bool WillBeLogged(const char* FunctionFullName, int Level) {
             std::lock_guard<CriticalSection> lg(cs_);
             bool bLogged = false;
-            auto ClassNamePair = GetClassName(FunctionFullName);
+            auto ClassNamePair = GetClassNamePair(FunctionFullName);
             auto& ClassName = ClassNamePair.first;
             LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const ClassData& Data) { return Data.GetName() == ClassName; });
 
@@ -311,7 +315,7 @@ namespace swktool {
         }
         
     protected:
-        std::pair<std::string, std::string> GetClassName(const char* FullFuncName) const
+        static std::pair<std::string, std::string> GetClassNamePair(const char* FullFuncName)
         {
             std::string funcName(FullFuncName);
             std::string MethodName;
@@ -331,7 +335,7 @@ namespace swktool {
             return std::make_pair(ClassName, MethodName);
         }
 
-        bool IsClassRegistered(const std::string ClassName) const {
+        static bool IsClassRegistered(const std::string ClassName) {
             if (std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const ClassData& Data) { return Data.GetName() == ClassName; }) != ClassList_.end())
             {
                 return true;

@@ -3,8 +3,14 @@
 #include "..\SWKUI\WinKernel.h"
 
 namespace swktool {    
-    CriticalSection ClassLogger::cs_;
-    ClassLogger* ClassLogger::mInst = nullptr;
+    CriticalSection LevelLogger::cs_;
+    std::unique_ptr<LoggerStream> LevelLogger::pStream = std::unique_ptr<LoggerStream>(nullptr);
+    bool            LevelLogger::bInitialized = false;;
+    LogLevelList    LevelLogger::ClassList_;    
+    int           LevelLogger::DefaultLogLevel_ = 0;
+
+    LPCTSTR                 LevelLogger::LogFileName_ = TEXT("");
+
 
     Logger::Logger() : bInitialized(false), currentLevel_(0) { ; }
 
