@@ -1,0 +1,30 @@
+#pragma once
+
+#include "GDIObject.h"
+#include "Ctrl.h"
+#include "AnimationCtrl.h"
+#include "ButtonCtrl.h"
+#include "ComboboxCtrl.h"
+#include "ComboBoxExCtrl.h"
+#include "DateTimePickerCtrl.h"
+#include "EditCtrl.h"
+#include "GroupboxCtrl.h"
+#include "HeaderCtrl.h"
+#include "ListboxCtrl.h"
+#include "ListViewCtrl.h"
+#include "ProgressBarCtrl.h"
+#include "RebarCtrl.h"
+#include "RichEditCtrl.h"
+#include "ScrollBarCtrl.h"
+#include "SliderCtrl.h"
+#include "StaticTextCtrl.h"
+#include "StatusBarCtrl.h"
+#include "SysLinkCtrl.h"
+#include "TabCtrl.h"
+#include "ToolbarCtrl.h"
+#include "TooltipCtrl.h"
+#include "TreeViewCtrl.h"
+#include "UpDownCtrl.h"
+
+
+
