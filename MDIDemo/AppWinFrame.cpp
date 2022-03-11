@@ -5,7 +5,8 @@
 
 std::shared_ptr<swktool::Window> AppWindowFrame::CreateWin(LPCWSTR WinClassName, LPCWSTR WinTitle, HMENU hMDIMenu, int nCmdShow)
 {	
-	//pLogger_->Log(__FUNCTION__, 0, "Testing");
+	
+	swktool::Logfunction Guard(__FUNCTION__, *pLogger_, swktool::LogLevel::DETAIL1);
 
 	std::shared_ptr<swktool::Window> pWin = std::make_shared<TestMDIFrameWindow>(WinClassName, WinTitle, hMDIMenu, hInstance);
 
@@ -15,7 +16,3 @@ std::shared_ptr<swktool::Window> AppWindowFrame::CreateWin(LPCWSTR WinClassName,
 
 	return pWin;
 }
-
-//std::shared_ptr<swktool::Window> AppWindowFrame::CreateMFDIWin(LPCWSTR WinClassName, LPCWSTR WinTitle, int nCmdShow) {
-//
-//}

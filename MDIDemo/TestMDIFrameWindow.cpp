@@ -16,7 +16,7 @@ BOOL TestMDIFrameWindow::OnNewHello() {
 
 	std::ostringstream ss;
 	ss << "HwndChild=" << std::setbase(16) << hChild;
-	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+	Logger_->Log(__FUNCTION__, swktool::LogLevel::DETAIL2, ss);	
 
 	return TRUE;
 }
@@ -29,8 +29,7 @@ BOOL TestMDIFrameWindow::OnNewRect() {
 	
 	std::ostringstream ss;
 	ss << "HwndChild=" << std::setbase(16) << hChild;
-	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
-
+	Logger_->Log(__FUNCTION__, swktool::LogLevel::DETAIL2, ss);	
 
 	return TRUE;
 }
@@ -38,12 +37,12 @@ BOOL TestMDIFrameWindow::OnNewRect() {
 BOOL TestMDIFrameWindow::OnFileClose() {
 	HWND hwndChild = (HWND)::SendMessage(GetMDIClientHWND(), WM_MDIGETACTIVE, 0, 0);
 	if (SendMessage(hwndChild, WM_QUERYENDSESSION, 0, 0)) {
-		SendMessage(GetMDIClientHWND(), WM_MDIDESTROY, (WPARAM)hwndChild, 0);		
+		SendMessage(GetMDIClientHWND(), WM_MDIDESTROY, (WPARAM)hwndChild, 0);
 	}
 
 	std::ostringstream ss;
 	ss << "HwndChild=" << std::setbase(16) << hwndChild;
-	LevelLogger::Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+	Logger_->Log(__FUNCTION__, swktool::LogLevel::DETAIL2, ss);	
 
 	return TRUE;
 }

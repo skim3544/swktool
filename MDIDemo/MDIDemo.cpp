@@ -1,15 +1,28 @@
 // MDIDemo.cpp : Defines the entry point for the application.
 //
+
+#define _CRTDBG_MAP_ALLOC
 #include <Windows.h>
 #include <string>
+#include <stdlib.h>
+
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
 
 
 #include "..\SWKBase\DebugStream.h"
+#include "..\SWKBase\IOC.h"
 #include "..\SWKBase\Logger.h"
 #include "..\SWKUI\MDIChildWindow.h"
 #include "..\SWKUI\WinRegistration.h"
 #include "..\SWKUI\WinEventHandler.h"
 #include "..\SWKUI\WinMenu.h"
+
 #include "framework.h"
 #include "MDIDemo.h"
 #include "AppWinFrame.h"
@@ -46,23 +59,34 @@ swktool::WinMenu GetRectMenu() {
     return MdiMenuRect;
 }
 
+swktool::IOCContainer& GetDI() {
+    static swktool::IOCContainer oIOC;
+    return oIOC;
+}
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+   // _crtBreakAlloc = 399;
+
     using namespace swktool;
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG | _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    LevelLogger::init(TEXT("DetailedLog.log"));
-    LevelLogger::SetLogLevel(2);
-    LevelLogger::Register(0, __FUNCTION__);
-    LevelLogger::Log(__FUNCTION__, 0, " --------------------------- START ---------------------------");
+    GetDI().Register<ILogger, Logger>(object_type::Singleton);
 
+    auto* pLogger = GetDI().Resolve<ILogger, Logger>();
+    pLogger->init(TEXT("DetailedLog.log"));
+    //pLogger->SetLogLevel(LogLevel::STATUS);
+    pLogger->Register(LogLevel::STATUS, __FUNCTION__);
+    pLogger->Log(__FUNCTION__, LogLevel::STATUS, " --------------------------- START ---------------------------");
+   
+    
 
     // Create default Win registration information
     WNDCLASSEXW wcex = swktool::WindowReg::CreateMDIFrameTemplate(hInstance);
@@ -111,9 +135,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     std::shared_ptr<swktool::Window> MDIFrame = App.CreateWin(szFrameClass, TEXT("MDI Demonstration"), MdiMenuInit, nCmdShow);
 
     int rc = App.DoMDIMessageLoop(MDIFrame);
-    AppLog::Inst().Log(0, "Application Terminating...");
 
-    LevelLogger::Log(__FUNCTION__, 0, " --------------------------- END ---------------------------");
+    //AppLog::Inst().Log(LogLevel::STATUS, "Application Terminating...");
 
+    pLogger->Log(__FUNCTION__, LogLevel::STATUS, " --------------------------- END ---------------------------");
+
+    _CrtDumpMemoryLeaks();
     return rc;
 }

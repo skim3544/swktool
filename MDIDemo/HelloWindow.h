@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MDIDemo.h"
 #include "..\SWKUI\MDIChildWindow.h"
 #include "..\SWKUI\WinMenu.h"
 #include "resource.h"

@@ -1,24 +1,27 @@
 #pragma once
 
 #include <list>
+#include "MDIDemo.h"
 #include "..\SWKUI\Window.h"
 #include "..\SWKUI\WinEventHandler.h"
 #include "..\SWKUI\MDIFrameWindow.h"
 #include "resource.h"
 #include "..\SWKBase\Logger.h"
 
+
+
 	class TestMDIFrameWindow : public swktool::MDIFrameWindow
 	{
 	protected:
-		//HANDLE    MDIMenu_;
+		swktool::ILogger* Logger_;
 
 	public:
 		TestMDIFrameWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, HMENU hMDIMenu, HINSTANCE hInstance) :
 			swktool::MDIFrameWindow(lpClassName, lpWindowName, hInstance)
 		{
 			hMenu = hMDIMenu;
-			//swktool::LevelLogger::Register((int)swktool::LogLevel::NONE, __FUNCTION__);
-			swktool::LevelLogger::Register((int)swktool::LogLevel::DETAIL3, __FUNCTION__);
+			Logger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();
+			Logger_->Register(swktool::LogLevel::DETAIL3, __FUNCTION__);
 		}
 
 		virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) override {
@@ -33,7 +36,7 @@
 
 			std::ostringstream ss;
 			ss << "HwndClient=" << std::setbase(16) << hwndClient;
-			//swktool::ClassLogger::Inst().Log(__FUNCTION__, (int)swktool::LogLevel::DETAIL2, ss);
+			Logger_->Log(__FUNCTION__, swktool::LogLevel::DETAIL2, ss);
 
 			return TRUE;
 		}
