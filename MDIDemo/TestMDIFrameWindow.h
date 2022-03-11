@@ -21,7 +21,7 @@
 		{
 			hMenu = hMDIMenu;
 			Logger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();
-			Logger_->Register(swktool::LogLevel::DETAIL3, __FUNCTION__);
+			Logger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL3);
 		}
 
 		virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) override {

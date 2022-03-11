@@ -3,12 +3,12 @@
 #include "..\SWKUI\WinKernel.h"
 
 namespace swktool {    
-    CriticalSection LevelLogger::cs_;
-    std::unique_ptr<LoggerStream> LevelLogger::pStream = std::unique_ptr<LoggerStream>(nullptr);
+    //CriticalSection LevelLogger::cs_;
+    //std::unique_ptr<LoggerStream> LevelLogger::pStream = std::unique_ptr<LoggerStream>(nullptr);
 
-    bool            LevelLogger::bInitialized = false;;
-    LogLevelList    LevelLogger::ClassList_;    
-    LogLevel        LevelLogger::DefaultLogLevel_ = LogLevel::STATUS;
+    //bool            LevelLogger::bInitialized = false;;
+    //LogLevelList    LevelLogger::ClassList_;    
+    //LogLevel        LevelLogger::DefaultLogLevel_ = LogLevel::STATUS;
 
 
 

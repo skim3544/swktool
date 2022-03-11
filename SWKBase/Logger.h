@@ -35,7 +35,7 @@ namespace swktool {
         virtual ~ILogger() { ; }
         virtual void init(LPCTSTR LogFileName) = 0;
         virtual void SetLogLevel(LogLevel Level) = 0;
-        virtual void Register(LogLevel nLevel, const char* FunctionFullName) = 0;
+        virtual void Register(const char* FunctionFullName, LogLevel nLevel) = 0;
 
         virtual void Log(const char* FunctionFullName, LogLevel Level, LPCSTR msg) = 0;
         virtual void Log(const char* FunctionFullName, LogLevel Level, const std::string& msg) = 0;
@@ -134,7 +134,7 @@ namespace swktool {
     class NoLogger : public ILogger
     {
         void init(LPCTSTR LogFileName) { ; }
-        void Register(LogLevel nLevel, const char* FunctionFullName) { ; }
+        void Register(const char* FunctionFullName, LogLevel nLevel) { ; }
         void SetLogLevel(LogLevel Level) { ; }
         void Log(const char* FunctionFullName, LogLevel Level, LPCSTR msg) { ; }
         void Log(const char* FunctionFullName, LogLevel Level, const std::string& msg) { ; }
@@ -177,14 +177,12 @@ namespace swktool {
         }
     };
 
-
-    typedef std::vector<ClassLoggingData> LogLevelList;
-    typedef LogLevelList::iterator  LogLevelListItr;
-
     
 
     class CriticalSection;
     class Logger : public ILogger {
+        using LogLevelList = std::vector<ClassLoggingData>;
+        using LogLevelListItr = LogLevelList::iterator;
 
     protected:
         LogLevel currentLevel_;
@@ -203,11 +201,19 @@ namespace swktool {
         virtual ~Logger() { ; }
 
 
+        /// <summary>
+        /// Sets the default logging level
+        /// </summary>
+        /// <param name="nLevel"></param>
         void SetLogLevel(LogLevel nLevel) override {
             currentLevel_ = nLevel;
         }
               
 
+        /// <summary>
+        /// Initialize, pass the logging file name
+        /// </summary>
+        /// <param name="LogFileName"></param>
         virtual void init(LPCTSTR LogFileName) override {
             if (bInitialized == false)
             {
@@ -219,7 +225,12 @@ namespace swktool {
             }
         }
 
-        void Register(LogLevel nLevel, const char* FunctionFullName) override {
+        /// <summary>
+        /// Register the functional logging level
+        /// </summary>
+        /// <param name="nLevel"></param>
+        /// <param name="FunctionFullName"></param>
+        void Register(const char* FunctionFullName, LogLevel nLevel) override {
             assert(bInitialized == true);
             std::lock_guard<CriticalSection> lg(cs_);
 
@@ -227,6 +238,7 @@ namespace swktool {
             auto& ClassName = ClassNamePair.first;
             //auto& MethodName = ClassNamePair.second;
 
+            // register only if new class
             if (IsClassRegistered(ClassName) == false)
             {
                 ClassLoggingData NewData(nLevel, ClassName);
@@ -235,10 +247,6 @@ namespace swktool {
         }
 
         void Log(const char* FunctionFullName, LogLevel Level, LPCSTR msg) override {
-            //std::string CompleteStr = FunctionFullName + std::string(" - ") + msg;
-            Log(FunctionFullName, Level, std::string(msg));
-        }
-        void Log(const char* FunctionFullName, LogLevel Level, const std::string& msg) override {
             assert(bInitialized == true);
             std::lock_guard<CriticalSection> lg(cs_);
 
@@ -256,8 +264,12 @@ namespace swktool {
                 }
             }
         }
-        void Log(const char* FunctionFullName, LogLevel Level, std::ostringstream& msg) override {
-            assert(bInitialized == true);
+
+        void Log(const char* FunctionFullName, LogLevel Level, const std::string& msg) override {            
+            Log(FunctionFullName, Level, msg.c_str());
+        }
+
+        void Log(const char* FunctionFullName, LogLevel Level, std::ostringstream& msg) override {            
             Log(FunctionFullName, Level, msg.str().c_str());
         }
 
@@ -266,10 +278,11 @@ namespace swktool {
             std::lock_guard<CriticalSection> lg(cs_);
 
             if ((int)Level <= (int)currentLevel_ || (int)Level <= (int)DefaultLogLevel_) {
-                std::string outputmsg = msg;
-                *pStream << outputmsg.c_str() << std::endl;
+                //std::string outputmsg = msg;
+                *pStream << msg << std::endl;
             }
         }
+
         void Log(LogLevel Level, const std::string& msg) override {  
             Log(Level, msg.c_str());
         }
@@ -309,172 +322,206 @@ namespace swktool {
                 return false;
             }
         }
-
     };
 
 
-    /// <summary>
-    /// Object for class level logger
-    /// From contstructor of the class, register __function__ with the level.  Depending on level, log message of the class will be logged
-    /// When not interested in logging for the class, set log level to 0
-    /// </summary>
-    class LevelLogger {
+    ///// <summary>
+    ///// Object for class level logger
+    ///// From contstructor of the class, register __function__ with the level.  Depending on level, log message of the class will be logged
+    ///// When not interested in logging for the class, set log level to 0
+    ///// </summary>
+    //class LevelLogger {
 
-    protected:
-        // critical section to prevent multiple threads from corrupting the logging process
-        static CriticalSection cs_;
+    //protected:
+    //    // critical section to prevent multiple threads from corrupting the logging process
+    //    static CriticalSection cs_;
 
-        // output stream
-        static std::unique_ptr<LoggerStream> pStream;
+    //    // output stream
+    //    static std::unique_ptr<LoggerStream> pStream;
 
-        // set to true if initiaized
-        static bool            bInitialized;
+    //    // set to true if initiaized
+    //    static bool            bInitialized;
 
-        //  list of Class, level pair.
-        static LogLevelList    ClassList_;
+    //    //  list of Class, level pair.
+    //    static LogLevelList    ClassList_;
 
-        // default logging level
-        static LogLevel        DefaultLogLevel_;
+    //    // default logging level
+    //    static LogLevel        DefaultLogLevel_;
 
-    public:
-        
-        static void SetLogLevel(LogLevel nLevel) {
-            DefaultLogLevel_ = nLevel;
-        }
+    //public:
+    //    
+    //    static void SetLogLevel(LogLevel nLevel) {
+    //        DefaultLogLevel_ = nLevel;
+    //    }
 
-        static void init(LPCTSTR LogFileName)   {
-            if (bInitialized == false) {
-                std::lock_guard<CriticalSection> lg(cs_);
-                if (bInitialized == false) {
-                    pStream = std::make_unique<LoggerStream>(LogFileName);
-                    bInitialized = true;
-                }
-            }
-        }
+    //    static void init(LPCTSTR LogFileName)   {
+    //        if (bInitialized == false) {
+    //            std::lock_guard<CriticalSection> lg(cs_);
+    //            if (bInitialized == false) {
+    //                pStream = std::make_unique<LoggerStream>(LogFileName);
+    //                bInitialized = true;
+    //            }
+    //        }
+    //    }
 
-        static void Register(LogLevel nLevel, const char* FunctionFullName) {
-            assert(bInitialized == true);
-            std::lock_guard<CriticalSection> lg(cs_);            
+    //    static void Register(LogLevel nLevel, const char* FunctionFullName) {
+    //        assert(bInitialized == true);
+    //        std::lock_guard<CriticalSection> lg(cs_);            
 
-            auto ClassNamePair = GetClassNamePair(FunctionFullName);
-            auto& ClassName = ClassNamePair.first;
-            //auto& MethodName = ClassNamePair.second;
+    //        auto ClassNamePair = GetClassNamePair(FunctionFullName);
+    //        auto& ClassName = ClassNamePair.first;
+    //        //auto& MethodName = ClassNamePair.second;
 
-            if (IsClassRegistered(ClassName) == false)
-            {
-                ClassLoggingData NewData(nLevel, ClassName);
-                ClassList_.push_back(NewData);
-            }
-        }
+    //        if (IsClassRegistered(ClassName) == false)
+    //        {
+    //            ClassLoggingData NewData(nLevel, ClassName);
+    //            ClassList_.push_back(NewData);
+    //        }
+    //    }
 
-        static void Log(const char* FunctionFullName, LogLevel Level, LPCSTR msg) {
-            assert(bInitialized == true);
-            std::lock_guard<CriticalSection> lg(cs_);
+    //    static void Log(const char* FunctionFullName, LogLevel Level, LPCSTR msg) {
+    //        assert(bInitialized == true);
+    //        std::lock_guard<CriticalSection> lg(cs_);
 
-            auto ClassNamePair = GetClassNamePair(FunctionFullName);
-            auto& ClassName = ClassNamePair.first;
-            LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data){ return Data.GetName() == ClassName; });
+    //        auto ClassNamePair = GetClassNamePair(FunctionFullName);
+    //        auto& ClassName = ClassNamePair.first;
+    //        LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data){ return Data.GetName() == ClassName; });
 
-            if (FindItr != ClassList_.end()) {
-                auto& Item = *FindItr;
-                auto currentLevel_ = Item.GetLogLevel();
+    //        if (FindItr != ClassList_.end()) {
+    //            auto& Item = *FindItr;
+    //            auto currentLevel_ = Item.GetLogLevel();
 
-                if ((int)Level <= (int)currentLevel_ || (int)Level <= (int)DefaultLogLevel_) {
-                    std::string outputmsg = FunctionFullName + std::string(" - ") + msg;
-                    *pStream << outputmsg.c_str() << std::endl;
-                }
-            }                       
-        }
+    //            if ((int)Level <= (int)currentLevel_ || (int)Level <= (int)DefaultLogLevel_) {
+    //                std::string outputmsg = FunctionFullName + std::string(" - ") + msg;
+    //                *pStream << outputmsg.c_str() << std::endl;
+    //            }
+    //        }                       
+    //    }
 
-        static void Log(const char* FunctionFullName, LogLevel Level, std::string& msg) {
-            assert(bInitialized == true);
-            Log(FunctionFullName, Level, msg.c_str());
-        }
+    //    static void Log(const char* FunctionFullName, LogLevel Level, std::string& msg) {
+    //        assert(bInitialized == true);
+    //        Log(FunctionFullName, Level, msg.c_str());
+    //    }
 
-        static void Log(const char* FunctionFullName, LogLevel Level, std::ostringstream& msg) {
-            assert(bInitialized == true);
-            Log(FunctionFullName, Level, msg.str().c_str());            
-        }
+    //    static void Log(const char* FunctionFullName, LogLevel Level, std::ostringstream& msg) {
+    //        assert(bInitialized == true);
+    //        Log(FunctionFullName, Level, msg.str().c_str());            
+    //    }
 
-        //
-        // Will system log this function,Level?
-        //   Used when constructing log data takes long CPU time, no point wastimg time
-        //   when data will not even be logged
-        //
-        static bool WillBeLogged(const char* FunctionFullName, LogLevel Level) {
-            assert(bInitialized == true);
-            std::lock_guard<CriticalSection> lg(cs_);
-            bool bLogged = false;
-            auto ClassNamePair = GetClassNamePair(FunctionFullName);
-            auto& ClassName = ClassNamePair.first;
-            LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data) { return Data.GetName() == ClassName; });
+    //    //
+    //    // Will system log this function,Level?
+    //    //   Used when constructing log data takes long CPU time, no point wastimg time
+    //    //   when data will not even be logged
+    //    //
+    //    static bool WillBeLogged(const char* FunctionFullName, LogLevel Level) {
+    //        assert(bInitialized == true);
+    //        std::lock_guard<CriticalSection> lg(cs_);
+    //        bool bLogged = false;
+    //        auto ClassNamePair = GetClassNamePair(FunctionFullName);
+    //        auto& ClassName = ClassNamePair.first;
+    //        LogLevelListItr FindItr = std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data) { return Data.GetName() == ClassName; });
 
-            if (FindItr != ClassList_.end()) {
-                auto& Item = *FindItr;
-                auto currentLevel_ = Item.GetLogLevel();
+    //        if (FindItr != ClassList_.end()) {
+    //            auto& Item = *FindItr;
+    //            auto currentLevel_ = Item.GetLogLevel();
 
-                if ((int)Level <= (int)currentLevel_ || (int)Level <= (int)DefaultLogLevel_) {
-                    bLogged = true;
-                }
-            }
+    //            if ((int)Level <= (int)currentLevel_ || (int)Level <= (int)DefaultLogLevel_) {
+    //                bLogged = true;
+    //            }
+    //        }
 
-            return bLogged;
-        }
-        
-    protected:
-        static std::pair<std::string, std::string> GetClassNamePair(const char* FullFuncName)
-        {
-            std::string funcName(FullFuncName);
-            std::string MethodName;
-            std::string ClassName;
+    //        return bLogged;
+    //    }
+    //    
+    //protected:
+    //    static std::pair<std::string, std::string> GetClassNamePair(const char* FullFuncName)
+    //    {
+    //        std::string funcName(FullFuncName);
+    //        std::string MethodName;
+    //        std::string ClassName;
 
-            // if in ClassName::Method format, pull out class name
-            auto SepLoc = funcName.find("::");
-            if (SepLoc != std::string::npos) {
-                ClassName = funcName.substr(0, SepLoc);
-                MethodName = funcName.substr(SepLoc+2);
-            }
-            else {
-                ClassName = FullFuncName;
-                MethodName = "";
-            }
+    //        // if in ClassName::Method format, pull out class name
+    //        auto SepLoc = funcName.find("::");
+    //        if (SepLoc != std::string::npos) {
+    //            ClassName = funcName.substr(0, SepLoc);
+    //            MethodName = funcName.substr(SepLoc+2);
+    //        }
+    //        else {
+    //            ClassName = FullFuncName;
+    //            MethodName = "";
+    //        }
 
-            return std::make_pair(ClassName, MethodName);
-        }
+    //        return std::make_pair(ClassName, MethodName);
+    //    }
 
-        static bool IsClassRegistered(const std::string ClassName) {
-            if (std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data) { return Data.GetName() == ClassName; }) != ClassList_.end())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }            
-        }
-    };
+    //    static bool IsClassRegistered(const std::string ClassName) {
+    //        if (std::find_if(ClassList_.begin(), ClassList_.end(), [ClassName](const auto& Data) { return Data.GetName() == ClassName; }) != ClassList_.end())
+    //        {
+    //            return true;
+    //        }
+    //        else
+    //        {
+    //            return false;
+    //        }            
+    //    }
+    //};
 
 
     /// <summary>
     ///  This class, logs the "Entering" at construction and logs "Leaving" when going out of scope from destructor
     /// </summary>
-    class Logfunction {
+    class LogScope {
     public:
-        Logfunction(std::string function_name, ILogger& Logger, LogLevel level = LogLevel::DETAIL2) : 
-            function_name_(function_name), 
+        LogScope(const std::string& scope_name, ILogger& Logger, LogLevel level = LogLevel::DETAIL2) :
+            scope_name_(scope_name),
             pLogger_(Logger),
             LogLevel_(level) 
         {
-            pLogger_.Log(function_name.c_str(), LogLevel_, "Entering");
+            pLogger_.Log(LogLevel_, "Entering - " + scope_name);
         }
 
-        ~Logfunction() {
-            pLogger_.Log(function_name_.c_str(), LogLevel_, "Leaving");
+        ~LogScope() {
+            pLogger_.Log(LogLevel_, "Leaving - " + scope_name_);
         }
+
     protected:
         ILogger& pLogger_;
         LogLevel LogLevel_;
-        std::string function_name_;
+        std::string scope_name_;
+    };
+
+    class HexDump {
+        unsigned char* pData_;
+        size_t Len_;
+    public:
+        HexDump(unsigned char* pData, size_t Len) : pData_(pData), Len_(Len) { ; }
+        std::string GetData() const {
+            std::string HexStr;
+            std::string ASCStr;
+            GetData(HexStr, ASCStr);
+
+            std::string Total = HexStr + " " + ASCStr;
+            return Total;
+        }
+
+        void GetData(std::string& Hex, std::string& Ascii, char Sep = ' ') const {
+            bool bFirstData = true;
+            std::stringstream str;
+            std::stringstream Asciistr;
+            for (auto i = 0; i < Len_; i++) {
+                if (bFirstData) {
+                    str << std::setw(2) << std::hex  << std::uppercase  << (int)pData_[i];
+                    Asciistr << pData_[i];
+                    bFirstData = false;
+                }
+                else {
+                    str << Sep << std::setw(2) << std::hex << std::uppercase << (int)pData_[i];
+                    Asciistr << pData_[i];
+                }
+            }
+            Hex = str.str();
+            Ascii = Asciistr.str();
+        }
     };
 }
 

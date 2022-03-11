@@ -11,7 +11,7 @@ public:
 	AppWindowFrame() : WindowFrame()
 	{
 		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();		
-		pLogger_->Register(swktool::LogLevel::DETAIL1, __FUNCTION__);
+		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
 	}
 
 
@@ -19,7 +19,7 @@ public:
 		swktool::WindowFrame(hInst)		
 	{
 		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();
-		pLogger_->Register(swktool::LogLevel::DETAIL1, __FUNCTION__);
+		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
 	}
 	~AppWindowFrame() { ; }
 

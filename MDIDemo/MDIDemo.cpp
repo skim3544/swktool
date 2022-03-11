@@ -83,11 +83,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     auto* pLogger = GetDI().Resolve<ILogger, Logger>();
     pLogger->init(TEXT("DetailedLog.log"));
     //pLogger->SetLogLevel(LogLevel::STATUS);
-    pLogger->Register(LogLevel::STATUS, __FUNCTION__);
+    pLogger->Register(__FUNCTION__, LogLevel::STATUS);
     pLogger->Log(__FUNCTION__, LogLevel::STATUS, " --------------------------- START ---------------------------");
    
-    
-
     // Create default Win registration information
     WNDCLASSEXW wcex = swktool::WindowReg::CreateMDIFrameTemplate(hInstance);
     
