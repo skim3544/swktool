@@ -6,66 +6,146 @@
 #include <exception>
 #include <tchar.h>
 #include <intrin.h>
+#include <string>
+#include <iomanip>
 #include "Logger.h"
 
 
 #pragma intrinsic(_ReturnAddress)
 #pragma intrinsic(_AddressOfReturnAddress)
 
+#pragma comment(lib, "Dbghelp.lib")
 
 namespace swktool {
-    ILogger* CCrashHandler::pLogger = nullptr;
-    MINIDUMP_TYPE    CCrashHandler::MemDumpType_ = MiniDumpNormal;
-    bool CCrashHandler::DumpMemory_ = true;
+    ILogger* CCrashHandler32::pLogger = nullptr;
+    MINIDUMP_TYPE    CCrashHandler32::MemDumpType_ = MiniDumpNormal;
+    bool CCrashHandler32::DumpMemory_ = true;
 
 
-    LONG WINAPI CCrashHandler::SehHandler(PEXCEPTION_POINTERS pExceptionPtrs) {
+    LONG WINAPI CCrashHandler32::SehHandler(PEXCEPTION_POINTERS pExceptionPtrs) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
         return 0l;
     }
 
-    void __cdecl CCrashHandler::TerminateHandler() {
+    void __cdecl CCrashHandler32::TerminateHandler() {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void __cdecl CCrashHandler::UnexpectedHandler() {
+    void __cdecl CCrashHandler32::UnexpectedHandler() {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
 
-    void __cdecl CCrashHandler::PureCallHandler() {
+    void __cdecl CCrashHandler32::PureCallHandler() {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
 
-    void __cdecl CCrashHandler::InvalidParameterHandler(const wchar_t* expression,
+    void __cdecl CCrashHandler32::InvalidParameterHandler(const wchar_t* expression,
         const wchar_t* function, const wchar_t* file,
-        unsigned int line, uintptr_t pReserved) {
+        unsigned int line, uintptr_t pReserved) 
+    {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);                
 
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
     }
 
-    int __cdecl CCrashHandler::NewHandler(size_t) {
+    int __cdecl CCrashHandler32::NewHandler(size_t) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
+
         return 0;
     }
 
-    void CCrashHandler::SigabrtHandler(int) {
+    void CCrashHandler32::SigabrtHandler(int) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void CCrashHandler::SigfpeHandler(int /*code*/, int subcode) {
+    void CCrashHandler32::SigfpeHandler(int /*code*/, int subcode) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void CCrashHandler::SigintHandler(int) {
+    void CCrashHandler32::SigintHandler(int) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void CCrashHandler::SigillHandler(int) {
+    void CCrashHandler32::SigillHandler(int) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void CCrashHandler::SigsegvHandler(int) {
+    void CCrashHandler32::SigsegvHandler(int) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
-    void CCrashHandler::SigtermHandler(int) {
+    void CCrashHandler32::SigtermHandler(int) {
+        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
+        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
+
+
+        CCrashHandler32::seh_filter(0, pExPointers);
 
     }
 
 
-    void CCrashHandler::SetProcessExceptionHandlers()
+    void CCrashHandler32::SetProcessExceptionHandlers()
     {
         // Install top-level SEH handler
         SetUnhandledExceptionFilter(SehHandler);
@@ -78,7 +158,7 @@ namespace swktool {
         _set_purecall_handler(PureCallHandler);
 
         // Catch new operator memory allocation exceptions
-        _set_new_handler(NewHandler);
+        //_set_new_handler(NewHandler);
 
         // Catch invalid parameter exceptions.
         _set_invalid_parameter_handler(InvalidParameterHandler);
@@ -97,7 +177,7 @@ namespace swktool {
         signal(SIGTERM, SigtermHandler);
     }
 
-    void CCrashHandler::SetThreadExceptionHandlers()
+    void CCrashHandler32::SetThreadExceptionHandlers()
     {
 
         // Catch terminate() calls. 
@@ -127,7 +207,7 @@ namespace swktool {
     }
 
 
-    void CCrashHandler::GetExceptionPointers(DWORD dwExceptionCode, EXCEPTION_POINTERS** ppExceptionPointers) {
+    void CCrashHandler32::GetExceptionPointers(DWORD dwExceptionCode, EXCEPTION_POINTERS** ppExceptionPointers) {
         // The following code was taken from VC++ 8.0 CRT (invarg.c: line 104)
 
         EXCEPTION_RECORD ExceptionRecord;
@@ -177,19 +257,38 @@ namespace swktool {
         (*ppExceptionPointers)->ContextRecord = pContextRecord;
     }
 
-    void CCrashHandler::CreateLog(EXCEPTION_POINTERS* pExcPtrs) {        
+    void CCrashHandler32::CreateLog(EXCEPTION_POINTERS* pExcPtrs) {
         if (pLogger == nullptr) return;
 
-
         std::ostringstream str;
-        str << "Exception Thrown:" << std::endl;
+        std::string Desc = GetExceptionDesc(pExcPtrs->ExceptionRecord->ExceptionCode);
+        str << "Exception Thrown: " << Desc.c_str();
+
+        if (pExcPtrs->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION ||
+            pExcPtrs->ExceptionRecord->ExceptionCode == EXCEPTION_IN_PAGE_ERROR) {
+            ULONG_PTR IO = pExcPtrs->ExceptionRecord->ExceptionInformation[0];
+            if (IO == 0) 
+                str << " Read Error";
+            if (IO == 1)
+                str << " Write Error";
+            else
+                str << " Data execution Error";
+
+            ULONG_PTR Address = pExcPtrs->ExceptionRecord->ExceptionInformation[1];
+            str << " Address : " << std::setw(8) << std::setfill('0') << std::hex << Address << std::setfill(' ');
+
+            ULONG_PTR NCStatus = pExcPtrs->ExceptionRecord->ExceptionInformation[2];
+            str << " Status Code: " << std::setw(8) << std::setfill('0') << std::hex << NCStatus << std::setfill(' ');            
+        }
 
         pLogger->Log(LogLevel::STATUS, str);
 
+        // Walk the stack
+        WalkStack(pExcPtrs);
     }
 
     // This method creates minidump of the process
-    void CCrashHandler::CreateMiniDump(EXCEPTION_POINTERS* pExcPtrs)
+    void CCrashHandler32::CreateMiniDump(EXCEPTION_POINTERS* pExcPtrs)
     {
         HMODULE hDbgHelp = NULL;
         HANDLE hFile = NULL;
@@ -279,32 +378,146 @@ namespace swktool {
     //  }
     // }
 
-    int CCrashHandler::seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep) {
+    //DWORDLONG* GetTopOfStack() {
+    //    DWORDLONG* pRetAddr;
+    //    __asm {
+    //        mov rax, 4
+    //        mov [pRetAddr], rax
+    //    }
+
+    //    return pRetAddr;
+    //}
+
+    int CCrashHandler32::seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep) {
         
         // Create exception log
-        CCrashHandler::CreateLog(ep);
+        CCrashHandler32::CreateLog(ep);
 
         // Create Memory Dump
         if (DumpMemory_) {
-            CCrashHandler::CreateMiniDump(ep);
+            CCrashHandler32::CreateMiniDump(ep);
         }
-//        EXCEPTION_ACCESS_VIOLATION
+
         return EXCEPTION_EXECUTE_HANDLER;
     }
 
-    std::string GetExceptionDesc(DWORD Code) {
+    std::string CCrashHandler32::GetExceptionDesc(DWORD Code) {
         struct { 
             DWORD Code;
-            LPCSTR Deesc;
-        } Test[] = {
+            LPCSTR Desc;
+        } Desc_Lookup[] = {
             {EXCEPTION_ACCESS_VIOLATION, "Access Violation"},
             {EXCEPTION_ARRAY_BOUNDS_EXCEEDED, "Array bounds exceeded Violation"},
             {EXCEPTION_DATATYPE_MISALIGNMENT, "Data Misalignment"},
             {EXCEPTION_FLT_DENORMAL_OPERAND, "Denomal operand"},
-            {EXCEPTION_FLT_DIVIDE_BY_ZERO, "Divide by Zero"},
+            {EXCEPTION_FLT_DIVIDE_BY_ZERO, "Floating point Divide by Zero"},
             {EXCEPTION_INT_DIVIDE_BY_ZERO, "Divide by Zero"},
-            {EXCEPTION_INVALID_HANDLE, "Invalid Handle"}
+            {EXCEPTION_FLT_INVALID_OPERATION, "Floating point Invalid operation"},
+            {EXCEPTION_ILLEGAL_INSTRUCTION, "Illegal Instruction"},
+            {EXCEPTION_INVALID_HANDLE, "Invalid Handle"},
+            {EXCEPTION_PRIV_INSTRUCTION, "Privileged instruction"},
+            {EXCEPTION_STACK_OVERFLOW, "Stack Overflow"}
+        };
+
+        std::string Desc = "Unknown";
+        for (int i = 0; i < _countof(Desc_Lookup); i++) {
+            if (Desc_Lookup[i].Code == Code) {
+                Desc = std::string(Desc_Lookup[i].Desc);
+                break;
+            }
         }
+
+        return Desc;
+    }
+    
+    
+    using Address = uint64_t;
+
+    Address* StackTop(CONTEXT& context) {
+#if defined(_IA64_) || defined(_AMD64_)
+        Address* Ptr = reinterpret_cast<Address*>(context.Rsp);
+#else
+        Address* Ptr = reinterpret_cast<Address*>(context.Esp);
+#endif
+        return Ptr;
+    }
+
+
+    void CCrashHandler32::WalkStack(struct _EXCEPTION_POINTERS* ep) {
+        if (pLogger == nullptr) return;
+
+        return;
+
+        std::ostringstream s;
+        CONTEXT& context = *(ep->ContextRecord);
+
+        char symbol_mem[sizeof(IMAGEHLP_SYMBOL) + 256]{};
+        IMAGEHLP_SYMBOL* symbol = (IMAGEHLP_SYMBOL*)symbol_mem;
+        
+        HANDLE process = GetCurrentProcess();
+        SymInitialize(process, NULL, TRUE);
+
+        DWORD64 displacement;
+        char name[256]{};
+        STACKFRAME64         stack{};
+        //copyString(out, max_size, "Crash callstack:\n");
+        //memset(&stack, 0, sizeof(STACKFRAME64));
+        
+        HANDLE thread = GetCurrentThread();
+        displacement = 0;
+        DWORD machineType;
+#ifdef _WIN64
+        machineType = IMAGE_FILE_MACHINE_IA64;
+        stack.AddrPC.Offset = context.Rip;
+        stack.AddrPC.Mode = AddrModeFlat;
+        stack.AddrStack.Offset = context.Rsp;
+        stack.AddrStack.Mode = AddrModeFlat;
+        stack.AddrFrame.Offset = context.Rbp;
+        stack.AddrFrame.Mode = AddrModeFlat;
+#else
+        machineType = IMAGE_FILE_MACHINE_I386;
+        stack.AddrPC.Offset = context.Eip;
+        stack.AddrPC.Mode = AddrModeFlat;
+        stack.AddrStack.Offset = context.Esp;
+        stack.AddrStack.Mode = AddrModeFlat;
+        stack.AddrFrame.Offset = context.Ebp;
+        stack.AddrFrame.Mode = AddrModeFlat;
+#endif
+        BOOL result = false;
+        DWORD ErrorCode = 0;
+        DWORD count = 0;
+        Address* pCurrentStackPtr = StackTop(context);
+        do
+        {
+            
+
+            //result = StackWalk64(machineType,
+            //    process,
+            //    thread,
+            //    &stack,
+            //    &context,
+            //    NULL,
+            //    SymFunctionTableAccess,
+            //    SymGetModuleBase,
+            //    NULL);
+            count = count + 1;
+            symbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
+            symbol->MaxNameLength = 255;
+
+            //SymGetSymFromAddr64(process, (DWORD64)stack.AddrFrame.Offset, &displacement, symbol);
+            //SymGetSymFromAddr64(process, (DWORD64)CurrentStackPtr, &displacement, symbol);
+            SymGetSymFromAddr(process, (DWORD)*pCurrentStackPtr, 0, symbol);
+            UnDecorateSymbolName(symbol->Name, (PSTR)name, 256, UNDNAME_COMPLETE);
+            std::string FuncName = symbol->Name;
+            if (FuncName.length() > 0)
+                s << symbol->Name << std::endl;
+
+            pCurrentStackPtr = pCurrentStackPtr + 1;            
+
+        } while (count < 4096);
+        pLogger->Log(LogLevel::STATUS, s);
     }
 }
+
+
 

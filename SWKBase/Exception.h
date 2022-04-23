@@ -1,18 +1,16 @@
 #pragma once
 #include <Windows.h>
 #include <DbgHelp.h>
+#include <string>
 #include "Logger.h"
-//#include <rtcapi.h>
 
 namespace swktool {
-
-    
 
     /// <summary>
     ///  Exception crash handler
     ///  based on https://www.codeproject.com/Articles/207464/Exception-Handling-in-Visual-Cplusplus
     /// </summary>
-    class CCrashHandler
+    class CCrashHandler32
     {
         static ILogger*  pLogger;    
         static MINIDUMP_TYPE    MemDumpType_;
@@ -20,7 +18,7 @@ namespace swktool {
 
     public:
         // Destructor
-        virtual ~CCrashHandler() { ; }
+        virtual ~CCrashHandler32() { ; }
 
         void Configure(bool bDumpMemoryOnCrash, MINIDUMP_TYPE oType = MiniDumpNormal) {
             DumpMemory_ = bDumpMemoryOnCrash;
@@ -69,5 +67,10 @@ namespace swktool {
         static void SigtermHandler(int);
 
         static int seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep);
+
+        static std::string GetExceptionDesc(DWORD Code);
+
+    protected:
+        static void WalkStack(struct _EXCEPTION_POINTERS* ep);
     };
 }

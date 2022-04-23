@@ -508,7 +508,7 @@ namespace swktool {
             bool bFirstData = true;
             std::stringstream str;
             std::stringstream Asciistr;
-            for (auto i = 0; i < Len_; i++) {
+            for (size_t i = 0; i < Len_; i++) {
                 if (bFirstData) {
                     str << std::setw(2) << std::hex  << std::uppercase  << (int)pData_[i];
                     Asciistr << pData_[i];

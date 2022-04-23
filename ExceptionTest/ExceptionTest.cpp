@@ -6,6 +6,7 @@
 #include "../SWKBase/Logger.h"
 #include "../SWKBase/IOC.h"
 
+
 int RetZero() {
     return 0;
 }
@@ -27,14 +28,25 @@ int main()
     pLogger->init(TEXT("Exception.log"));
     pLogger->Register("Exception", LogLevel::STATUS);
 
-    CCrashHandler::SetLogger(pLogger);
+    CCrashHandler32::SetLogger(pLogger);
     
+    CCrashHandler32::SetProcessExceptionHandlers();
+    CCrashHandler32::SetThreadExceptionHandlers();
+
+
     __try {
+        char buffer[10]{};
+        sprintf_s(buffer, _countof(buffer), "012345678901234567890");
+ /*       char C;
+        char* ptr = &C;
+        *ptr = 'A';
+        *(ptr + 4096) = 'C';
+
         int value = 1000;
         int value2 = value / RetZero();
-        std::cout << "Hello World!\n";
+        std::cout << "Hello World!\n";*/
     }
-    __except (swktool::CCrashHandler::seh_filter(GetExceptionCode(), GetExceptionInformation()))
+    __except (swktool::CCrashHandler32::seh_filter(GetExceptionCode(), GetExceptionInformation()))
     {
          ExitProcess(1);
     }

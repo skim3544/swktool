@@ -7,7 +7,7 @@
 using namespace swktool;
 
 int ATCPCommunication::Send(SOCKET ConnectSocket, TBuffer& Buf) {
-	int TotalSent = 0;
+	size_t TotalSent = 0;
 	auto TotalToSend = Buf.Size();
 
 	// loop around until everything we have gets ent
