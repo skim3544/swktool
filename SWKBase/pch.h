@@ -21,6 +21,6 @@
 #include <assert.h>
 #include "TimeSpan.h"
 #include "ioc.h"
-
+#include "xml.h"
 
 #endif //PCH_H
