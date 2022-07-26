@@ -17,6 +17,23 @@ swktool::IOCContainer& GetDI() {
     return oIOC;
 }
 
+void foo()
+{
+    try {
+        char buffer[10]{};
+        sprintf_s(buffer, _countof(buffer), "012345678901234567890");
+        using namespace swktool;
+        //Logger* pLogger = GetDI().Resolve<ILogger, Logger>();
+        Logger* pLogger = nullptr;
+        pLogger->Log(LogLevel::STATUS, "test");
+
+
+    }
+    catch (...) {
+        ExitProcess(2);
+    }
+
+}
 
 int main()
 {
@@ -35,8 +52,7 @@ int main()
 
 
     __try {
-        char buffer[10]{};
-        sprintf_s(buffer, _countof(buffer), "012345678901234567890");
+        foo();
  /*       char C;
         char* ptr = &C;
         *ptr = 'A';
