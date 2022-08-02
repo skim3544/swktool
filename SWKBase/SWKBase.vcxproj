@@ -166,7 +166,6 @@
     <ClInclude Include="TCPFactory.h" />
     <ClInclude Include="TCPServer.h" />
     <ClInclude Include="ThreadPool.h" />
-    <ClInclude Include="ui.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>

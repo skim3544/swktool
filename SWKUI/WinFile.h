@@ -96,7 +96,7 @@ namespace swktool {
 
 	class WinFile {
 
-		HANDLE 	hFile = INVALID_HANDLE_VALUE;
+		HANDLE 	hFile_ = INVALID_HANDLE_VALUE;
 		DWORD	LastError_ = 0;
 
 	public:
@@ -144,7 +144,7 @@ namespace swktool {
 			DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL,
 			HANDLE					hTemplateFile = NULL)
 		{
-			hFile = INVALID_HANDLE_VALUE;
+			hFile_ = INVALID_HANDLE_VALUE;
 
 			FileDesiredAccess FileAccess = FileDesiredAccess::READ;
 			FileShareMode	  dwShareMode = FileShareMode::NONE;
@@ -197,7 +197,7 @@ namespace swktool {
 			}
 
 			LastError_ = 0;
-			hFile = ::CreateFile(lpFileName,
+			hFile_ = ::CreateFile(lpFileName,
 				(DWORD)FileAccess,
 				(DWORD)dwShareMode,
 				lpSecurityAttributes,
@@ -205,18 +205,18 @@ namespace swktool {
 				dwFlagsAndAttributes,
 				hTemplateFile);
 
-			if (hFile == INVALID_HANDLE_VALUE)
+			if (hFile_ == INVALID_HANDLE_VALUE)
 			{
 				LastError_ = GetLastError();
 			}
 
-			return (hFile != INVALID_HANDLE_VALUE);
+			return (hFile_ != INVALID_HANDLE_VALUE);
 		}
 
 		bool Close() {
-			if (hFile != INVALID_HANDLE_VALUE) {
-				::CloseHandle(hFile);
-				hFile = INVALID_HANDLE_VALUE;
+			if (hFile_ != INVALID_HANDLE_VALUE) {
+				::CloseHandle(hFile_);
+				hFile_ = INVALID_HANDLE_VALUE;
 			}
 
 			return true;
@@ -230,25 +230,25 @@ namespace swktool {
 			DWORD					dwFlagsAndAttributes,
 			HANDLE					hTemplateFile) {
 			LastError_ = 0;
-			hFile = ::CreateFile(lpFileName,
+			hFile_ = ::CreateFile(lpFileName,
 				(DWORD)dwDesiredAccess,
 				(DWORD)dwShareMode,
 				lpSecurityAttributes,
 				(DWORD)dwCreationDisposition,
 				dwFlagsAndAttributes,
 				hTemplateFile);
-			if (hFile == INVALID_HANDLE_VALUE)
+			if (hFile_ == INVALID_HANDLE_VALUE)
 			{
 				LastError_ = GetLastError();
 			}
 
-			return (hFile != INVALID_HANDLE_VALUE);
+			return (hFile_ != INVALID_HANDLE_VALUE);
 		}
 
 		DWORD Read(LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPOVERLAPPED lpOverlapped = NULL) {
 			DWORD lpNumberOfBytesRead = 0;
 			LastError_ = 0;			
-			BOOL fReadSuccess = ::ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, &lpNumberOfBytesRead, lpOverlapped);
+			BOOL fReadSuccess = ::ReadFile(hFile_, lpBuffer, nNumberOfBytesToRead, &lpNumberOfBytesRead, lpOverlapped);
 			if (!fReadSuccess) {
 				LastError_ = GetLastError();
 			}
@@ -258,7 +258,7 @@ namespace swktool {
 		DWORD Write(LPVOID lpBuffer, DWORD nNumberOfBytesToWrite, LPOVERLAPPED lpOverlapped = NULL) {
 			DWORD lpNumberOfBytesWrite = 0;
 			LastError_ = 0;
-			BOOL fWriteSuccess = ::WriteFile(hFile, lpBuffer, nNumberOfBytesToWrite, &lpNumberOfBytesWrite, lpOverlapped);
+			BOOL fWriteSuccess = ::WriteFile(hFile_, lpBuffer, nNumberOfBytesToWrite, &lpNumberOfBytesWrite, lpOverlapped);
 			if (!fWriteSuccess) {
 				LastError_ = GetLastError();
 			}
@@ -269,7 +269,7 @@ namespace swktool {
 			LARGE_INTEGER NewFilePointer = {};
 			NewFilePointer.QuadPart = 0;
 			LastError_ = 0;
-			BOOL Success = SetFilePointerEx( hFile, offset, &NewFilePointer, (DWORD)dwMoveMethod);
+			BOOL Success = SetFilePointerEx(hFile_, offset, &NewFilePointer, (DWORD)dwMoveMethod);
 			if (!Success) {
 				LastError_ = GetLastError();
 			}
@@ -281,7 +281,7 @@ namespace swktool {
 			LARGE_INTEGER lpFileSize = {};
 			lpFileSize.QuadPart = 0;
 
-			BOOL bSuccess = GetFileSizeEx(hFile, &lpFileSize);
+			BOOL bSuccess = GetFileSizeEx(hFile_, &lpFileSize);
 			if (!bSuccess)
 			{
 				LastError_ = GetLastError();
@@ -290,7 +290,7 @@ namespace swktool {
 		}
 
 		bool CancelIO() {
-			BOOL bSuccess = CancelIo(hFile);
+			BOOL bSuccess = CancelIo(hFile_);
 			if (!bSuccess)
 			{
 				LastError_ = GetLastError();
@@ -306,7 +306,7 @@ namespace swktool {
 		*/
 
 		virtual ~WinFile() {
-			if (hFile != INVALID_HANDLE_VALUE) {
+			if (hFile_ != INVALID_HANDLE_VALUE) {
 				Close();
 			}
 		}

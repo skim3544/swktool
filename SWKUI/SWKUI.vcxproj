@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\SWKBase\ui.h" />
     <ClInclude Include="AnimationCtrl.h" />
     <ClInclude Include="AWindow.h" />
     <ClInclude Include="Bitmap.h" />
