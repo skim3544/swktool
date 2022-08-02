@@ -58,6 +58,7 @@ namespace swktool {
             unsigned int line, uintptr_t pReserved);
 
         static int __cdecl NewHandler(size_t);
+        static LONG NTAPI VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionPtrs);
 
         static void SigabrtHandler(int);
         static void SigfpeHandler(int /*code*/, int subcode);
@@ -65,6 +66,7 @@ namespace swktool {
         static void SigillHandler(int);
         static void SigsegvHandler(int);
         static void SigtermHandler(int);
+        
 
         static int seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep);
 

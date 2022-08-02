@@ -143,12 +143,36 @@ namespace swktool {
         CCrashHandler32::seh_filter(0, pExPointers);
 
     }
+    
+    /// <summary>
+    /// VectoredExceptionHandler
+    /// Used tocapture heap corruption exception
+    /// C/C++ startup code calls HeapSetInformation with HeapEnableTerminationOnCorruption class as parameter,
+    /// which prevents our exception handler from capturing the heap corruption exception (0xc0000374)
+    /// This exception is captured and handled from Vectored Exception handler
+    /// </summary>
+    /// <param name="pExceptionPtrs"></param>
+    /// <returns></returns>
+    LONG CCrashHandler32::VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionPtrs) {
 
+        if (pExceptionPtrs->ExceptionRecord->ExceptionCode == STATUS_HEAP_CORRUPTION) {
+            if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+            CCrashHandler32::seh_filter(STATUS_HEAP_CORRUPTION, pExceptionPtrs);
+
+            return EXCEPTION_EXECUTE_HANDLER;
+        }
+
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
 
     void CCrashHandler32::SetProcessExceptionHandlers()
     {
         // Install top-level SEH handler
         SetUnhandledExceptionFilter(SehHandler);
+
+
+        // Chain the vectored Exception Handler
+        AddVectoredExceptionHandler(TRUE, VectoredExceptionHandler);
 
         // Catch pure virtual function calls.
         // Because there is one _purecall_handler for the whole process, 
