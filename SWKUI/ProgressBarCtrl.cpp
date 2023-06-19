@@ -15,4 +15,6 @@ namespace swktool {
 	ProgressBarCtrl::ProgressBarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	ProgressBarCtrl::ProgressBarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
 }

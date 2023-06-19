@@ -17,4 +17,6 @@ namespace swktool {
 	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
 }

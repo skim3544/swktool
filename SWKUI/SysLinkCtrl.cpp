@@ -31,5 +31,8 @@ namespace swktool {
     SysLinkCtrl::SysLinkCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 
     }
+	SysLinkCtrl::SysLinkCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
 
 }

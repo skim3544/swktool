@@ -16,4 +16,6 @@ namespace swktool {
 	GroupboxCtrl::GroupboxCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	GroupboxCtrl::GroupboxCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
 }
