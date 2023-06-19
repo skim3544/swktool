@@ -7,4 +7,4 @@ namespace swktool {
 
 }
 
-#endif
+#endif // ___DRAWING_H___

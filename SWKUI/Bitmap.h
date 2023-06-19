@@ -154,6 +154,8 @@ namespace swktool {
 			UINT         usage);
 
 
+
+
 	};
 
 }

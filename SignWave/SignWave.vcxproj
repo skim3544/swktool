@@ -153,7 +153,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AppSignWaveFrame.cpp" />
     <ClCompile Include="SignWave.cpp" />
     <ClCompile Include="SignWaveWindow.cpp" />
   </ItemGroup>

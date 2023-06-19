@@ -89,6 +89,10 @@
     <ClCompile Include="MDIClientWindow.cpp" />
     <ClCompile Include="MDIFrameWindow.cpp" />
     <ClCompile Include="MonthCalendarCtrl.cpp" />
+    <ClInclude Include="MsgHandler.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
+    <ClCompile Include="MsgHandler.cpp" />
     <ClCompile Include="RichEditCtrl.cpp" />
     <ClCompile Include="ScrollBarCtrl.cpp" />
     <ClCompile Include="StatusBarCtrl.cpp" />

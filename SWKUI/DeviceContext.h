@@ -578,7 +578,8 @@ namespace swktool {
 		PAINTSTRUCT ps = {};
 
 	public:
-		PaintDeviceContext(HWND hWnd) : DeviceContext(hWnd, nullptr, DC_CLEAN_METHOD::None)
+		PaintDeviceContext(HWND hWnd) : 
+			DeviceContext(hWnd, nullptr, DC_CLEAN_METHOD::None)
 		{
 			hDC = ::BeginPaint(hWndOwner, &ps);
 		}

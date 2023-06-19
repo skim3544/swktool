@@ -66,6 +66,13 @@ namespace swktool {
 			return oMenu;
 		}
 
+		static WinMenu Load(HINSTANCE hInst, int MenuName) {
+			HMENU hNewMenu = ::LoadMenu(hInst, MAKEINTRESOURCE(MenuName));
+			WinMenu oMenu(hNewMenu);
+
+			return oMenu;
+		}
+
 		void CheckMenuItem(UINT MenuID, CheckedType Checked) {
 			::CheckMenuItem(hMenu_, MenuID, (UINT)Checked);
 		}

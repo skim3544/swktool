@@ -1,32 +1,25 @@
 #pragma once
 
+#include "../SWKUI/Window.h"
 
-#include "../SWKUI/pch.h"
 
-
-class SignWaveWindow : public swktool::Window
-{
+class MainWindow : public swktool::Window {
 public:
-	SignWaveWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, HINSTANCE hInstance) :
-		swktool::Window(lpClassName, lpWindowName, hInstance),
-		cxClient_(0),
-		cyClient_(0)
-	{
-
+	PCWSTR  ClassName() const {
+		return L"Signwave Window";
 	}
 
-	~SignWaveWindow() { ; }
-
-	virtual void OnClose() {		
-		PostQuitMessage(0);	// send Quit-message so the window closes
+	virtual void PreRegisterWindow(WNDCLASSEX& wc) override {
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	}
 
-
-	virtual void OnSize(UINT state, int nWidth, int nHeight) override; 
+	void virtual OnSize(UINT state, int nWidth, int nHeight) override;
 	virtual void OnPaint() override;
 
 private:
 	int	cxClient_;
 	int cyClient_;
 };
+
 

@@ -26,7 +26,8 @@ namespace swktool {
     {
         DebugStreamBuf buffer_;
     public:
-        DebugStream() : basic_ostream(&buffer_, false)
+        DebugStream() : 
+            std::ostream(&buffer_, false)
         {
             rdbuf(&buffer_);
         }

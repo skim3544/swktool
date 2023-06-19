@@ -1,13 +1,6 @@
 #include "pch.h"
-#include "framework.h"
-#include "WinEventHandler.h"
-#include "Window.h"
 #include "DialogWindow.h"
-#include "Ctrl.h"
-#include "ListboxCtrl.h"
-
-#include "StaticTextCtrl.h"
-#include <CommCtrl.h>
+//#include "..\SWKBase\DebugStream.h"
 
 #ifdef _DEBUG
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -15,140 +8,103 @@
 #define DBG_NEW new
 #endif
 
-
 namespace swktool {
-
-	BOOL DialogWindow::Create(std::shared_ptr<DialogWindow> pDlg) {
-		WinEventHandler::GetInst()->PreRegisterDlgWindow(pDlg);
-
-		return TRUE;
+	DialogWindow::DialogWindow(UINT ID, Window* pParent) :
+		DialogMsgHandler()
+	{
+		m_ResourceID = ID;
+		// convert ID to template name			
+		DialogTemplateName = MAKEINTRESOURCE(ID);
+		if (pParent) {
+			m_hParent = pParent->WindowHandle();
+			m_hInstance = pParent->GetInstance();
+		}
 	}
 
 
-	/*
-	HWND DialogWindow::CreateDlgIndirect(LPCTSTR lpszTemplateName, HINSTANCE hInst) {
-		HWND hDialog = NULL;
-		LPCDLGTEMPLATE lpDialogTemplate = NULL;
-		HGLOBAL hDialogTemplate = nullptr;
-		HRSRC hResource = ::FindResource(hInst, lpszTemplateName, RT_DIALOG);
-		if (hResource != nullptr) {
-			hDialogTemplate = LoadResource(hInst, hResource);
+	DialogWindow::DialogWindow(LPCTSTR pDialogTemplateName, Window* pParent) :
+		DialogMsgHandler()
+		, m_ResourceID(0)
+	{
+		if (pParent)
+		{
+			m_hParent = pParent->WindowHandle();
+			m_hInstance = pParent->GetInstance();
 		}
-
-		// If loading the dialog template from the resource file was successful
-		if (hDialogTemplate != nullptr) {
-			lpDialogTemplate = (LPCDLGTEMPLATE)LockResource(hDialogTemplate);
-
-			std::shared_ptr< DialogWindow> shared(this);
-			// Let the system know that I am the one trying to create this window
-			WinEventHandler::GetInst()->PreRegisterDlgWindow(shared);
-
-			// create a modeless dialog
-			hDialog = ::CreateDialogIndirect(hInst, lpDialogTemplate, hWndParent, 
-				static_cast<DLGPROC>(WinEventHandler::ProcDlgMessage));
-			WinEventHandler::GetInst()->PreRegisterDlgWindow(nullptr);
-
-			UnlockResource(hDialogTemplate);
-			if (hDialogTemplate != nullptr) {
-				FreeResource(hDialogTemplate);
-			}
-		}
-
-		return hDialog;
 	}
-	*/
 
 
-	INT DialogWindow::ShowDialog() {
-		
 
-		// Missing Create call?
-		assert(swktool::WinEventHandler::GetInst()->GetPreRegistedDialog() != nullptr);
-		
-		// start the message pumping
-		::DialogBox(hInst,
+	INT_PTR  DialogWindow::OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam) 
+	{
+
+		// Dialog template style detection does not work, always force it to visible unless the caller just does not call
+		// Base class OnInitDialg
+		// 
+		//auto  dwStyle = GetWindowLong(m_hwnd, GWL_STYLE);
+		//const auto DlgVisible = (dwStyle & WS_VISIBLE);
+
+		//if (!DlgVisible) {
+		//	DebugOut << "Dialog Box template not visible.  Forcing it to be visible" << std::endl;
+		//	::ShowWindow(m_hwnd, SW_SHOW);
+		//	::UpdateWindow(m_hwnd);
+		//}
+
+		// Always show
+		::ShowWindow(m_hwnd, SW_SHOW);
+		::UpdateWindow(m_hwnd);
+
+		// if caption set, send ir over
+		if (cwCaption.length() > 0)
+			SetWindowText(m_hwnd, cwCaption.c_str());		
+
+		return (INT_PTR)TRUE;
+	}
+
+	INT_PTR DialogWindow::OnCommand(WPARAM wParam, LPARAM lParam) 
+	{
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+			EndDialog(m_hwnd, LOWORD(wParam));
+
+		return (INT_PTR)TRUE;
+	}
+
+	INT_PTR DialogWindow::OnClose() 
+	{
+		::EndDialog(m_hwnd, 0L);
+
+		return (INT_PTR)TRUE;
+	}
+
+
+	INT_PTR DialogWindow::ShowDialog()
+	{
+		// register THIS dialog box to receive next Model dialog box message
+		PreRegisterClass(this);
+
+		// start the message pumping, for model dialog box this call will not return until EndDialog gets called
+		auto retval = ::DialogBox(
+			m_hInstance,
 			DialogTemplateName,
-			hwndParent,
-			swktool::WinEventHandler::ProcDialogMessage);
+			//MAKEINTRESOURCE(m_ResourceID),
+			m_hParent,
+			(DLGPROC)DialogMsgHandler::DialogMsgProc);
 
-		return DialogResult;		
+		return retval;
 	}
 
 
-	/*
-	INT DialogWindow::ShowDialog() {
-		bool fDone = false;
-	
-		// if riding on top of parent, disable the parent window
-		if (hWndParent != NULL)
-			EnableWindow(hWndParent, FALSE);
-
-
-		// enter message loop for this dialog, don't come out until dialog gets closed
-		while (fDone == false)
+	INT_PTR DialogWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg)
 		{
-			MSG msg;
-
-			while (PeekMessage(&msg, hDlg, 0, 0, PM_NOREMOVE))
-			{
-				UINT MsgID = msg.message;
-
-				if (MsgID == WM_CLOSE)
-				{
-					MsgID = 0;
-				}
-
-
-				if (GetMessage(&msg, NULL, 0, 0))
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-
-				if (msg.message == WM_NULL || msg.message == WM_CLOSE || msg.message == WM_QUIT)
-				{
-					fDone = true;
-					//PostMessage(NULL, WM_QUIT, 0, 0);
-					break;
-				}
-			}
+			//PROC_DLG_MSG(m_hwnd, WM_SETFONT, OnSetFont);
+			PROC_DLG_MSG(m_hwnd, WM_INITDIALOG, OnInitDialog);
+			PROC_DLG_MSG(m_hwnd, WM_COMMAND, OnCommand);
+			PROC_DLG_MSG(m_hwnd, WM_CLOSE, OnClose);
 		}
 
-		// Enable Parent Window
-		if (hWndParent != NULL)
-			EnableWindow(hWndParent, true);
-
-		return DialogResult;
-	}
-*/
-
-
-
-	BOOL DialogWindow::OnInitDialog(HWND hwndFocus, LPARAM lParam) {
-
-		if (!Caption_.empty()) {
-			SetWindowText(hwndWindow, Caption_.c_str());
-		}
-		return TRUE;
+		return (INT_PTR)FALSE;
 	}
 
-
-
-
-	LRESULT DialogWindow::OnCommand(WPARAM msg, LPARAM lParam)
-	{				
-		return FALSE;
-	}
-
-	 LRESULT DialogWindow::ProcessMessage(HWND hDialog, WORD wMsg, WPARAM wParam, LPARAM lParam) {		
-		switch (wMsg)
-		{
-			PROC_DLG_MSG(hDialog, WM_INITDIALOG, OnInitDialog);
-			PROC_DLG_MSG(hDialog, WM_COMMAND, OnCommand);
-			PROC_DLG_MSG(hDialog, WM_CLOSE, OnClose);			
-		}
-
-		return FALSE;
-	}
-
-}
+} // namespace swktool
