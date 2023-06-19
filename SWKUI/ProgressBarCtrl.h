@@ -9,8 +9,8 @@ namespace swktool {
 
 	class ProgressBarCtrl : public Ctrl {
 	public:
-		ProgressBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		ProgressBarCtrl(UINT CtrlID, AWindow* pParent);
+		ProgressBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		ProgressBarCtrl(UINT CtrlID, Window* pParent);
 		~ProgressBarCtrl() { ; }
 
 

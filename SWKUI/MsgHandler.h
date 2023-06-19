@@ -96,11 +96,20 @@ namespace swktool {
 		using MsgHandlerPair = DialogMsgHandlerPair;
 		using MsgHandlerList = std::vector< MsgHandlerPair >;
 
+	public:
+		HINSTANCE GetInstance() const { return m_hInstance; }
+		HWND   GetWindowHandle() const { return m_hwnd;}
+		HWND   GetParentWindowHandle() const { return m_hParent; }
+
+
+	protected:
 		HINSTANCE m_hInstance;
 		HWND m_hwnd;
 		HWND m_hParent;
 
 		static MsgHandlerList m_MsgHandlerList;
+
+		
 
 		DialogMsgHandler() :
 			  m_hwnd(NULL)
@@ -124,6 +133,7 @@ namespace swktool {
 			return  TRUE;
 		}
 
+		static DialogMsgHandlerPair* FindPreRegistered();
 		static INT_PTR CALLBACK DialogMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};
 

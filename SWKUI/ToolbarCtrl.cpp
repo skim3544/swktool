@@ -6,7 +6,7 @@
 
 namespace swktool {
 
-	ToolbarCtrl::ToolbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID) {
+	ToolbarCtrl::ToolbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
 		INITCOMMONCONTROLSEX icex;
 
 		icex.dwSize = sizeof(icex);
@@ -14,8 +14,9 @@ namespace swktool {
 
 		InitCommonControlsEx(&icex);
 
-		hInst = pParent->GetInstanceHandle();
-		hDlg = pParent->GetDlgHWND();
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
+
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			TOOLBARCLASSNAME, (LPCWSTR)Caption.c_str(),
@@ -23,7 +24,7 @@ namespace swktool {
 			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
-	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, AWindow* pParent) : Ctrl(CtrlID, pParent) {
+	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 }

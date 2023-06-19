@@ -10,8 +10,8 @@ namespace swktool {
     {
     public:
         // WS_VISIBLE | WS_CHILD | WS_TABSTOP
-        SysLinkCtrl(std::wstring HtmlLinkText, DWORD Style, int x, int y, int Width, int Height, AWindow* pParent, UINT CtrlID);
-        SysLinkCtrl(UINT CtrlID, AWindow* pParent);
+        SysLinkCtrl(std::wstring HtmlLinkText, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID);
+        SysLinkCtrl(UINT CtrlID, Window* pParent);
         virtual ~SysLinkCtrl() { ; }
 
     };

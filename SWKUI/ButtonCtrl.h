@@ -7,13 +7,14 @@
 
 namespace swktool {
 
-	class BaseDialog;
+	//class BaseDialog;
 
 	class ButtonCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
 	public:
-		ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		ButtonCtrl(UINT CtrlID, AWindow* pParent);
+		ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		ButtonCtrl(UINT CtrlID, Window* pParent);
+		ButtonCtrl(UINT CtrlID, DialogWindow* pParent);
 		~ButtonCtrl() { ; }
 
 
@@ -61,8 +62,8 @@ namespace swktool {
 	class CheckboxCtrl : public Ctrl {
 
 	public:
-		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		CheckboxCtrl(UINT CtrlID, swktool::AWindow* pParent);
+		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		CheckboxCtrl(UINT CtrlID, swktool::Window* pParent);
 
 		~CheckboxCtrl() { ; }
 
@@ -84,8 +85,8 @@ namespace swktool {
 
 	public:
 		// WS_VISIBLE | WS_CHILD|BS_GROUPBOX
-		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		RadioCtrl(UINT CtrlID, AWindow* pParent);
+		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		RadioCtrl(UINT CtrlID, Window* pParent);
 		~RadioCtrl() { ; }
 
 		void Set() {

@@ -35,8 +35,10 @@ namespace swktool {
 		Ctrl(HWND hwnd) : 
 			hInst(nullptr), hwndCtrl(hwnd), hDlg(nullptr), ID(-1) { ; }
 		// Used for createing a child control dynamically (whithin resource file)
-		Ctrl(AWindow* pParent);
-		Ctrl(UINT CtrlID, AWindow* pParent);		
+		Ctrl(Window* pParent);
+
+		Ctrl(UINT CtrlID, Window* pParent);		
+		Ctrl(UINT CtrlID, DialogWindow* pParent);
 		virtual ~Ctrl() { ; }
 
 		HWND GetCtrlHandle() const {

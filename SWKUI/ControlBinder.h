@@ -25,7 +25,7 @@ namespace swktool {
 
 	public:
 		// Binds Dialog resource control with the control
-		template <class CtrlItem, class TParent = BaseDialog>
+		template <class CtrlItem, class TParent = DialogWindow>
 		CtrlItem* Bind(UINT ID, TParent* pParent) {
 			std::unique_ptr<CtrlItem> data = std::make_unique<CtrlItem>(ID, pParent);
 			ControlList_.push_back(std::move(data));

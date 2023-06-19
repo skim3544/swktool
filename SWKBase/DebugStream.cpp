@@ -3,6 +3,6 @@
 
 namespace swktool {
 
-	DebugStream DebugOut;
-
+	DebugStreamA DebugOut;
+	DebugStreamW WDebugOut;
 }

@@ -5,7 +5,6 @@
 #include "..\SWKUI\WinMenu.h"
 
 #include "..\SWKUI\DialogWindow.h"
-
 #include "..\SWKBase\DebugStream.h"
 
 #include "SimpleDialog.h"

@@ -10,8 +10,8 @@ namespace swktool {
 		const int STRING_BUF_SIZE = 255;
 
 	public:
-		ComboboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		ComboboxCtrl(UINT CtrlID, AWindow* pParent);
+		ComboboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		ComboboxCtrl(UINT CtrlID, Window* pParent);
 		~ComboboxCtrl() { ; }
 
 		std::wstring GetText() {

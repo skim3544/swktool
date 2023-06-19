@@ -13,21 +13,33 @@
 
 
 namespace swktool {
-	Ctrl::Ctrl(AWindow* pParent) :
+	Ctrl::Ctrl(Window* pParent) :
 		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(-1) {
-		hInst = pParent->GetInstanceHandle();
-		hDlg = pParent->GetWindowHWND();
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
 	}
 
-	Ctrl::Ctrl(UINT CtrlID, AWindow* pParent) :
+	Ctrl::Ctrl(UINT CtrlID, Window* pParent) :
 		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(CtrlID) {
 
-		hInst = pParent->GetInstanceHandle();
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
 
-		hDlg = pParent->GetWindowHWND();
 		hwndCtrl = GetDlgItem(hDlg, CtrlID);
 
 		GetWindowRect(hwndCtrl, &Rect);
+	}
+
+	Ctrl::Ctrl(UINT CtrlID, DialogWindow* pParent) :
+		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(CtrlID) {
+
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
+
+		hwndCtrl = GetDlgItem(hDlg, CtrlID);
+
+		GetWindowRect(hwndCtrl, &Rect);
+
 	}
 
 	void Ctrl::Enable() {

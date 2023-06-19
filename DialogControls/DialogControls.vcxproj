@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a75d79bd-f820-44b3-abc7-906494c57873}</ProjectGuid>
-    <RootNamespace>SimpleDialog</RootNamespace>
+    <ProjectGuid>{e6cc1e7e-a61e-40a1-82c2-e2686e6ff481}</ProjectGuid>
+    <RootNamespace>DialogControls</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,19 +129,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DialogControls.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SimpleDialog.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Test1Dlg.h" />
+    <ClInclude Include="Test2Dlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimpleDialog.cpp" />
+    <ClCompile Include="DialogControls.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SimpleDialog.rc" />
+    <ResourceCompile Include="DialogControls.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="SimpleDialog.ico" />
+    <Image Include="DialogControls.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

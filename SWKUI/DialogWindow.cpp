@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DialogWindow.h"
-//#include "..\SWKBase\DebugStream.h"
+#include "..\SWKBase\DebugStream.h"
 
 #ifdef _DEBUG
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -78,18 +78,27 @@ namespace swktool {
 
 
 	INT_PTR DialogWindow::ShowDialog()
-	{
+	{		
 		// register THIS dialog box to receive next Model dialog box message
 		PreRegisterClass(this);
+
+		//auto lpProc = (DLGPROC)(& DialogMsgHandler::DialogMsgProc);
+
+		//DebugOut << std::hex << "THIS: " << this
+		//	<< std::hex << " Inst: " << m_hInstance
+		//	<< std::hex << " Res: " << m_ResourceID
+		//	<< std::hex << " Parent: " << m_hParent
+		//	<< std::hex << " Addr : " << lpProc << std::endl;
 
 		// start the message pumping, for model dialog box this call will not return until EndDialog gets called
 		auto retval = ::DialogBox(
 			m_hInstance,
-			DialogTemplateName,
-			//MAKEINTRESOURCE(m_ResourceID),
+			//DialogTemplateName,
+			MAKEINTRESOURCE(m_ResourceID),
 			m_hParent,
 			(DLGPROC)DialogMsgHandler::DialogMsgProc);
 
+		auto Lasterror = GetLastError();
 		return retval;
 	}
 

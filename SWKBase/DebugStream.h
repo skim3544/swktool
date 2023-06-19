@@ -7,10 +7,10 @@
 
 namespace swktool {
 
-    class DebugStreamBuf : public std::stringbuf
+    class DebugStreamBufA : public std::stringbuf
     {
     public:
-        ~DebugStreamBuf() { sync(); }
+        ~DebugStreamBufA() { sync(); }
 
         int sync()
         {
@@ -21,12 +21,27 @@ namespace swktool {
     };
 
 
-
-    class DebugStream : public std::ostream
+    class DebugStreamBufW : public std::wstringbuf
     {
-        DebugStreamBuf buffer_;
     public:
-        DebugStream() : 
+        ~DebugStreamBufW() { sync(); }
+
+        int sync()
+        {
+            ::OutputDebugStringW(str().c_str());
+            str(std::wstring()); // Clear the string buffer
+            
+            return 0;
+        }
+    };
+
+
+
+    class DebugStreamA : public std::ostream
+    {
+        DebugStreamBufA buffer_;
+    public:
+        DebugStreamA() :
             std::ostream(&buffer_, false)
         {
             rdbuf(&buffer_);
@@ -34,7 +49,20 @@ namespace swktool {
     };
 
 
-    extern DebugStream DebugOut;
+    class DebugStreamW : public std::wostream
+    {
+        DebugStreamBufW buffer_;
+    public:
+        DebugStreamW() :
+            std::wostream(&buffer_, false)
+        {
+            rdbuf(&buffer_);
+        }
+    };
+
+
+    extern DebugStreamA DebugOut;
+    extern DebugStreamW WDebugOut;
 }
 
 

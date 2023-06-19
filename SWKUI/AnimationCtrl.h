@@ -6,8 +6,8 @@ namespace swktool {
 
 	class AnimationCtrl : public Ctrl {
 	public:
-		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		AnimationCtrl(UINT CtrlID, AWindow* pParent);
+		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		AnimationCtrl(UINT CtrlID, Window* pParent);
 		~AnimationCtrl() { ; }
 
 		void Open(LPTSTR szName) {

@@ -4,9 +4,9 @@
 
 namespace swktool {
 
-	ScrollBarCtrl::ScrollBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID) {
-		hInst = pParent->GetInstanceHandle();
-		hDlg = pParent->GetDlgHWND();
+	ScrollBarCtrl::ScrollBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			TEXT("SCROLLBAR"), (LPCWSTR)Caption.c_str(),
@@ -14,7 +14,7 @@ namespace swktool {
 			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
 
-	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, AWindow* pParent) : Ctrl(CtrlID, pParent) {
+	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
 }

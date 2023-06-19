@@ -35,8 +35,8 @@ namespace swktool {
 		const int STRING_BUF_SIZE = 255;
 
 	public:
-		EditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		EditCtrl(UINT CtrlID, swktool::AWindow* pParent) : 
+		EditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		EditCtrl(UINT CtrlID, swktool::Window* pParent) : 
 			Ctrl(CtrlID, pParent) 
 		{
 		}

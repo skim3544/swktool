@@ -18,7 +18,7 @@ namespace swktool {
 	class StatusBarCtrl : public Ctrl {		
 
 	public:
-		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
+		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		~StatusBarCtrl() { ; }
 
 		// Must chain to Parent/Owner window's OnSize message

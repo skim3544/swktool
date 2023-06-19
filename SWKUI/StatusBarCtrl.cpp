@@ -3,7 +3,7 @@
 #include "StatusBarCtrl.h"
 
 namespace swktool {
-	StatusBarCtrl::StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID) :
+	StatusBarCtrl::StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
 		INITCOMMONCONTROLSEX iccx;
@@ -25,7 +25,7 @@ namespace swktool {
 			NULL);                   // no window creation data
 
 		RECT rcClient;
-		::GetClientRect(pParent->GetParentHWND(), &rcClient);
+		//::GetClientRect(pParent->GetParentHWND(), &rcClient);
 	}
 
 

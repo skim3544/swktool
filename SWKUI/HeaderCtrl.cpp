@@ -3,7 +3,7 @@
 #include "HeaderCtrl.h"
 
 namespace swktool {
-	HeaderCtrl::HeaderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  AWindow* pParent, UINT CtrlID)
+	HeaderCtrl::HeaderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID)
 	{
 		INITCOMMONCONTROLSEX icex;
 
@@ -12,8 +12,8 @@ namespace swktool {
 
 		InitCommonControlsEx(&icex);
 
-		hInst = pParent->GetInstanceHandle();
-		hDlg = pParent->GetDlgHWND();
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_HEADER, (LPCWSTR)Caption.c_str(),
@@ -23,7 +23,7 @@ namespace swktool {
 	}
 
 
-	HeaderCtrl::HeaderCtrl(UINT CtrlID, AWindow* pParent) : Ctrl(CtrlID, pParent) {
+	HeaderCtrl::HeaderCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 

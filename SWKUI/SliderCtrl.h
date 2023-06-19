@@ -10,8 +10,8 @@ namespace swktool {
 	/// </summary>
 	class TrackbarCtrl : public Ctrl {
 	public:
-		TrackbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, AWindow* pParent, UINT CtrlID);
-		TrackbarCtrl(UINT CtrlID, AWindow* pParent);
+		TrackbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		TrackbarCtrl(UINT CtrlID, Window* pParent);
 		~TrackbarCtrl() { ; }
 
 		void SetRange(int Min, int Max) {
@@ -50,11 +50,11 @@ namespace swktool {
 
 	class SliderCtrl : public TrackbarCtrl {
 	public:
-		SliderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, swktool::AWindow* pParent, UINT CtrlID) :
+		SliderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, swktool::Window* pParent, UINT CtrlID) :
 			TrackbarCtrl(Caption, Style, x, y, Height, Width, pParent, CtrlID) {
 		}
 
-		SliderCtrl(UINT CtrlID, swktool::AWindow* pParent) : TrackbarCtrl(CtrlID, pParent) {
+		SliderCtrl(UINT CtrlID, swktool::Window* pParent) : TrackbarCtrl(CtrlID, pParent) {
 		}
 
 		~SliderCtrl() { ; }
