@@ -11,6 +11,7 @@ namespace swktool {
 	public:
 		ProgressBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		ProgressBarCtrl(UINT CtrlID, Window* pParent);
+		ProgressBarCtrl(UINT CtrlID, DialogWindow* pParent);
 		~ProgressBarCtrl() { ; }
 
 
