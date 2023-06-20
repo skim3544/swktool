@@ -48,6 +48,11 @@ public:
         }break;
 
         case IDM_FILE_TEST2:
+        {
+            Test1Dlg Dlg(IDD_TEST2, this);
+            Dlg.SetCaption(L"Test2 Dialog");
+            result = Dlg.ShowDialog();
+        }
             break;
 
         case IDM_ABOUT:

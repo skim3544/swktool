@@ -2,15 +2,13 @@
 #include "Ctrl.h"
 namespace swktool {
 
-
-	//class swktool::BaseDialog;
-
 	class GroupboxCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
 
 	public:
 		GroupboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		GroupboxCtrl(UINT CtrlID, Window* pParent);
+		GroupboxCtrl(UINT CtrlID, DialogWindow* pParent);
 		~GroupboxCtrl() { ; }
 
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "resource.h"
 
 #include "../SWKUI/DialogWindow.h"
 #include "../SWKUI/ControlBinder.h"
@@ -12,7 +13,7 @@ class Test1Dlg : public swktool::DialogWindow {
 	swktool::ButtonCtrl* button_;
 public:
 	Test1Dlg(UINT ID, swktool::Window* pParent) :
-		DialogWindow(IDD_TEST1, pParent) {
+		DialogWindow(IDD_TEST2, pParent) {
 
 	}
 

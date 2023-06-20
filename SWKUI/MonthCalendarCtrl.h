@@ -3,14 +3,13 @@
 #include "Ctrl.h"
 
 
-namespace swktool {
-
-	class AWindow;
+namespace swktool {	
 
 	class MonthCalendarCtrl : public Ctrl {
 	public:
 		MonthCalendarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID);
 		MonthCalendarCtrl(UINT CtrlID, Window* pParent);
+		MonthCalendarCtrl(UINT CtrlID, DialogWindow* pParent);
 		~MonthCalendarCtrl() { ; }
 
 		RECT GetMinReqRect() const {
