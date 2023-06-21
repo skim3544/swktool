@@ -18,7 +18,7 @@ namespace swktool {
 		~ButtonCtrl() { ; }
 
 
-		std::wstring GetText() {
+		std::wstring GetText() const {
 			std::wstring str;
 			str.resize(STRING_BUF_SIZE, 0);
 
@@ -28,7 +28,7 @@ namespace swktool {
 			return str;
 		}
 
-		int GetTextLength() {
+		int GetTextLength() const {
 			return GetWindowTextLength(hwndCtrl);
 		}
 
@@ -36,7 +36,7 @@ namespace swktool {
 			SendMessage(hwndCtrl, WM_SETTEXT, 0, (LPARAM)(s.c_str()));
 		}
 
-		int GetCheck() {
+		int GetCheck() const {
 			return ((int)(DWORD)SendMessage((hwndCtrl), BM_GETCHECK, 0L, 0L));
 		}
 
@@ -44,7 +44,7 @@ namespace swktool {
 			((void)SendMessage((hwndCtrl), BM_SETCHECK, (WPARAM)(int)(check), 0L));
 		}
 
-		UINT GetState() {
+		UINT GetState() const {
 			return ((int)(DWORD)SendMessage((hwndCtrl), BM_GETSTATE, 0L, 0L));
 		}
 
@@ -55,26 +55,37 @@ namespace swktool {
 		void SetStyle(int style, BOOL fRedraw = TRUE) {
 			((void)SendMessage((hwndCtrl), BM_SETSTYLE, (WPARAM)LOWORD(style), MAKELPARAM(((fRedraw) ? TRUE : FALSE), 0)));
 		}
-
 	};
 
 
 	class CheckboxCtrl : public Ctrl {
+	public:
+		enum class CheckState {
+			Checked = BST_CHECKED,
+			Indeterminate = BST_INDETERMINATE,
+			Unchecked = BST_UNCHECKED
+		};
 
 	public:
 		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		CheckboxCtrl(UINT CtrlID, swktool::Window* pParent);
-
+		CheckboxCtrl(UINT CtrlID, swktool::DialogWindow* pParent);
 		~CheckboxCtrl() { ; }
 
 
-		int  GetCheckState()
+		CheckState  GetCheck() const
 		{
-			LRESULT CheckState = ::SendMessage(hwndCtrl, BM_GETCHECK, 0L, 0L);
-			return (int)CheckState;
+			LRESULT LCheckState = ::SendMessage(hwndCtrl, BM_GETCHECK, 0L, 0L);
+			return (CheckState)LCheckState;
 		}
 
-		void SetCheck(int ChekState)
+		DWORD  GetCheckState() const
+		{
+			auto LCheckState = ::SendMessage(hwndCtrl, BM_GETSTATE, 0L, 0L);
+			return (DWORD)LCheckState;
+		}
+
+		void SetCheck(CheckState ChekState)
 		{
 			((void)SendMessage((hwndCtrl), BM_SETCHECK, (WPARAM)(int)(ChekState), 0L));
 		}
@@ -87,6 +98,7 @@ namespace swktool {
 		// WS_VISIBLE | WS_CHILD|BS_GROUPBOX
 		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		RadioCtrl(UINT CtrlID, Window* pParent);
+		RadioCtrl(UINT CtrlID, DialogWindow* pParent);
 		~RadioCtrl() { ; }
 
 		void Set() {

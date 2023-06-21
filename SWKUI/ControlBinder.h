@@ -28,8 +28,15 @@ namespace swktool {
 		template <class CtrlItem, class TParent = DialogWindow>
 		CtrlItem* Bind(UINT ID, TParent* pParent) {
 			std::unique_ptr<CtrlItem> data = std::make_unique<CtrlItem>(ID, pParent);
-			ControlList_.push_back(std::move(data));
-			return dynamic_cast<CtrlItem*>(ControlList_.rbegin()->get());
+			Ctrl* pData = dynamic_cast<Ctrl*>(data.get());
+			if (pData && pData->GetCtrlHandle() != NULL) {
+				ControlList_.push_back(std::move(data));
+			}
+			else 
+			{
+				pData = nullptr;
+			}
+			return dynamic_cast<CtrlItem*>(pData);
 		}
 
 		// Creates the Dialog Control dynamically

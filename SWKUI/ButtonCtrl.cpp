@@ -42,6 +42,9 @@ namespace swktool {
 	CheckboxCtrl::CheckboxCtrl(UINT CtrlID, Window* pParent) :
 		Ctrl(CtrlID, pParent) {
 	}
+	CheckboxCtrl::CheckboxCtrl(UINT CtrlID, swktool::DialogWindow* pParent) :
+		Ctrl(CtrlID, pParent) {
+	}
 
 
 
@@ -56,6 +59,10 @@ namespace swktool {
 
 	RadioCtrl::RadioCtrl(UINT CtrlID, Window* pParent) :
 		Ctrl(CtrlID, pParent) {		
+	}
+
+	RadioCtrl::RadioCtrl(UINT CtrlID, DialogWindow* pParent) :
+		Ctrl(CtrlID, pParent) {
 	}
 
 }
