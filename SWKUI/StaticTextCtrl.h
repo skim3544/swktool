@@ -11,6 +11,7 @@ namespace swktool {
 	public:		
 		StaticTextCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		StaticTextCtrl(UINT CtrlID, Window* pParent);
+		StaticTextCtrl(UINT CtrlID, DialogWindow* pParent);
 		virtual ~StaticTextCtrl() { ; }
 	};
 }

@@ -6,6 +6,9 @@ namespace swktool {
 	StaticTextCtrl::StaticTextCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent)
 	{
 	}
+	StaticTextCtrl::StaticTextCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent)
+	{
+	}
 
 	StaticTextCtrl::StaticTextCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
@@ -14,5 +17,6 @@ namespace swktool {
 			Style, x, y, Height, Width,
 			hDlg, (HMENU)(UINT_PTR)CtrlID, hInst, NULL);
 	}
+
 }
 
