@@ -24,7 +24,7 @@ namespace swktool {
 			NULL);                   // no window creation data
 
 		RECT rcClient;
-		//::GetClientRect(pParent->GetParentHWND(), &rcClient);
+		::GetClientRect(pParent->GetWindowHandle(), &rcClient);
 	}
 
 
