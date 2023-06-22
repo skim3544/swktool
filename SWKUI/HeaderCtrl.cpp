@@ -27,5 +27,8 @@ namespace swktool {
 
 	}
 
+	HeaderCtrl::HeaderCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
 
 }

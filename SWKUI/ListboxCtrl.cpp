@@ -16,4 +16,8 @@ namespace swktool {
 	ListboxCtrl::ListboxCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	ListboxCtrl::ListboxCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
+
+
 }

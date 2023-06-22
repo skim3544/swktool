@@ -29,21 +29,27 @@ public:
 	virtual INT_PTR OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam) override {
 		swktool::DialogWindow::OnInitDialog(hwndFocusedCtrl, lParam);
 
+		// change the static text prompt
 		pStaticText_ = binder_.Bind<swktool::StaticTextCtrl>(IDC_STATIC1, this);
 		pStaticText_->SetText(TEXT("Please enter your name:"));
 		
+		// plugin default text into the edit control
 		pEditCtrl_   = binder_.Bind<swktool::EditCtrl>(IDC_EDIT1, this);
 		pEditCtrl_->SetText(TEXT("Name"));
 
+		// change the OK button text
 		button_ = binder_.Bind<swktool::ButtonCtrl>(IDOK, this);
 		button_->SetText(TEXT("Test OK"));
 		
+		// set check box checked
 		checkbox1_ = binder_.Bind<swktool::CheckboxCtrl>(IDC_CHECK1, this);
 		checkbox1_->SetCheck(swktool::CheckboxCtrl::CheckState::Checked);
 
+		// bind two radio boxes
 		Radio1 = binder_.Bind<swktool::RadioCtrl>(IDC_RADIO1, this);
 		Radio2 = binder_.Bind<swktool::RadioCtrl>(IDC_RADIO2, this);
 
+		// set radio1 to on
 		Radio1->Set();
 
 		return TRUE;

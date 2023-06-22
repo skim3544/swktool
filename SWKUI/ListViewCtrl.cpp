@@ -27,5 +27,9 @@ namespace swktool {
 
 	}
 
+	ListViewCtrl::ListViewCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
+
 
 }

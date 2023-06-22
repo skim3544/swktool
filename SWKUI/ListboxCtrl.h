@@ -17,6 +17,7 @@ namespace swktool {
 	public:
 		ListboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		ListboxCtrl(UINT CtrlID, Window* pParent);
+		ListboxCtrl(UINT CtrlID, DialogWindow* pParent);
 		~ListboxCtrl() { ; }
 
 		/*
