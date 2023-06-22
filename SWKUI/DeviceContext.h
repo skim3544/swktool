@@ -11,6 +11,8 @@
 namespace swktool {
 	class AWindow;
 	class Brush;
+	class DialogWindow;
+	class Window;
 
 	enum class DC_CLEAN_METHOD {
 		None = 0,
@@ -584,7 +586,8 @@ namespace swktool {
 			hDC = ::BeginPaint(hWndOwner, &ps);
 		}
 
-		PaintDeviceContext(AWindow* pWin);
+		PaintDeviceContext(Window* pWin);
+		PaintDeviceContext(DialogWindow* pWin);
 
 
 		~PaintDeviceContext() {

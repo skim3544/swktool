@@ -4,7 +4,7 @@
 #include <tchar.h>
 #include <wtypes.h>
 
-#import <msxml6.dll> 
+#import <msxml6.dll> exclude ("ISequentialStream") exclude ("_FILETIME")
 
 //
 namespace swktool

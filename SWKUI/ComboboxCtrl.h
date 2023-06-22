@@ -2,9 +2,7 @@
 
 #include "ctrl.h"
 
-namespace swktool {
-
-	class AWindow;
+namespace swktool {	
 
 	class ComboboxCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
@@ -12,6 +10,7 @@ namespace swktool {
 	public:
 		ComboboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		ComboboxCtrl(UINT CtrlID, Window* pParent);
+		ComboboxCtrl(UINT CtrlID, DialogWindow* pParent);
 		~ComboboxCtrl() { ; }
 
 		std::wstring GetText() {

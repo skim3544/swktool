@@ -4,7 +4,7 @@
 #include "Ctrl.h"
 
 namespace swktool {
-	class AWindow;
+	
 	class StaticTextCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
 

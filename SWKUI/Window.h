@@ -9,7 +9,6 @@
 #include <memory>
 #include "Drawing.h"
 #include "msg_filter.h"
-//#include "AWindow.h"
 
 //#include "MDIFrameWindow.h"
 

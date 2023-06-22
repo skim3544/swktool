@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Ctrl.h"
-#include "AWindow.h"
 #include "TabCtrl.h"
 
 namespace swktool {
@@ -24,6 +23,9 @@ namespace swktool {
 
 	}
 	TabCtrl::TabCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
+	TabCtrl::TabCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 

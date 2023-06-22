@@ -1,11 +1,10 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "ComboboxExCtrl.h"
 
 namespace swktool {
 	ComboboxExCtrl::ComboboxExCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
-		//hInst = pParent->GetInstanceHandle();
-		//hDlg = pParent->GetDlgHWND();
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
 		ID = CtrlID;
 
 		INITCOMMONCONTROLSEX icex;
@@ -24,4 +23,6 @@ namespace swktool {
 	ComboboxExCtrl::ComboboxExCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	ComboboxExCtrl::ComboboxExCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
 }

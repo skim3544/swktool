@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "MonthCalendarCtrl.h"
 
 namespace swktool {

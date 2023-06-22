@@ -4,8 +4,7 @@
 #include "Ctrl.h"
 
 
-namespace swktool {
-	class AWindow;
+namespace swktool {	
 
 	class ProgressBarCtrl : public Ctrl {
 	public:

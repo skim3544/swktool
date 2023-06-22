@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Ctrl.h"
-#include "AWindow.h"
 #include "GroupboxCtrl.h"
 
 namespace swktool {

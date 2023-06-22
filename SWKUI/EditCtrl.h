@@ -3,10 +3,7 @@
 
 #include "Ctrl.h"
 
-//class swktool::BaseDialog;
-
-namespace swktool {
-	class AWindow;
+namespace swktool {	
 
 	typedef enum class _EditCtrlStyle : DWORD {
 		BORDER = WS_BORDER,

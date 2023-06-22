@@ -1,6 +1,5 @@
 #include "pch.h"
 #include <Richedit.h>
-#include "AWindow.h"
 #include "RichEditCtrl.h"
 
 namespace swktool {
@@ -23,5 +22,8 @@ namespace swktool {
 
 	}
 
+	RichEditCtrl::RichEditCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
 
 }

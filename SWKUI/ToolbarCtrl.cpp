@@ -1,7 +1,6 @@
 
 #include "pch.h"
 #include "ctrl.h"
-#include "AWindow.h"
 #include "ToolbarCtrl.h"
 
 namespace swktool {
@@ -25,6 +24,10 @@ namespace swktool {
 
 	}
 	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
+
+	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 }

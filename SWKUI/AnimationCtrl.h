@@ -1,6 +1,8 @@
 #pragma once
 
+#include <CommCtrl.h>
 #include "Ctrl.h"
+
 
 namespace swktool {
 
@@ -8,6 +10,7 @@ namespace swktool {
 	public:
 		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		AnimationCtrl(UINT CtrlID, Window* pParent);
+		AnimationCtrl(UINT CtrlID, DialogWindow* pParent);
 		~AnimationCtrl() { ; }
 
 		void Open(LPTSTR szName) {

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "ctrl.h"
-#include "AWindow.h"
 #include "TreeViewCtrl.h"
 
 namespace swktool {
@@ -18,4 +17,7 @@ namespace swktool {
 
 	}
 	
+	TreeViewCtrl::TreeViewCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
 }

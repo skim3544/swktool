@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "AnimationCtrl.h"
 
 namespace swktool {
@@ -13,6 +12,9 @@ namespace swktool {
 	}
 
 	AnimationCtrl::AnimationCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	}
+
+	AnimationCtrl::AnimationCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
 }

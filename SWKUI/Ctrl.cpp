@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "framework.h"
-#include "AWindow.h"
 #include "Ctrl.h"
 #include "Window.h"
 

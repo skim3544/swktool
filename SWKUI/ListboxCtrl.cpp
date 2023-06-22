@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "ListboxCtrl.h"
 
 namespace swktool {

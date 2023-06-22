@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Ctrl.h"
-#include "AWindow.h"
 
 namespace swktool {
 	EditCtrl::EditCtrl(

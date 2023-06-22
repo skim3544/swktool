@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "DateTimePickerCtrl.h"
 
 
@@ -30,6 +29,10 @@ namespace swktool {
 	}
 
 	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+
+	}
+
+	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 }

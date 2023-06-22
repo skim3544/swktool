@@ -4,14 +4,13 @@
 #include "Ctrl.h"
 
 
-namespace swktool {
-
-	class AWindow;
+namespace swktool {	
 
 	class RichEditCtrl : public Ctrl {
 	public:
 		RichEditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		RichEditCtrl(UINT CtrlID, Window* pParent);
+		RichEditCtrl(UINT CtrlID, DialogWindow* pParent);
 		~RichEditCtrl() { ; }
 	};
 }

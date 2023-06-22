@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Ctrl.h"
-#include "AWindow.h"
 #include "UpDownCtrl.h"
 
 
@@ -26,5 +25,10 @@ namespace swktool {
 
 	UpDownCtrl::UpDownCtrl(UINT CtrlID, swktool::Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
+
+	UpDownCtrl::UpDownCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
+
+
 }
 

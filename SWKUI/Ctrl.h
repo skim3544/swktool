@@ -7,8 +7,7 @@
 
 
 
-namespace swktool {
-	class AWindow;
+namespace swktool {	
 
 	class Ctrl {
 		const int STRING_BUF_SIZE = 255;

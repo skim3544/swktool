@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "SliderCtrl.h"
 
 namespace swktool {
@@ -16,4 +15,6 @@ namespace swktool {
 	TrackbarCtrl::TrackbarCtrl(UINT CtrlID, swktool::Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
+	TrackbarCtrl::TrackbarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
 }

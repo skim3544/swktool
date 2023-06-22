@@ -2,8 +2,7 @@
 
 #include "Ctrl.h"
 
-namespace swktool {
-	class AWindow;
+namespace swktool {	
 
 	/// <summary>
 	///  Sometimes known as Slider control
@@ -12,6 +11,7 @@ namespace swktool {
 	public:
 		TrackbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
 		TrackbarCtrl(UINT CtrlID, Window* pParent);
+		TrackbarCtrl(UINT CtrlID, DialogWindow* pParent);
 		~TrackbarCtrl() { ; }
 
 		void SetRange(int Min, int Max) {

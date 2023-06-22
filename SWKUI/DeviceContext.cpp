@@ -314,13 +314,19 @@ namespace swktool {
 
 
 
-	PaintDeviceContext::PaintDeviceContext(AWindow* pWin) :		
-		DeviceContext(pWin ? pWin->GetWindowHWND() : nullptr, nullptr, DC_CLEAN_METHOD::None)
+	PaintDeviceContext::PaintDeviceContext(Window* pWin) :		
+		DeviceContext(pWin ? pWin->GetWindowHandle() : nullptr, nullptr, DC_CLEAN_METHOD::None)
 	{
 		assert(pWin != nullptr);
 		hDC = ::BeginPaint(hWndOwner, &ps);
 	}
 
+	PaintDeviceContext::PaintDeviceContext(DialogWindow* pWin) :
+		DeviceContext(pWin ? pWin->GetWindowHandle() : nullptr, nullptr, DC_CLEAN_METHOD::None)
+	{
+		assert(pWin != nullptr);
+		hDC = ::BeginPaint(hWndOwner, &ps);
+	}
 
 
 

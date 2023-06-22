@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "AWindow.h"
 #include "ComboboxCtrl.h"
 
 namespace swktool {
@@ -14,5 +13,8 @@ namespace swktool {
 
 	ComboboxCtrl::ComboboxCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 	}
+	ComboboxCtrl::ComboboxCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	}
+
 
 }

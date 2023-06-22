@@ -5,8 +5,6 @@
 
 #include <Windows.h>
 #include <string>
-
-#include "AWindow.h"
 #include "Ctrl.h"
 
 namespace swktool {
