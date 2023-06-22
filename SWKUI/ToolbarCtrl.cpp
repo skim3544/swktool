@@ -6,7 +6,7 @@
 namespace swktool {
 
 	ToolbarCtrl::ToolbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
-		INITCOMMONCONTROLSEX icex;
+		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_BAR_CLASSES;

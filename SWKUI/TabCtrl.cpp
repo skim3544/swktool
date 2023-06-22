@@ -5,7 +5,7 @@
 namespace swktool {
 
 	TabCtrl::TabCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
-		INITCOMMONCONTROLSEX icex;
+		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_TAB_CLASSES;

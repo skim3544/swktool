@@ -7,7 +7,7 @@ namespace swktool {
 		hDlg = pParent->GetWindowHandle();
 		ID = CtrlID;
 
-		INITCOMMONCONTROLSEX icex;
+		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_USEREX_CLASSES;

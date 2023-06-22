@@ -5,7 +5,7 @@ namespace swktool {
 	StatusBarCtrl::StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
-		INITCOMMONCONTROLSEX iccx;
+		INITCOMMONCONTROLSEX iccx{};
 		iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		iccx.dwICC = ICC_BAR_CLASSES;
 		bool bInit = InitCommonControlsEx(&iccx);

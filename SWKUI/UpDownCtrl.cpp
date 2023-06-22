@@ -9,7 +9,7 @@ namespace swktool {
 		hDlg = pParent->GetWindowHandle();
 		ID = CtrlID;
 
-		INITCOMMONCONTROLSEX icex = {};
+		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		icex.dwICC = ICC_UPDOWN_CLASS;    // Set the Initialization Flag value.

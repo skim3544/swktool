@@ -4,7 +4,7 @@
 namespace swktool {
 	ListViewCtrl::ListViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID)
 	{
-		INITCOMMONCONTROLSEX icex;
+		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_LISTVIEW_CLASSES;
