@@ -16,5 +16,14 @@ namespace swktool {
 	}
 
 
+	EditCtrl::EditCtrl(UINT CtrlID, Window* pParent) :
+		Ctrl(CtrlID, pParent)
+	{
+	}
+	EditCtrl::EditCtrl(UINT CtrlID, DialogWindow* pParent) :
+		Ctrl(CtrlID, pParent)
+	{
+	}
+
 
 }

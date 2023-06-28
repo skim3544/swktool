@@ -43,17 +43,17 @@ namespace swktool
 			cwCaption = pCaptioNText;
 		}
 
+		virtual INT_PTR ShowDialog();
+		virtual INT_PTR HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
+	protected:
 		virtual INT_PTR  OnSetFont(WPARAM wParam, LPARAM lParam) {
 			return (INT_PTR)TRUE;  
 		}
 
 		virtual INT_PTR OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam);
 		virtual INT_PTR OnCommand(WPARAM wParam, LPARAM lParam);			
-		virtual INT_PTR OnClose();
-
-
-		virtual INT_PTR ShowDialog();
-		virtual INT_PTR HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+		virtual INT_PTR OnClose();						
 	};
 
 }

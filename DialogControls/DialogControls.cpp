@@ -3,21 +3,23 @@
 #include "..\SWKUI\msg_filter.h"
 #include "..\SWKUI\Window.h"
 #include "..\SWKUI\WinMenu.h"
-
 #include "..\SWKUI\DialogWindow.h"
-
 #include "..\SWKBase\DebugStream.h"
+#include "..\SWKUI\StatusBarCtrl.h"
+#include "..\SWKUI\HeaderCtrl.h"
+
 #include "Resource.h"
 
-//#include "SimpleDialog.h"
-
-
-#include "..\SWKUI\DialogWindow.h"
 #include "Test1Dlg.h"
+#include "Test2Dlg.h"
+
 
 class MainWindow :
     public  swktool::Window {
 
+protected:
+    std::unique_ptr<swktool::StatusBarCtrl> StatusBar_;
+    std::unique_ptr<swktool::HeaderCtrl> HeaderCtrl_;
 
 public:
     PCWSTR  ClassName() const {
@@ -31,8 +33,35 @@ public:
         wc.lpszMenuName = MAKEINTRESOURCE(IDC_DIALOGCONTROLS);
         wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_DIALOGCONTROLS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        //(PCWSTR) L"IDC_SIMPLEDIALOG";
-        //wc.lpszMenuName = ClassName();
+    }
+
+
+    virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) {
+
+        StatusBar_ = std::make_unique<swktool::StatusBarCtrl>(TEXT("Status"), 0, 0, 0, 0, 0, this, 0);
+
+        // Add header control with 2 header labels
+        HeaderCtrl_ = std::make_unique<swktool::HeaderCtrl>(this);
+
+        HeaderCtrl_->InsertItem(0, 300, (WCHAR*)L"Test1");
+        HeaderCtrl_->InsertItem(1, 300, (WCHAR*)L"Test2");
+        return TRUE;
+    }
+
+    virtual void OnSize(UINT state, int nWidth, int nHeight) {
+        StatusBar_->OnSize(state, nWidth, nHeight);
+        HeaderCtrl_->OnSize(state, nWidth, nHeight);
+    }
+
+    void OnSysCommand(UINT nID, LPARAM lParam) override {        
+        switch (nID) {
+        case SC_MAXIMIZE:
+        case SC_RESTORE:
+            //HeaderCtrl_->OnSize(0, 0, 0);
+            UpdateWindow(HeaderCtrl_->GetDlgHandle());
+        }               
+
+        Window::OnSysCommand(nID, lParam);
     }
 
     virtual LRESULT OnCommand(WPARAM wParam, LPARAM lParam)
@@ -42,14 +71,16 @@ public:
         {
         case IDM_FILE_TEST1:
         {
+            StatusBar_->SetText(TEXT("Showing Dialog 1"));
             Test1Dlg Dlg(IDD_TEST1, this);
             Dlg.SetCaption(L"Test1 Dialog");
             result = Dlg.ShowDialog();
+            StatusBar_->SetText(TEXT(""));
         }break;
 
         case IDM_FILE_TEST2:
         {
-            Test1Dlg Dlg(IDD_TEST2, this);
+            Test2Dlg Dlg(IDD_TEST2, this);
             Dlg.SetCaption(L"Test2 Dialog");
             result = Dlg.ShowDialog();
         }
@@ -92,7 +123,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     ShowWindow(win.WindowHandle(), nCmdShow);
-    UpdateWindow(win.WindowHandle());
+    //UpdateWindow(win.WindowHandle());
 
     // Run the message loop.
 

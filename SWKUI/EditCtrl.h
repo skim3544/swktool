@@ -33,16 +33,9 @@ namespace swktool {
 
 	public:
 		EditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		EditCtrl(UINT CtrlID, Window* pParent) : 
-			Ctrl(CtrlID, pParent) 
-		{
-		}
-		EditCtrl(UINT CtrlID, DialogWindow* pParent) :
-			Ctrl(CtrlID, pParent)
-		{
-		}
-
-		~EditCtrl() { ; }
+		EditCtrl(UINT CtrlID, Window* pParent);
+		EditCtrl(UINT CtrlID, DialogWindow* pParent);
+		virtual ~EditCtrl() { ; }
 
 		void LimitText(int cchMax)  {
 			((void)SendMessage((hwndCtrl), EM_LIMITTEXT, (WPARAM)(cchMax), 0L));

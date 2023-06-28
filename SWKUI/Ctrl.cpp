@@ -11,12 +11,25 @@
 #endif
 
 
+// When you are using pre-compiled headers, this source file is necessary for compilation to succeed.
+#pragma comment(lib, "Comctl32.lib")
+
+
+
+
 namespace swktool {
 	Ctrl::Ctrl(Window* pParent) :
 		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(-1) {
 		hInst = pParent->GetInstance();
 		hDlg = pParent->GetWindowHandle();
 	}
+
+	Ctrl::Ctrl(DialogWindow* pParent) :
+		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(-1) {
+		hInst = pParent->GetInstance();
+		hDlg = pParent->GetWindowHandle();
+	}
+
 
 	Ctrl::Ctrl(UINT CtrlID, Window* pParent) :
 		hInst(nullptr), hwndCtrl(nullptr), hDlg(nullptr), ID(CtrlID) {

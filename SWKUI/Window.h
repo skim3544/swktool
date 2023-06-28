@@ -143,6 +143,10 @@ namespace swktool {
 			return TRUE;
 		}
 		virtual void OnEndSession(BOOL fEnding) { ; }
+
+		virtual void OnSysCommand(UINT nID, LPARAM lParam) { 
+			DefWindowProc(GetWindowHandle(), WM_SYSCOMMAND, (WPARAM)nID, lParam);
+		}
 	};
 }
 

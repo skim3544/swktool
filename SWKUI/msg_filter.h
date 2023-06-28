@@ -215,6 +215,9 @@
     case (message): \
         return fn() ? TRUE : FALSE; break;
 
+#define PROC_WM_SYSCOMMAND(wParam, lParam, fn) \
+    ((fn)((wParam), (LPARAM)(lParam)), 0L)
+
 //  OnCommandNOTIFIED(int id, HWND hwndCtl, UINT codeNotify)
 //  used inside of OnCommand(UINT wParam, LPARAM lParam) method
 //  wParam must be LOWORD filtered to get the command ID

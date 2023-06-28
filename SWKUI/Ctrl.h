@@ -35,7 +35,7 @@ namespace swktool {
 			hInst(nullptr), hwndCtrl(hwnd), hDlg(nullptr), ID(-1) { ; }
 		// Used for createing a child control dynamically (whithin resource file)
 		Ctrl(Window* pParent);
-
+		Ctrl(DialogWindow* pParent);
 		Ctrl(UINT CtrlID, Window* pParent);		
 		Ctrl(UINT CtrlID, DialogWindow* pParent);
 		virtual ~Ctrl() { ; }
@@ -102,15 +102,6 @@ namespace swktool {
 			int  X, int  Y, int  nWidth, int  nHeight, BOOL bRepaint = TRUE) {
 			return ::MoveWindow(hwndCtrl, X, Y, nWidth, nHeight, bRepaint);
 		}
-
-		//void Test() {
-		//	HDC hdc = GetDC(hwndCtrl);
-
-		//	COLORREF Color = 0x000000FF;	
-		//	::SetTextColor(hdc, Color);
-
-		//	::ReleaseDC(hwndCtrl, hdc);
-		//}
 
 		virtual void OnSize(UINT state, int nWidth, int nHeight) {}
 	};

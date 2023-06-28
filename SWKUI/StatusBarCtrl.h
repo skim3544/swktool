@@ -16,15 +16,20 @@ namespace swktool {
 	/// StatusBar control
 	/// </summary>
 	class StatusBarCtrl : public Ctrl {		
+	protected:
+		RECT   rectClient_;
 
 	public:
-		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
+		StatusBarCtrl(Window* pParent);
+		StatusBarCtrl(DialogWindow* pParent);
+		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);		
 		~StatusBarCtrl() { ; }
 
 		// Must chain to Parent/Owner window's OnSize message
 		// 3 parameters are not used, but match the calling Windows parameters
 		virtual void OnSize(UINT state = 0, int nWidth= 0, int nHeight = 0) {
 			::SendMessage(hwndCtrl, WM_SIZE, nWidth, nHeight);
+			::UpdateWindow(hwndCtrl);
 		}
 
 		// parts array is array integer of each section of status bar where each number

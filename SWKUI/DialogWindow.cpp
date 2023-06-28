@@ -110,7 +110,7 @@ namespace swktool {
 			//PROC_DLG_MSG(m_hwnd, WM_SETFONT, OnSetFont);
 			PROC_DLG_MSG(m_hwnd, WM_INITDIALOG, OnInitDialog);
 			PROC_DLG_MSG(m_hwnd, WM_COMMAND, OnCommand);
-			PROC_DLG_MSG(m_hwnd, WM_CLOSE, OnClose);
+			PROC_DLG_MSG(m_hwnd, WM_CLOSE, OnClose);			
 		}
 
 		return (INT_PTR)FALSE;

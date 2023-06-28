@@ -28,7 +28,8 @@ namespace swktool {
 			NULL);
 	}
 
-	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, Window* pParent) : 
+		Ctrl(CtrlID, pParent) {
 
 	}
 

@@ -81,10 +81,11 @@ namespace swktool {
 			PROC_MSG(WM_INITMENUPOPUP, OnInitMenuPopup);
 			PROC_MSG(WM_QUERYENDSESSION, OnQueryEndSession);
 			PROC_MSG(WM_ENDSESSION, OnEndSession);
-
+			PROC_MSG(WM_SYSCOMMAND, OnSysCommand);
 
 		default:
-			lResult = DefWindowProc( WindowHandle(), uMsg, wParam, lParam);
+			HWND hWindow = WindowHandle();
+			lResult = DefWindowProc(hWindow, uMsg, wParam, lParam);
 		}
 
 		return lResult;
