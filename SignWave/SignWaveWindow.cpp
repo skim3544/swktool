@@ -12,7 +12,7 @@ void MainWindow::OnSize(UINT state, int nWidth, int nHeight) {
 
 void MainWindow::OnPaint() {
 	// The original code had missing EndPaint, but we cannot make mistake since we use RAII
-	auto hwnd = WindowHandle();
+	auto hwnd = GetHwnd();
 
 	swktool::PaintDeviceContext PC(hwnd);
 	

@@ -8,28 +8,28 @@
 #define DBG_NEW new
 #endif
 
-namespace swktool {
-	DialogWindow::DialogWindow(UINT ID, Window* pParent) :
-		DialogMsgHandler()
+namespace swktool 
+{
+	DialogWindow::DialogWindow(UINT ID, Window* pParent)
 	{
 		m_ResourceID = ID;
 		// convert ID to template name			
 		DialogTemplateName = MAKEINTRESOURCE(ID);
-		if (pParent) {
-			m_hParent = pParent->WindowHandle();
-			m_hInstance = pParent->GetInstance();
+		if (pParent) 
+		{
+			SetParent(pParent->GetHwnd());			
+			SetInstance(pParent->GetInstance());
 		}
 	}
 
 
 	DialogWindow::DialogWindow(LPCTSTR pDialogTemplateName, Window* pParent) :
-		DialogMsgHandler()
-		, m_ResourceID(0)
+		m_ResourceID(0)
 	{
 		if (pParent)
 		{
-			m_hParent = pParent->WindowHandle();
-			m_hInstance = pParent->GetInstance();
+			SetParent(pParent->GetHwnd());
+			SetInstance(pParent->GetInstance());
 		}
 	}
 
@@ -51,12 +51,12 @@ namespace swktool {
 		//}
 
 		// Always show
-		::ShowWindow(m_hwnd, SW_SHOW);
-		::UpdateWindow(m_hwnd);
+		::ShowWindow(GetHwnd(), SW_SHOW);
+		::UpdateWindow(GetHwnd());
 
 		// if caption set, send ir over
 		if (cwCaption.length() > 0)
-			SetWindowText(m_hwnd, cwCaption.c_str());		
+			SetWindowText(GetHwnd(), cwCaption.c_str());
 
 		return (INT_PTR)TRUE;
 	}
@@ -64,23 +64,24 @@ namespace swktool {
 	INT_PTR DialogWindow::OnCommand(WPARAM wParam, LPARAM lParam) 
 	{
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-			EndDialog(m_hwnd, LOWORD(wParam));
+			EndDialog(GetHwnd(), LOWORD(wParam));
 
 		return (INT_PTR)TRUE;
 	}
 
 	INT_PTR DialogWindow::OnClose() 
 	{
-		::EndDialog(m_hwnd, 0L);
+		::EndDialog(GetHwnd(), 0L);
 
 		return (INT_PTR)TRUE;
 	}
 
+	INT_PTR CALLBACK SWKDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	INT_PTR DialogWindow::ShowDialog()
 	{		
 		// register THIS dialog box to receive next Model dialog box message
-		PreRegisterClass(this);
+		//PreRegisterClass(this);
 
 		//auto lpProc = (DLGPROC)(& DialogMsgHandler::DialogMsgProc);
 
@@ -89,28 +90,32 @@ namespace swktool {
 		//	<< std::hex << " Res: " << m_ResourceID
 		//	<< std::hex << " Parent: " << m_hParent
 		//	<< std::hex << " Addr : " << lpProc << std::endl;
+		
+
+		DialogWindow dlgHandler;
+		dlgHandler.SetInstance( GetInstance() );
 
 		// start the message pumping, for model dialog box this call will not return until EndDialog gets called
-		auto retval = ::DialogBox(
-			m_hInstance,
-			//DialogTemplateName,
+		auto retval = DialogBoxParam(
+			GetInstance(),
 			MAKEINTRESOURCE(m_ResourceID),
-			m_hParent,
-			(DLGPROC)DialogMsgHandler::DialogMsgProc);
+			GetParent(),
+			SWKDialogProc,
+			reinterpret_cast<LPARAM>(&dlgHandler));
 
 		auto Lasterror = GetLastError();
 		return retval;
 	}
 
 
-	INT_PTR DialogWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	INT_PTR DialogWindow::OnDialogMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
 		{
 			//PROC_DLG_MSG(m_hwnd, WM_SETFONT, OnSetFont);
-			PROC_DLG_MSG(m_hwnd, WM_INITDIALOG, OnInitDialog);
-			PROC_DLG_MSG(m_hwnd, WM_COMMAND, OnCommand);
-			PROC_DLG_MSG(m_hwnd, WM_CLOSE, OnClose);			
+			PROC_DLG_MSG(GetHwnd(), WM_INITDIALOG, OnInitDialog);
+			PROC_DLG_MSG(GetHwnd(), WM_COMMAND, OnCommand);
+			PROC_DLG_MSG(GetHwnd(), WM_CLOSE, OnClose);
 		}
 
 		return (INT_PTR)FALSE;

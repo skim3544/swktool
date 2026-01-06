@@ -11,7 +11,7 @@
 
 namespace swktool {
 
-	LRESULT Window::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		LRESULT lResult = 1;
 
@@ -84,7 +84,7 @@ namespace swktool {
 			PROC_MSG(WM_SYSCOMMAND, OnSysCommand);
 
 		default:
-			HWND hWindow = WindowHandle();
+			HWND hWindow = GetHwnd();
 			lResult = DefWindowProc(hWindow, uMsg, wParam, lParam);
 		}
 

@@ -6,7 +6,7 @@
 namespace swktool {
 	UpDownCtrl::UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 
 		INITCOMMONCONTROLSEX icex{};

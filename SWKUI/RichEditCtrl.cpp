@@ -8,7 +8,7 @@ namespace swktool {
 		::LoadLibrary(TEXT("Msftedit.dll"));
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			MSFTEDIT_CLASS, (LPCWSTR)Caption.c_str(),

@@ -9,8 +9,9 @@
 
 #include "SimpleDialog.h"
 
-
-
+//#pragma comment(Lib, )
+#pragma comment(lib, "SWKBase.lib")
+#pragma comment(lib, "SWKUI.lib")
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -25,8 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    ShowWindow(win.WindowHandle(), nCmdShow);
-    UpdateWindow(win.WindowHandle());
+    ShowWindow(win.GetHwnd(), nCmdShow);
+    UpdateWindow(win.GetHwnd());
 
     // Run the message loop.
 

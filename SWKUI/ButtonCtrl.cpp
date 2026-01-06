@@ -7,7 +7,7 @@
 namespace swktool {
 	ButtonCtrl::ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(TEXT("BUTTON"), (LPCWSTR)Caption.c_str(),
 			Style, x, y, Height, Width,
@@ -29,7 +29,7 @@ namespace swktool {
 
 	CheckboxCtrl::CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(
 			TEXT("CHECKBOX"), 
@@ -49,7 +49,7 @@ namespace swktool {
 
 	RadioCtrl::RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(TEXT("BUTTON"), (LPCWSTR)Caption.c_str(),
 			Style, x, y, Height, Width,

@@ -21,6 +21,9 @@
 #define DBG_NEW new
 #endif
 
+#pragma comment(lib, "SWKBase.lib")
+#pragma comment(lib, "SWKUI.lib")
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -39,7 +42,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    ShowWindow(win.WindowHandle(), nCmdShow);
+    ShowWindow(win.GetHwnd(), nCmdShow);
 
     // Run the message loop.
 

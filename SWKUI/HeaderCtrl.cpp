@@ -12,7 +12,7 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_HEADER, (LPCWSTR)Caption.c_str(),
@@ -32,7 +32,7 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		//ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_HEADER, NULL,
@@ -64,7 +64,7 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		//ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_HEADER, NULL,
@@ -129,11 +129,11 @@ namespace swktool {
 		}
 	}
 
-	int HeaderCtrl::DoInsertItem(HWND hwndHeader, int iInsertAfter,
+	LRESULT HeaderCtrl::DoInsertItem(HWND hwndHeader, int iInsertAfter,
 		int nWidth, LPTSTR lpsz)
 	{
 		HDITEM hdi;
-		int index;
+		//int index;
 
 		hdi.mask = HDI_TEXT | HDI_FORMAT | HDI_WIDTH;
 		hdi.cxy = nWidth;
@@ -141,7 +141,7 @@ namespace swktool {
 		hdi.cchTextMax = sizeof(hdi.pszText) / sizeof(hdi.pszText[0]);
 		hdi.fmt = HDF_LEFT | HDF_STRING;
 
-		index = SendMessage(hwndHeader, HDM_INSERTITEM,
+		auto index = SendMessage(hwndHeader, HDM_INSERTITEM,
 			(WPARAM)iInsertAfter, (LPARAM)&hdi);
 
 		return index;

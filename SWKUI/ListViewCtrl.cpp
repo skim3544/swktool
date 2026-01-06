@@ -12,7 +12,7 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_LISTVIEW, (LPCWSTR)Caption.c_str(),

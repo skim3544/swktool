@@ -169,29 +169,29 @@ namespace swktool {
 
 
 
-	template <class TClipboard>
-	class ClipboardMemory : public WinMemory {
+	//template <class TClipboard>
+	//class ClipboardMemory : public WinMemory {
 
-	protected:
-		using WinMemory::hMemory;
-		using WinMemory::bOwner;
-		using WinMemory::AllocateSize;
-		using WinMemory::Alloc_Flags;
+	//protected:
+	//	using WinMemory::hMemory;
+	//	using WinMemory::bOwner;
+	//	using WinMemory::AllocateSize;
+	//	using WinMemory::Alloc_Flags;
 
-	public:
-		ClipboardMemory(const TClipboard& oClipboard, UINT CopyFormat) :
-			WinMemory() {
-			// Get the memory handle from Clipboard
-			hMemory = TClipboard.GetData(CopyFormat);
+	//public:
+	//	explicit ClipboardMemory(const TClipboard& oClipboard, UINT CopyFormat)
+	//	{
+	//		// Get the memory handle from Clipboard
+	//		hMemory = TClipboard.GetData(CopyFormat);
 
-			// not the owner of this memory
-			bOwner = false;
+	//		// not the owner of this memory
+	//		bOwner = false;
 
-			AllocateSize = WinMemory::Size();
-			Alloc_Flags = WinMemory::AllocFlags();
-		}
-		~ClipboardMemory() { ; }
-	};
+	//		AllocateSize = WinMemory::Size();
+	//		Alloc_Flags = WinMemory::AllocFlags();
+	//	}
+	//	~ClipboardMemory() { ; }
+	//};
 
 
 

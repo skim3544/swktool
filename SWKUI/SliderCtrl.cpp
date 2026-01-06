@@ -4,7 +4,7 @@
 namespace swktool {
 	TrackbarCtrl::TrackbarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, swktool::Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(
 			0, TRACKBAR_CLASS, (LPCWSTR)Caption.c_str(),

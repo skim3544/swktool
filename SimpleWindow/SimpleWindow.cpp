@@ -1,11 +1,16 @@
 #include "framework.h"
 #include "..\SWKUI\MsgHandler.h"
 #include "..\SWKUI\msg_filter.h"
-#include "..\SWKUI\Window.h"
 
+#include "../SWKUI/Window.h"
 
+#pragma comment(lib, "SWKBase.lib")
+#pragma comment(lib, "SWKUI.lib")
 
-class MainWindow : public  swktool::Window  {
+//#pragma comment(lib, "..\\Release\\SWKBase.lib")
+//#pragma comment(lib, "..\\Release\\SWKUI.lib")
+
+class MainWindow : public swktool::Window  {
 public:
     PCWSTR  ClassName() const { 
         return L"Sample Window"; 
@@ -33,8 +38,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    ShowWindow(win.WindowHandle(), nCmdShow);
-    UpdateWindow(win.WindowHandle());
+    ShowWindow(win.GetHwnd(), nCmdShow);
+    UpdateWindow(win.GetHwnd());
 
     // Run the message loop.
 

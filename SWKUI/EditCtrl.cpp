@@ -8,7 +8,7 @@ namespace swktool {
 		int x, int y, int Height, int Width, 
 		swktool::Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetWindowHandle();
+		hDlg = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(TEXT("EDIT"), (LPCWSTR)Caption.c_str(),
 			(DWORD)Style, x, y, Height, Width,

@@ -26,7 +26,7 @@ namespace swktool {
 			hInst,                   // handle to application instance
 			NULL);                   // no window creation data
 
-		::GetClientRect(pParent->GetWindowHandle(), &rectClient_);
+		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
 	StatusBarCtrl::StatusBarCtrl(Window* pParent) : Ctrl(pParent) {
@@ -48,7 +48,7 @@ namespace swktool {
 			hInst,                   // handle to application instance
 			NULL);                   // no window creation data
 
-		::GetClientRect(pParent->GetWindowHandle(), &rectClient_);
+		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
 	StatusBarCtrl::StatusBarCtrl(DialogWindow* pParent) : Ctrl(pParent) {
@@ -70,7 +70,7 @@ namespace swktool {
 			hInst,                   // handle to application instance
 			NULL);                   // no window creation data
 
-		::GetClientRect(pParent->GetWindowHandle(), &rectClient_);
+		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
 

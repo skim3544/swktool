@@ -13,9 +13,6 @@ namespace swktool {
 
 		~CriticalSection()
 		{
-			// unlock critical section if necessary
-			//unlock();
-
 			::DeleteCriticalSection(&cs_);
 		}
 
@@ -43,15 +40,15 @@ namespace swktool {
 		CriticalSection& operator = (const CriticalSection& Other) = delete;
 	};
 
-	class CS_Guard {
+	class CS_LockGuard {
 		CriticalSection& cs_;
 
 	public:
-		CS_Guard(CriticalSection& cs) : cs_(cs){
+		CS_LockGuard(CriticalSection& cs) : cs_(cs){
 			cs_.lock();
 		}
 
-		~CS_Guard() {
+		~CS_LockGuard() {
 			cs_.unlock();
 		}
 	};
