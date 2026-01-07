@@ -40,8 +40,8 @@ public:
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     }
 
-
-    virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) {
+    LRESULT OnCreate(LPCREATESTRUCT lpCreateStruct) override {
+    //virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
         StatusBar_ = std::make_unique<swktool::StatusBarCtrl>(TEXT("Status"), 0, 0, 0, 0, 0, this, 0);
         //RebarCtrl_ = std::make_unique<swktool::RebarCtrl>(this);
@@ -52,7 +52,6 @@ public:
         HeaderCtrl_ = std::make_unique<swktool::HeaderCtrl>(this);
         HeaderCtrl_->InsertItem(0, 300, (WCHAR*)L"Test1");
         HeaderCtrl_->InsertItem(1, 300, (WCHAR*)L"Test2");
-
 
         return TRUE;
     }
@@ -65,9 +64,9 @@ public:
         //RebarCtrl_->OnSize(state, nWidth, nHeight);    
     }
 
-    void OnSysCommand(UINT nID, LPARAM lParam) override {        
-        Window::OnSysCommand(nID, lParam);
-    }
+    //void OnSysCommand(UINT nID, LPARAM lParam) override {        
+    //    Window::OnSysCommand(nID, lParam);
+    //}
 
     LRESULT DoTest1Dlg(WPARAM wParam, LPARAM lParam) {
         LRESULT result;

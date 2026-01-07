@@ -25,7 +25,7 @@ public:
 
     virtual LRESULT OnCommand(WPARAM wParam, LPARAM lParam) 
     {
-        auto result = 0;
+        INT_PTR result = 0;
         switch (wParam)
         {
         case IDM_ABOUT:
@@ -41,7 +41,7 @@ public:
             break;
 
         default:
-            return DefWindowProc(m_hwnd, WM_COMMAND, wParam, lParam);
+            return DefWindowProc(GetHwnd(), WM_COMMAND, wParam, lParam);
         }
         return 0L;
     }

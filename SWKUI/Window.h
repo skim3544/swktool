@@ -18,14 +18,13 @@ namespace swktool
 {
 	LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	class Window : 
+	class Window :
 		public WindowHandlerBase
-		,public WindowsRegister 
-	{		
-	public:		
+		, public WindowsRegister
+	{
+	public:
 		// called right before register to be able to change the registration information
 		virtual void   PreRegisterWindow(WindowRegisterClass& wc) { ; }
-		LRESULT OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 		BOOL Create(
 			PCWSTR lpWindowName,
@@ -44,109 +43,90 @@ namespace swktool
 			wc.lpfnWndProc = SWKWindowProc;
 			wc.hInstance = GetModuleHandle(NULL);
 			wc.lpszClassName = ClassName();
+			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+			wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			wc.hIconSm = wc.hIcon;
 
 			PreRegisterWindow(wc);
 
-			RegisterClassEx(&wc);
+			auto atom = RegisterClassEx(&wc);
+			if (0 == atom) {
+				auto lastError = GetLastError();
+
+			}
 
 			auto handle = CreateWindowEx(
 				dwExStyle, ClassName(), lpWindowName, dwStyle, x, y,
 				nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(NULL),
 				this // passing this pointer here is what makes msg_routing work
 			);
+			if (nullptr == handle)
+			{
+				auto lastError = GetLastError();
+				wchar_t buf[256]; FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, lastError, 0, buf, 256, nullptr); MessageBox(nullptr, buf, L"CreateWindowEx failed", MB_OK);
+			}
 
 			SetHwnd(handle);
 
 			return (handle ? TRUE : FALSE);
 		}
 
-		virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) {
-			return TRUE;
+		LRESULT OnCreate(CREATESTRUCT* lpCreateStruct) override {
+			return 0;
 		}
+		void OnClose() override { DestroyWindow(GetHwnd()); }
+		void OnDestroy() override {}
 
-		virtual void OnPaint()
+
+		//
+		// Commands & Notifications
+		//
+		LRESULT OnCommand(WORD id, WORD code, HWND control) override { return 0; }
+		LRESULT OnNotify(int idCtrl, NMHDR* hdr) override { return 0; }
+
+		//
+		// Focus
+		//
+		LRESULT OnSetFocus(HWND oldFocus) override { return 0; }
+		LRESULT OnKillFocus(HWND newFocus) override { return 0; }
+
+		//
+		// Keyboard
+		//
+		LRESULT OnKeyDown(UINT vk, UINT flags) override { return 0; }
+		LRESULT OnKeyUp(UINT vk, UINT flags) override { return 0; }
+		LRESULT OnChar(UINT ch, UINT flags) override { return 0; }
+
+		//
+		// Mouse
+		//
+		LRESULT OnMouseMove(UINT keys, int x, int y) override { return 0; }
+		LRESULT OnLButtonDown(UINT keys, int x, int y) override { return 0; }
+		LRESULT OnLButtonUp(UINT keys, int x, int y) override { return 0; }
+		LRESULT OnRButtonDown(UINT keys, int x, int y) override { return 0; }
+		LRESULT OnRButtonUp(UINT keys, int x, int y) override { return 0; }
+
+		LRESULT OnPaint() override
 		{
-			//HWND hWindow = WindowHandle();
-			PaintDeviceContext PC( GetHwnd() );
+			PaintDeviceContext PC(GetHwnd());
+
+			return 0;
 		}
 
-		virtual void OnClose() { 
-			//_asm { int 3 };
-			PostQuitMessage(0);
-			
-		}
-		virtual void OnShowWindow(BOOL fShow, UINT status) { ; }
-		virtual void OnKeyDown(UINT vk, int cRepeat, UINT flags) { ; }
-		virtual void OnKeyUp(UINT vk, int cRepeat, UINT flags) { ; }
+		LRESULT OnEraseBkgnd(HDC hdc) override { return 1; }
 
-		virtual void OnMouseLButtonDown(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseLButtonUp(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseLButtonDblClick(int x, int y, UINT keyFlags) { ; }
+		//
+		// Sizing / Moving
+		//
+		LRESULT OnSize(UINT type, int cx, int cy) override { return 0; }
+		LRESULT OnMove(int x, int y) override { return 0; }
 
-		virtual void OnMouseRButtonDown(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseRButtonUp(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseRButtonDblClick(int x, int y, UINT keyFlags) { ; }
-
-		virtual void OnMouseMButtonDown(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseMButtonUp(int x, int y, UINT keyFlags) { ; }
-		virtual void OnMouseMButtonDblClick(int x, int y, UINT keyFlags) { ; }
-
-		virtual void OnMouseWheel(int xPos, int yPos, int zDelta, UINT fwKeys) { ; }
-		virtual void OnMouseMove(int x, int y, UINT keyFlags) { ; }
-
-		virtual void OnVScroll(HWND hwndCtl, UINT code, int pos) { ; }
-		virtual void OnHScroll(HWND hwndCtl, UINT code, int pos) { ; }
-
-		virtual void OnTimer(UINT TimerID) { ; }
-
-		virtual void OnMove(int x, int y) { ; }
-		virtual void OnSize(UINT state, int nWidth, int nHeight) {
-			//	Width = nWidth; 
-			//	Height = nHeight;
-		}
-
-		virtual void OnDestroy() {
-			PostQuitMessage(0);
-		}
-		virtual void OnNCDestroy() { ; }
-		virtual void OnQuit(int exitCode) { ; }
-
-		virtual void OnSetFocus(HWND hWnd) { ; }
-		virtual void OnKillFocus(HWND hWnd) { ; }
-
-		virtual void OnClipboardCopy() { ; }
-		virtual void OnClipboardCut() { ; }
-		virtual void OnClipboardPaste() { ; }
-		virtual void OnClipboardClear() { ; }
-		virtual void OnClipboardUndo() { ; }
-		virtual BOOL OnSetCursor(HWND hWnd, WPARAM wParam, LPARAM lParam) {
-			return FALSE;
-		}
-
-		virtual LRESULT OnCommand(WPARAM wParam, LPARAM lParam) {
-			return 0L; 
-		}
-
-		virtual void OnSettingChange() { ; }
-		virtual void OnDrawItem(const DRAWITEMSTRUCT* p) { ; }
-		virtual HBRUSH OnCtrlColorScrollbar(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorMsgBox(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorEdit(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorListBox(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorBtn(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorDlg(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-		virtual HBRUSH OnCtrlColorStatic(HDC hdc, HWND hwndChild, int type) { return (HBRUSH)(GetStockBrush(WHITE_BRUSH)); }
-
-		virtual void OnSysColorChange() { ; }
-		virtual void OnInitMenu(HMENU hMenu) { ; }
-		virtual void OnInitMenuPopup(HMENU hMenu, UINT item, BOOL fSystemMenu) { ; }
-		virtual BOOL OnQueryEndSession() {
-			return TRUE;
-		}
-		virtual void OnEndSession(BOOL fEnding) { ; }
-
-		virtual void OnSysCommand(UINT nID, LPARAM lParam) { 
-			DefWindowProc(GetHwnd(), WM_SYSCOMMAND, (WPARAM)nID, lParam);
+		//
+		// Fallback
+		//
+		LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override
+		{
+			return DefWindowProc(GetHwnd(), msg, wParam, lParam);
 		}
 	};
 }

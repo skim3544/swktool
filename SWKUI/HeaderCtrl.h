@@ -18,7 +18,7 @@ namespace swktool {
 		virtual void OnSize(UINT state, int nWidth, int nHeight) override;
 
 
-		int InsertItem(int Pos, int Width, LPTSTR lpsz) {
+		LRESULT InsertItem(int Pos, int Width, LPTSTR lpsz) {
 			return DoInsertItem(hwndCtrl, Pos, Width, lpsz);
 		}
 
@@ -47,7 +47,7 @@ namespace swktool {
 
 
 	protected:
-		int DoInsertItem(HWND hwndHeader, int iInsertAfter,
+		LRESULT DoInsertItem(HWND hwndHeader, int iInsertAfter,
 			int nWidth, LPTSTR lpsz);
 	};
 }

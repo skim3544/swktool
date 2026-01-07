@@ -17,8 +17,8 @@ namespace swktool
 		DialogTemplateName = MAKEINTRESOURCE(ID);
 		if (pParent) 
 		{
-			SetParent(pParent->GetHwnd());			
-			SetInstance(pParent->GetInstance());
+			//SetParent(pParent->GetHwnd());			
+			//SetInstance(pParent->GetInstance());
 		}
 	}
 
@@ -28,8 +28,9 @@ namespace swktool
 	{
 		if (pParent)
 		{
-			SetParent(pParent->GetHwnd());
-			SetInstance(pParent->GetInstance());
+			
+			//SetParent(pParent->GetHwnd());
+			//SetInstance(pParent->GetInstance());
 		}
 	}
 
@@ -69,12 +70,6 @@ namespace swktool
 		return (INT_PTR)TRUE;
 	}
 
-	INT_PTR DialogWindow::OnClose() 
-	{
-		::EndDialog(GetHwnd(), 0L);
-
-		return (INT_PTR)TRUE;
-	}
 
 	INT_PTR CALLBACK SWKDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -93,13 +88,13 @@ namespace swktool
 		
 
 		DialogWindow dlgHandler;
-		dlgHandler.SetInstance( GetInstance() );
+		//dlgHandler.SetInstance( GetInstance() );
 
 		// start the message pumping, for model dialog box this call will not return until EndDialog gets called
 		auto retval = DialogBoxParam(
 			GetInstance(),
 			MAKEINTRESOURCE(m_ResourceID),
-			GetParent(),
+			GetParent(m_hwnd),
 			SWKDialogProc,
 			reinterpret_cast<LPARAM>(&dlgHandler));
 

@@ -20,6 +20,28 @@ public:
         wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     }
+
+
+    LRESULT OnPaint() override {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(GetHwnd(), &ps);
+
+        TextOut(hdc, 10, 10, L"Hello from SWKUI!", 18);
+
+        EndPaint(GetHwnd(), &ps);
+        return 0;
+    }
+
+    LRESULT OnEraseBkgnd(HDC hdc) override {
+        RECT rc;
+        GetClientRect(GetHwnd(), &rc);
+        FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+        return 1; // tell Windows we erased the background
+    }
+
+    void OnDestroy() override {
+        PostQuitMessage(0);
+    }
 };
 
 

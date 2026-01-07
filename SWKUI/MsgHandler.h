@@ -3,139 +3,249 @@
 //#include <windows.h>
 #include <vector>
 #include <algorithm>
-
+#include <mutex>
+#include <unordered_map>
+#include "WinKernel.h"
 
 namespace swktool {
-	class WindowsMsgHandler;
-	class DialogMsgHandler;
-
-	// this pairs the Handle of the Window with the pointer of the messaging handler
-	class WindowMsgHandlerPair {
+	/// <summary>
+	/// Base interface to cover both Dialog and Window
+	/// </summary>
+	class IWindowHandler 
+	{
 	public:
-		WindowMsgHandlerPair(HWND handle, WindowsMsgHandler* ptr) :
-			hwnd_(handle), pHandler_(ptr) {
-			;
-		}
+		virtual ~IWindowHandler() = default;
 
-		HWND GetWindowHandle() const { return hwnd_; }
-		WindowsMsgHandler* GetHandler() const { return pHandler_; }
-	private:
-		HWND hwnd_;
-		WindowsMsgHandler* pHandler_;
+		// Called immediately after WM_NCCREATE or WM_INITDIALOG
+		virtual void SetHwnd(HWND hwnd) = 0;
+		virtual HWND GetHwnd() const = 0;
+
+		//
+		// ---- Dialog / Window Lifecycle ----
+		//
+
+		// Dialogs: return TRUE to let Windows set default focus
+		// Windows: return 0 to continue default processing
+		virtual BOOL OnInitDialog(WPARAM wParam, LPARAM lParam) { return TRUE; }
+
+		// Called for WM_CREATE (non-dialog windows)
+		virtual LRESULT OnCreate(CREATESTRUCT* cs) { return 0; }
+
+		// Called for WM_DESTROY
+		virtual void OnDestroy() {}
+
+		// Called for WM_CLOSE
+		virtual void OnClose() { DestroyWindow(GetHwnd()); }
+
+		//
+		// ---- Command Routing (Buttons, Menus, Accelerators) ----
+		//
+
+		// Called for WM_COMMAND
+		virtual LRESULT OnCommand(WORD id, WORD code, HWND control) { return 0; }
+
+		//
+		// ---- Notifications (ListView, TreeView, etc.) ----
+		//
+
+		// Called for WM_NOTIFY
+		virtual LRESULT OnNotify(int idCtrl, NMHDR* hdr) { return 0; }
+
+		//
+		// ---- Keyboard / Mouse ----
+		//
+
+		virtual LRESULT OnKeyDown(UINT vk, UINT flags) { return 0; }
+		virtual LRESULT OnKeyUp(UINT vk, UINT flags) { return 0; }
+		virtual LRESULT OnChar(UINT ch, UINT flags) { return 0; }
+
+		virtual LRESULT OnMouseMove(UINT keys, int x, int y) { return 0; }
+		virtual LRESULT OnLButtonDown(UINT keys, int x, int y) { return 0; }
+		virtual LRESULT OnLButtonUp(UINT keys, int x, int y) { return 0; }
+		virtual LRESULT OnRButtonDown(UINT keys, int x, int y) { return 0; }
+		virtual LRESULT OnRButtonUp(UINT keys, int x, int y) { return 0; }
+
+		//
+		// ---- Focus ----
+		//
+
+		virtual LRESULT OnSetFocus(HWND oldFocus) { return 0; }
+		virtual LRESULT OnKillFocus(HWND newFocus) { return 0; }
+
+		//
+		// ---- Painting ----
+		//
+
+		virtual LRESULT OnPaint() { return 0; }
+		virtual LRESULT OnEraseBkgnd(HDC hdc) { return 0; }
+
+		//
+		// ---- Sizing / Moving ----
+		//
+
+		virtual LRESULT OnSize(UINT type, int cx, int cy) { return 0; }
+		virtual LRESULT OnMove(int x, int y) { return 0; }
+
+		//
+		// ---- Default Message Router ----
+		//
+
+		// Fallback for messages not explicitly handled
+		virtual LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) { return 0; }
 	};
-
-
-
-	// this pairs the Handle of the Window with the pointer of the messaging handler
-	class DialogMsgHandlerPair {
-	public:
-		DialogMsgHandlerPair(HWND handle, DialogMsgHandler* ptr) :
-			hwnd_(handle), pHandler_(ptr) {
-			;
-		}
-
-		HWND GetWindowHandle() const { return hwnd_; }
-		void SetWindowHandle(HWND hwnd) {
-			hwnd_ = hwnd;
-		}
-
-		DialogMsgHandler* GetHandler() const { return pHandler_; }
-
-
-	private:
-		HWND hwnd_;
-		DialogMsgHandler* pHandler_;
-	};
-
 
 	/// <summary>
-	/// Windows Message Handler
-	/// It keeps static list of Window Handle and the message handler.
-	/// When the message comes in through WindowsProc, it either registers a new Window Message Handler (WM_NCCREATE)
-	/// or try to find the owner of the mssage by lookin up the list
-	/// Anything it cannot find, it passes to the default window handler
+	/// Registry pairs hwnd and pointer of Handler and store in the memory store
+	/// when message comes in with hwnd, this structure is used to find the ptr of handler 
+	/// responsible and routs the message to the proper object
 	/// </summary>
-	class WindowsMsgHandler {
-
-	protected:
-		using MsgHandlerPair = WindowMsgHandlerPair;
-		using MsgHandlerList = std::vector< MsgHandlerPair >;
-
-
-		HWND m_hwnd;
-		HINSTANCE  m_hInstance;
-
-		static MsgHandlerList m_MsgHandlerList;
-
+	class WindowHandlerRegistry 
+	{
 	public:
-		WindowsMsgHandler() :
-			m_hwnd(NULL),
-			m_hInstance(NULL) {
-
-		}
-		HWND WindowHandle() const {
-			return m_hwnd;
-		}
-
-		HWND GetWindowHandle() const {
-			return WindowHandle();
-		}
-
-		HINSTANCE GetInstance() const {
-			return m_hInstance;
-		}
-
-		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
-
-		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);		
-	};
-
-
-	class DialogMsgHandler {
-	protected:
-		using MsgHandlerPair = DialogMsgHandlerPair;
-		using MsgHandlerList = std::vector< MsgHandlerPair >;
-
-	public:
-		HINSTANCE GetInstance() const { return m_hInstance; }
-		HWND   GetWindowHandle() const { return m_hwnd;}
-		HWND   GetParentWindowHandle() const { return m_hParent; }
-
-
-	protected:
-		HINSTANCE m_hInstance;
-		HWND m_hwnd;
-		HWND m_hParent;
-
-		static MsgHandlerList m_MsgHandlerList;
-
-		
-
-		DialogMsgHandler() :
-			  m_hwnd(NULL)
-			, m_hParent(NULL)
-			, m_hInstance(NULL)
+		static WindowHandlerRegistry& Instance()
 		{
-
+			static WindowHandlerRegistry instance; 
+			return instance;
 		}
-		HWND WindowHandle() const {
-			return m_hwnd;
+		void RegisterHandler(HWND hwnd, IWindowHandler* handler)
+		{
+			//if (handlers_.c)
+			std::lock_guard<std::mutex> lock(mutex_);
+			handlers_[hwnd] = handler;
 		}
-
-		virtual void SetWindowHandle(HWND hWnd) {
-			m_hwnd = hWnd;
-		}
-
-		virtual INT_PTR   HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
-		static BOOL PreRegisterClass(DialogMsgHandler* ptr) {
-			MsgHandlerPair pair(0, ptr);
-			m_MsgHandlerList.push_back(pair);
-			return  TRUE;
+		void UnregisterHandler(HWND hwnd)
+		{
+			std::lock_guard<std::mutex> lock(mutex_);
+			handlers_.erase(hwnd);
 		}
 
-		static DialogMsgHandlerPair* FindPreRegistered();
-		static INT_PTR CALLBACK DialogMsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		IWindowHandler* GetHandler(HWND hwnd) 
+		{ 
+			std::lock_guard<std::mutex> lock(mutex_); 
+			auto it = handlers_.find(hwnd); 
+			return (it != handlers_.end()) ? it->second : nullptr;
+		}
+
+	private:
+		WindowHandlerRegistry() = default;
+		WindowHandlerRegistry(const WindowHandlerRegistry&) = delete;
+		WindowHandlerRegistry& operator=(const WindowHandlerRegistry&) = delete;
+
+		std::mutex mutex_;
+		std::unordered_map<HWND, IWindowHandler*> handlers_;
 	};
+
+	
+	
+	class WindowHandlerBase : public IWindowHandler {
+	public:
+		WindowHandlerBase() : hwnd_(nullptr), hInstance_(nullptr) {}
+		virtual ~WindowHandlerBase() = default;
+
+		HWND GetHwnd() const override { return hwnd_; }
+		void SetHwnd(HWND hwnd) override { hwnd_ = hwnd; }
+
+		HINSTANCE GetInstance() const { return hInstance_; }
+		void SetInstance(HINSTANCE hinst) { hInstance_ = hinst; }
+
+		void OnClose() override { DestroyWindow(hwnd_); }
+
+		// You implement this:
+		virtual LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override 
+		{
+			return DefWindowProc(hwnd_, msg, wParam, lParam);
+		}
+
+		LRESULT OnPaint() override { 
+			PAINTSTRUCT ps; 
+			HDC hdc = BeginPaint(hwnd_, &ps); 
+			EndPaint(hwnd_, &ps); return 0; 
+		}
+
+	private:
+		HWND hwnd_;
+		HINSTANCE hInstance_;
+	};
+
+
+	class DialogHandlerBase : public IWindowHandler
+	{
+	public:
+		DialogHandlerBase() : m_hwnd(nullptr) {}
+		virtual ~DialogHandlerBase() = default;
+
+		//
+		// HWND management
+		//
+		void SetHwnd(HWND hwnd) override { m_hwnd = hwnd; }
+		HWND GetHwnd() const override { return m_hwnd; }
+
+		HINSTANCE GetInstance() const 
+		{ 
+			return reinterpret_cast<HINSTANCE>(GetWindowLongPtr(m_hwnd, GWLP_HINSTANCE)); 
+		}
+
+		//
+		// Dialog initialization
+		//
+		BOOL OnInitDialog(WPARAM wParam, LPARAM lParam) override
+		{
+			// Default: allow Windows to set focus
+			return TRUE;
+		}
+
+		//
+		// Commands
+		//
+		LRESULT OnCommand(WORD id, WORD code, HWND control) override
+		{
+			// Default: close dialog on IDOK or IDCANCEL
+			if (id == IDOK || id == IDCANCEL)
+			{
+				EndDialog(m_hwnd, id);
+				return TRUE;
+			}
+			return FALSE;
+		}
+
+		//
+		// Notifications
+		//
+		LRESULT OnNotify(int idCtrl, NMHDR* hdr) override
+		{
+			return FALSE;
+		}
+
+		//
+		// Close / Destroy
+		//
+		void OnClose() override
+		{
+			EndDialog(m_hwnd, IDCANCEL);
+		}
+
+		void OnDestroy() override {}
+
+		//
+		// Fallback
+		//
+		LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override
+		{
+			return FALSE; // Dialogs return BOOL, not LRESULT
+		}
+
+	protected:
+		HWND m_hwnd;		
+	};
+
+
+
+
+
+
+
+
+
 
 
 
@@ -143,12 +253,10 @@ namespace swktool {
 	protected:
 		using WindowRegisterClass = WNDCLASSEX;
 
+	public:
 		virtual PCWSTR ClassName() const = 0;
 
 		// called right before register to be able to change the registration information
 		virtual void   PreRegisterWindow(WindowRegisterClass& wc) = 0;
-	};
-	
-
-
+	};	
 }

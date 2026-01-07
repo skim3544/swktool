@@ -2,13 +2,14 @@
 
 #include "MDIDemo.h"
 #include "../SWKUI/pch.h"
+#include "../SWKBase/ui.h"
 #include "../SWKUI/WinFrame.h"
 #include "../SWKBase/Logger.h"
 
 class AppWindowFrame : public swktool::WindowFrame {	
 
 public:
-	AppWindowFrame() : WindowFrame()
+	AppWindowFrame() 
 	{
 		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();		
 		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);

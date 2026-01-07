@@ -23,15 +23,17 @@
 namespace swktool
 {	
 	class DialogWindow :
-		public DialogMsgHandler
+		public DialogHandlerBase
 	{
 	protected:
 		LPCTSTR			DialogTemplateName = nullptr;
-		UINT			m_ResourceID;
+		UINT			m_ResourceID = 0;
 
 		std::wstring    cwCaption;
 
 	public:
+		DialogWindow() = default;
+
 		DialogWindow(UINT ID, Window* pParent);
 		DialogWindow(LPCTSTR pDialogTemplateName, Window* pParent);
 
@@ -43,9 +45,9 @@ namespace swktool
 			cwCaption = pCaptioNText;
 		}
 
-		virtual INT_PTR ShowDialog();
-		virtual INT_PTR HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+		virtual INT_PTR ShowDialog();		
 
+		virtual INT_PTR OnDialogMessage(UINT msg, WPARAM wParam, LPARAM lParam);
 	protected:
 		virtual INT_PTR  OnSetFont(WPARAM wParam, LPARAM lParam) {
 			return (INT_PTR)TRUE;  
@@ -53,7 +55,6 @@ namespace swktool
 
 		virtual INT_PTR OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam);
 		virtual INT_PTR OnCommand(WPARAM wParam, LPARAM lParam);			
-		virtual INT_PTR OnClose();						
 	};
 
 }

@@ -23,25 +23,32 @@ public:
 		mCLS.lpszClassName = L"test";
 		//mCLS.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));		
 	}
-	~WindowReg() { ; }
+	~WindowReg() = default;
 
 	WNDCLASSEXW& GetWndClass();
 };
 
+namespace swktool {
+	class WindowFrame {
+	public:
+		WindowFrame() = default;
+		WindowFrame(HINSTANCE hInst) : hInstance(hInst)
+		{
 
-class WindowFrame {
-public: 
-	WindowFrame(HINSTANCE hInst) {}
-	~WindowFrame() { ; }
+		}
+		~WindowFrame() = default;
 
-	ATOM Register(WindowReg& Reg) {
-		WNDCLASSEXW& Cls = Reg.GetWndClass();
+		ATOM Register(WindowReg& Reg) {
+			WNDCLASSEXW& Cls = Reg.GetWndClass();
 
-		return RegisterClassExW(&Cls);
-		//return RegisterClass(&Cls);
-	}
-};
+			return RegisterClassExW(&Cls);
+			//return RegisterClass(&Cls);
+		}
+		
+		HINSTANCE hInstance;
+	};
 
+}
 
 class EventConsumer {
 	HWND hWND = {};

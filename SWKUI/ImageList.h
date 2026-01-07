@@ -16,11 +16,13 @@ namespace swktool {
 		HIMAGELIST  hImageList_;
 
 	public:
-		ImageList() : hImageList_(nullptr) {
+		ImageList() : 
+			hImageList_(nullptr) {
 
 		}
 
-		ImageList(HIMAGELIST hImageListHandle) : hImageList_(hImageListHandle) 
+		ImageList(HIMAGELIST hImageListHandle) : 
+			hImageList_(hImageListHandle) 
 		{
 		}
 
@@ -39,7 +41,9 @@ namespace swktool {
 			hImageList_ = ImageList_Create(Width, Height, flags, Initial, nGrow);
 		}
 
-
+		HIMAGELIST GetHandle() const {
+			return hImageList_;
+		}
 
 		BOOL BeginDrag(int ImageIndex, int Hotspotx, int Hotspoty) {
 			return ImageList_BeginDrag(hImageList_, ImageIndex, Hotspotx, Hotspoty);
