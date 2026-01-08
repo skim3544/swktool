@@ -9,43 +9,50 @@
 
 namespace swktool {	
 
-	class Ctrl {
+	class Ctrl 
+	{
 		const int STRING_BUF_SIZE = 255;
 
 	protected:
 		HWND hwndCtrl = nullptr;
-		HWND hDlg = nullptr;
+		HWND hParent = nullptr;
 
 		// Control ID
 		UINT ID = -1;
 
-		HINSTANCE hInst;
+		HINSTANCE hInst = nullptr;
 
 		RECT Rect = { };
 
-	public:
-		Ctrl() : hInst(nullptr), hwndCtrl (nullptr), hDlg(nullptr), ID(-1) { ; }
-		Ctrl(UINT CtrlID, HINSTANCE h, HWND hDialog, HWND hControl) :
-			hInst(h), hwndCtrl(hControl), hDlg(hDialog), ID(CtrlID) {
-			;
+		Window* parentWindow = nullptr;
 
-			GetWindowRect(hwndCtrl, &Rect);
-		}
-		Ctrl(HWND hwnd) : 
-			hInst(nullptr), hwndCtrl(hwnd), hDlg(nullptr), ID(-1) { ; }
-		// Used for createing a child control dynamically (whithin resource file)
+	public:
+		Ctrl() = default;
 		Ctrl(Window* pParent);
-		Ctrl(DialogWindow* pParent);
-		Ctrl(UINT CtrlID, Window* pParent);		
-		Ctrl(UINT CtrlID, DialogWindow* pParent);
+		Ctrl(UINT CtrlID, Window* pParent);
+
+		//Ctrl(UINT CtrlID, HINSTANCE h, HWND hDialog, HWND hControl) :
+		//	hInst(h), hwndCtrl(hControl), hParent(hDialog), ID(CtrlID) {
+		//	;
+
+		//	GetWindowRect(hwndCtrl, &Rect);
+		//}
+		//Ctrl(HWND hwnd) : 
+		//	hInst(nullptr), hwndCtrl(hwnd), hParent(nullptr), ID(-1) { ; }				
+		//Ctrl(DialogWindow* pParent);
+		
+		
 		virtual ~Ctrl() { ; }
 
 		HWND GetCtrlHandle() const {
 			return hwndCtrl;
 		}
+		HWND GetHwnd() const {
+			return GetCtrlHandle();
+		}
 
-		HWND GetDlgHandle() const {
-			return hDlg;
+		HWND GetParentHandle() const {
+			return hParent;
 		}
 
 		UINT GetID() const {			
@@ -89,13 +96,13 @@ namespace swktool {
 			return ::IsWindowVisible(hwndCtrl);
 		}
 
-		HWND GetCtrlHandle() {
-			return hwndCtrl;
-		}
-
 		RECT GetRect() {
 			GetWindowRect(hwndCtrl, &Rect);
 			return Rect;
+		}
+
+		void UpdateRect() {
+			GetWindowRect(hwndCtrl, &Rect);
 		}
 
 		BOOL MoveWindow(

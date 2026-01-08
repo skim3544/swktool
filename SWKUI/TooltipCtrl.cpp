@@ -12,7 +12,7 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
@@ -20,7 +20,7 @@ namespace swktool {
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP, 
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
+			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
 	TooltipCtrl::TooltipCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
@@ -32,39 +32,39 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 
 		hwndCtrl = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			hDlg, NULL, hInst,
+			hParent, NULL, hInst,
 			NULL);
 
 		SetWindowPos(hwndCtrl, HWND_TOPMOST, 0, 0, 0, 0,
 			SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	}
 
-	TooltipCtrl::TooltipCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-		INITCOMMONCONTROLSEX icex;
+	//TooltipCtrl::TooltipCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	//	INITCOMMONCONTROLSEX icex;
 
-		icex.dwSize = sizeof(icex);
-		icex.dwICC = ICC_BAR_CLASSES;
+	//	icex.dwSize = sizeof(icex);
+	//	icex.dwICC = ICC_BAR_CLASSES;
 
-		InitCommonControlsEx(&icex);
+	//	InitCommonControlsEx(&icex);
 
-		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+	//	hInst = pParent->GetInstance();
+	//	hParent = pParent->GetHwnd();
 
-		hwndCtrl = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
-			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			CW_USEDEFAULT, CW_USEDEFAULT,
-			hDlg, NULL, hInst,
-			NULL);
+	//	hwndCtrl = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
+	//		WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+	//		CW_USEDEFAULT, CW_USEDEFAULT,
+	//		CW_USEDEFAULT, CW_USEDEFAULT,
+	//		hParent, NULL, hInst,
+	//		NULL);
 
-		SetWindowPos(hwndCtrl, HWND_TOPMOST, 0, 0, 0, 0,
-			SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-	}
+	//	SetWindowPos(hwndCtrl, HWND_TOPMOST, 0, 0, 0, 0,
+	//		SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	//}
 }
 

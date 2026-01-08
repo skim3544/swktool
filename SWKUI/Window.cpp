@@ -9,7 +9,8 @@
 #endif
 
 
-namespace swktool {
+namespace swktool 
+{
 
 	//LRESULT Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//{

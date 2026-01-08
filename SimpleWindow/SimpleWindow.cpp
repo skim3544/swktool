@@ -1,16 +1,11 @@
 #include "framework.h"
 #include "..\SWKUI\MsgHandler.h"
-#include "..\SWKUI\msg_filter.h"
-
 #include "../SWKUI/Window.h"
 
 #pragma comment(lib, "SWKBase.lib")
 #pragma comment(lib, "SWKUI.lib")
 
-//#pragma comment(lib, "..\\Release\\SWKBase.lib")
-//#pragma comment(lib, "..\\Release\\SWKUI.lib")
-
-class MainWindow : public swktool::Window  {
+class MainWindow : public swktool::Window {
 public:
     PCWSTR  ClassName() const { 
         return L"Sample Window"; 
@@ -19,28 +14,6 @@ public:
     virtual void PreRegisterWindow(WNDCLASSEX& wc) override {
         wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    }
-
-
-    LRESULT OnPaint() override {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(GetHwnd(), &ps);
-
-        TextOut(hdc, 10, 10, L"Hello from SWKUI!", 18);
-
-        EndPaint(GetHwnd(), &ps);
-        return 0;
-    }
-
-    LRESULT OnEraseBkgnd(HDC hdc) override {
-        RECT rc;
-        GetClientRect(GetHwnd(), &rc);
-        FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
-        return 1; // tell Windows we erased the background
-    }
-
-    void OnDestroy() override {
-        PostQuitMessage(0);
     }
 };
 
@@ -64,14 +37,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UpdateWindow(win.GetHwnd());
 
     // Run the message loop.
-
-    MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return 0;
+    swktool::AppMsgLoop MsgLoop;
+    return MsgLoop.Run();    
  }
 

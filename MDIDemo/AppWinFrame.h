@@ -6,28 +6,28 @@
 #include "../SWKUI/WinFrame.h"
 #include "../SWKBase/Logger.h"
 
-class AppWindowFrame : public swktool::WindowFrame {	
-
-public:
-	AppWindowFrame() 
-	{
-		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();		
-		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
-	}
-
-
-	AppWindowFrame(HINSTANCE hInst) : 
-		swktool::WindowFrame(hInst)		
-	{
-		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();
-		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
-	}
-	~AppWindowFrame() { ; }
-
-	std::shared_ptr<swktool::Window> CreateWin(LPCWSTR WinClassName, LPCWSTR WinTitle, HMENU hMDIMenu,  int nCmdShow);
-	//std::shared_ptr<swktool::Window> CreateMFDIWin(LPCWSTR WinClassName, LPCWSTR WinTitle, int nCmdShow);
-
-private:
-	swktool::ILogger* pLogger_;
-};
-
+//class AppWindowFrame : public swktool::WindowFrame {	
+//
+//public:
+//	AppWindowFrame() 
+//	{
+//		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();		
+//		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
+//	}
+//
+//
+//	AppWindowFrame(HINSTANCE hInst) : 
+//		swktool::WindowFrame(hInst)		
+//	{
+//		pLogger_ = GetDI().Resolve<swktool::ILogger, swktool::Logger>();
+//		pLogger_->Register(__FUNCTION__, swktool::LogLevel::DETAIL1);
+//	}
+//	~AppWindowFrame() { ; }
+//
+//	std::shared_ptr<swktool::Window> CreateWin(LPCWSTR WinClassName, LPCWSTR WinTitle, HMENU hMDIMenu,  int nCmdShow);
+//	//std::shared_ptr<swktool::Window> CreateMFDIWin(LPCWSTR WinClassName, LPCWSTR WinTitle, int nCmdShow);
+//
+//private:
+//	swktool::ILogger* pLogger_;
+//};
+//

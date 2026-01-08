@@ -3,10 +3,8 @@
 #include "resource.h"
 #include "..\SWKUI\DialogWindow.h"
 
-class MainWindow : 
-    public  swktool::Window {
-
-
+class MainWindow : public  swktool::Window 
+{
 public:
     PCWSTR  ClassName() const {
         return L"Sample Window";
@@ -20,7 +18,7 @@ public:
         wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_SIMPLEDIALOG));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         //(PCWSTR) L"IDC_SIMPLEDIALOG";
-        //wc.lpszMenuName = ClassName();
+        wc.lpszMenuName = ClassName();
     }
 
     virtual LRESULT OnCommand(WPARAM wParam, LPARAM lParam) 

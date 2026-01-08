@@ -8,11 +8,11 @@ namespace swktool {
 		int x, int y, int Height, int Width, 
 		swktool::Window* pParent, UINT CtrlID) {
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(TEXT("EDIT"), (LPCWSTR)Caption.c_str(),
 			(DWORD)Style, x, y, Height, Width,
-			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
+			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
 
 
@@ -20,10 +20,10 @@ namespace swktool {
 		Ctrl(CtrlID, pParent)
 	{
 	}
-	EditCtrl::EditCtrl(UINT CtrlID, DialogWindow* pParent) :
-		Ctrl(CtrlID, pParent)
-	{
-	}
+	//EditCtrl::EditCtrl(UINT CtrlID, DialogWindow* pParent) :
+	//	Ctrl(CtrlID, pParent)
+	//{
+	//}
 
 
 }

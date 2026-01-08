@@ -12,12 +12,12 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_LISTVIEW, (LPCWSTR)Caption.c_str(),
 			Style, x, y, Width, Height,
-			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
+			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
 
@@ -26,9 +26,9 @@ namespace swktool {
 
 	}
 
-	ListViewCtrl::ListViewCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	//ListViewCtrl::ListViewCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
-	}
+	//}
 
 
 }

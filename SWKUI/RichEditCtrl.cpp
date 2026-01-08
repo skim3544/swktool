@@ -8,12 +8,12 @@ namespace swktool {
 		::LoadLibrary(TEXT("Msftedit.dll"));
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			MSFTEDIT_CLASS, (LPCWSTR)Caption.c_str(),
 			Style, x, y, Height, Width,
-			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
+			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
 
@@ -22,8 +22,8 @@ namespace swktool {
 
 	}
 
-	RichEditCtrl::RichEditCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	//RichEditCtrl::RichEditCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
-	}
+	//}
 
 }

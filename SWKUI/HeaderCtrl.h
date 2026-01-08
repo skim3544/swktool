@@ -35,7 +35,7 @@ namespace swktool {
 
 		BOOL GetLayout(WINDOWPOS& wp, RECT& rcParent) {
 			HDLAYOUT hdl{};
-			GetClientRect(hDlg, &rcParent);
+			GetClientRect(hParent, &rcParent);
 			hdl.pwpos = &wp;
 			hdl.prc = &rcParent;
 

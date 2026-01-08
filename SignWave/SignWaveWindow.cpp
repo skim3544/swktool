@@ -4,20 +4,24 @@
 #define NUM 1000
 #define TWOPI (2 * 3.14159)
 
-void MainWindow::OnSize(UINT state, int nWidth, int nHeight) {
-	cxClient_ = nWidth;
-	cyClient_ = nHeight;
+LRESULT MainWindow::OnSize(UINT type, int cx, int cy) 
+{
+	cxClient_ = cx;
+	cyClient_ = cy;
+
+	return 0;
 }
 
-
-void MainWindow::OnPaint() {
+LRESULT MainWindow::OnPaint() 
+{
 	// The original code had missing EndPaint, but we cannot make mistake since we use RAII
 	auto hwnd = GetHwnd();
 
 	swktool::PaintDeviceContext PC(hwnd);
 	
 	// Prevent thrown exception from getting out of OnPaint without cleaning up the PaintContext
-	try {
+	try 
+	{
 		POINT apt[NUM] = {0};
 	
 		PC.MoveToEx(0, cyClient_ / 2, NULL);
@@ -30,8 +34,11 @@ void MainWindow::OnPaint() {
 	
 		PC.Polyline(apt, NUM);
 	}
-	catch (...) {
+	catch (...) 
+	{
 	
 	}
+
+	return 0;
 }
 

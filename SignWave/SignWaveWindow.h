@@ -1,6 +1,8 @@
 #pragma once
 
+#include <Windows.h>
 #include "../SWKUI/Window.h"
+
 
 
 class MainWindow : public swktool::Window {
@@ -14,8 +16,9 @@ public:
 		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	}
 
-	void virtual OnSize(UINT state, int nWidth, int nHeight) override;
-	virtual void OnPaint() override;
+	//void virtual OnSize(UINT state, int nWidth, int nHeight) override;
+	LRESULT OnSize(UINT type, int cx, int cy) override;
+	LRESULT OnPaint() override;
 
 private:
 	int	cxClient_;

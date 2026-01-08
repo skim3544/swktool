@@ -86,6 +86,18 @@ namespace swktool
 			return handler->OnMove((int)(short)LOWORD(lParam),
 				(int)(short)HIWORD(lParam));
 
+		case WM_NCCALCSIZE:
+			return handler->OnNcCalcSize((BOOL)wParam, (NCCALCSIZE_PARAMS*)lParam);
+
+		case WM_NCPAINT:
+			return handler->OnNcPaint((HRGN)wParam);
+
+		case WM_NCHITTEST:
+		{
+			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			return handler->OnNcHitTest(pt);
+		}
+
 		case WM_CLOSE:
 			handler->OnClose();
 			return 0;
@@ -165,6 +177,80 @@ namespace swktool
 		return handler->OnMessage(msg, wParam, lParam);
 	}
 
-	
+
+	LRESULT CALLBACK SWKMDIFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		HWND hClient = nullptr;
+
+		// Retrieve the MDI client handle stored in GWLP_USERDATA or wherever SWKUI keeps it.
+		// If you store it differently, adjust this line.
+		hClient = (HWND)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+		switch (msg)
+		{
+		case WM_CREATE:
+		{
+			// Extract CLIENTCREATESTRUCT from CREATESTRUCT
+			auto* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+			auto* ccs = reinterpret_cast<CLIENTCREATESTRUCT*>(cs->lpCreateParams);
+
+			// Create the MDI client window
+			hClient = CreateWindowEx(
+				0,
+				L"MDICLIENT",
+				nullptr,
+				WS_CHILD | WS_CLIPCHILDREN | WS_VISIBLE,
+				0, 0, 0, 0,
+				hWnd,
+				nullptr,
+				(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+				ccs
+			);
+
+			if (!hClient)
+				return -1;
+
+			// Store client handle for later use
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)hClient);
+			return 0;
+		}
+
+		case WM_COMMAND:
+			if (hClient)
+			{
+				// Let MDI handle menu commands (like Window → Tile, Cascade, etc.)
+				if (DefFrameProc(hWnd, hClient, msg, wParam, lParam))
+					return 0;
+			}
+			break;
+
+		case WM_MENUSELECT:
+		case WM_INITMENU:
+		case WM_INITMENUPOPUP:
+			if (hClient)
+				return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
+			break;
+
+		case WM_SIZE:
+			if (hClient)
+			{
+				MoveWindow(hClient, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
+			}
+			return 0;
+
+		case WM_CLOSE:
+			// You can intercept shutdown here if SWKUI needs cleanup
+			DestroyWindow(hWnd);
+			return 0;
+
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		}
+
+		// Default MDI frame message handling
+		return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
+	}
+
 
 }

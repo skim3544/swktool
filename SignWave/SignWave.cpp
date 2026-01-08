@@ -4,7 +4,6 @@
 //
 #include "..\SWKBase\pch.h"
 #include "..\SWKUI\pch.h"
-#include "..\SWKUI\WinEventHandler.h"
 #include "..\SWKUI\WinFrame.h"
 #include <string>
 #include <crtdbg.h>
@@ -43,17 +42,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     ShowWindow(win.GetHwnd(), nCmdShow);
+    UpdateWindow(win.GetHwnd());
 
     // Run the message loop.
-
-    MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return 0;
+    swktool::AppMsgLoop MsgLoop;
+    return MsgLoop.Run();
 }
 
 

@@ -86,6 +86,12 @@ namespace swktool {
 		virtual LRESULT OnSize(UINT type, int cx, int cy) { return 0; }
 		virtual LRESULT OnMove(int x, int y) { return 0; }
 
+		// added for caption modification
+		virtual LRESULT OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS* params) { return 0; }
+		virtual LRESULT OnNcPaint(HRGN hrgn) { return 0; }
+		virtual LRESULT OnNcHitTest(POINT pt) { return HTCLIENT; }
+
+
 		//
 		// ---- Default Message Router ----
 		//
@@ -136,7 +142,9 @@ namespace swktool {
 	};
 
 	
-	
+	/// <summary>
+	/// Base class for a Simple Window
+	/// </summary>
 	class WindowHandlerBase : public IWindowHandler {
 	public:
 		WindowHandlerBase() : hwnd_(nullptr), hInstance_(nullptr) {}
@@ -168,6 +176,9 @@ namespace swktool {
 	};
 
 
+	/// <summary>
+	/// class for Simple Dialog Box
+	/// </summary>
 	class DialogHandlerBase : public IWindowHandler
 	{
 	public:
@@ -249,14 +260,118 @@ namespace swktool {
 
 
 
-	class WindowsRegister {
+	/// <summary>
+	/// Interface for registering Windows
+	/// </summary>
+	class IWindowsRegister {
 	protected:
 		using WindowRegisterClass = WNDCLASSEX;
 
 	public:
+		// Must override to provide unique registration class name
 		virtual PCWSTR ClassName() const = 0;
 
-		// called right before register to be able to change the registration information
+		// called right before register to be able to change the registration information by overriding
 		virtual void   PreRegisterWindow(WindowRegisterClass& wc) = 0;
 	};	
+
+	LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK SWKMDIFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	class WindowsDefaultRegister 
+	{
+	protected:
+		using WindowRegisterClass = WNDCLASSEX;
+
+	public:
+		static WindowRegisterClass CreateDefault(LPCWSTR className)
+			{
+				WindowRegisterClass wc = {};
+				wc.cbSize = sizeof(WindowRegisterClass);
+				wc.style = CS_HREDRAW | CS_VREDRAW;
+				wc.lpfnWndProc = SWKWindowProc;
+				wc.hInstance = GetModuleHandle(nullptr);
+				wc.lpszClassName = className;
+				wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+				wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+				wc.hIconSm = wc.hIcon;
+				wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+
+				return wc;
+			}
+
+		static WindowRegisterClass CreateMDIFrame(LPCWSTR className)
+		{
+			WindowRegisterClass wc = {};
+			wc.cbSize = sizeof(WindowRegisterClass);
+			wc.style = CS_HREDRAW | CS_VREDRAW;
+			wc.lpfnWndProc = SWKMDIFrameProc;   // your custom frame proc
+			wc.hInstance = GetModuleHandle(nullptr);
+			wc.lpszClassName = className;
+			wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+			wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+			wc.hIconSm = wc.hIcon;
+			wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+
+			return wc;
+		}
+
+	};
+
+
+	class IMsgLoop
+	{
+	public:
+		virtual int Run() = 0;
+	};
+
+	/// <summary>
+	///  Standard Application Message Loop
+	/// </summary>
+	class AppMsgLoop : public IMsgLoop 
+	{
+	public:
+		virtual ~AppMsgLoop() = default;
+
+		virtual int Run() {
+			MSG msg = { };
+			while (GetMessage(&msg, nullptr, 0, 0)) {
+				if (!PreTranslateMessage(msg)) {
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			}
+			return (int)msg.wParam;
+		}
+
+		virtual bool PreTranslateMessage(MSG& msg) {
+			return false;
+		}
+	};
+
+	class AppIdleMsgLoop : public swktool::IMsgLoop 
+	{
+	public:
+		int Run() override {
+			MSG msg = { };
+
+			while (true) {
+				while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+					if (msg.message == WM_QUIT)
+						return (int)msg.wParam;
+
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+
+				OnIdle();
+			}
+		}
+
+		virtual void OnIdle() {
+			// background tasks, animations, layout, etc.
+		}
+	};
+
+
 }

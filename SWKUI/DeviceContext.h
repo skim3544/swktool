@@ -80,9 +80,9 @@ namespace swktool {
 		static std::unique_ptr<DeviceContext> GetDC(HWND hWindow);
 		static std::unique_ptr<DeviceContext> GetDC(AWindow* pWindow);
 		static std::unique_ptr<DeviceContext> GetDCEx(HWND  hWnd, HRGN  hrgnClip, DWORD flags);
-		static std::unique_ptr<DeviceContext> GetDCEx(AWindow* pWindow, HRGN  hrgnClip, DWORD flags);
+		//static std::unique_ptr<DeviceContext> GetDCEx(AWindow* pWindow, HRGN  hrgnClip, DWORD flags);
 		static std::unique_ptr<DeviceContext> GetWindowDC(HWND hWindow);
-		static std::unique_ptr<DeviceContext> GetWindowDC(AWindow* pWindow);
+		//static std::unique_ptr<DeviceContext> GetWindowDC(AWindow* pWindow);
 		static std::unique_ptr<DeviceContext> CreateDC(LPCWSTR Driver, LPCWSTR Device, LPCWSTR szPort, const DEVMODEW* pDM);
 		static std::unique_ptr<DeviceContext> CreateIC(LPCWSTR Driver, LPCWSTR Device, LPCWSTR szPort, const DEVMODEW* pDM);
 		static std::unique_ptr<DeviceContext> CreateCompatibleDC(const DeviceContext& dc);

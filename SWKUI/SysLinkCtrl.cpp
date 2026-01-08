@@ -13,7 +13,7 @@ namespace swktool {
 
         InitCommonControlsEx(&icex);
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 
 		hwndCtrl = CreateWindowEx(
@@ -22,7 +22,7 @@ namespace swktool {
 			(PCTSTR)HtmlLinkText.c_str(),           // no text when first created
 			Style,   
 			x, y, Width, Height,              // ignores size and position
-			hDlg,              // handle to parent window
+			hParent,              // handle to parent window
 			(HMENU)0,       // child window identifier
 			hInst,                   // handle to application instance
 			NULL);                   // no window creation data
@@ -30,8 +30,8 @@ namespace swktool {
     SysLinkCtrl::SysLinkCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 
     }
-	SysLinkCtrl::SysLinkCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	//SysLinkCtrl::SysLinkCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
-	}
+	//}
 
 }

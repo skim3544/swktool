@@ -1,6 +1,5 @@
 #include "pch.h"
 #include <assert.h>
-#include "AWindow.h"
 #include "Window.h"
 #include "Brush.h"
 #include "DeviceContext.h"
@@ -40,12 +39,12 @@ namespace swktool {
 		return std::make_unique<DeviceContext>(hWindow, hDC, DC_CLEAN_METHOD::Release);		
 	}
 
-	std::unique_ptr<DeviceContext> DeviceContext::GetDCEx(AWindow* pWindow, HRGN  hrgnClip, DWORD flags)
-	{
-		HWND hWindow = pWindow->GetWindowHWND();
+	//std::unique_ptr<DeviceContext> DeviceContext::GetDCEx(AWindow* pWindow, HRGN  hrgnClip, DWORD flags)
+	//{
+	//	HWND hWindow = pWindow->GetWindowHWND();
 
-		return DeviceContext::GetDCEx(hWindow, hrgnClip, flags);
-	}
+	//	return DeviceContext::GetDCEx(hWindow, hrgnClip, flags);
+	//}
 
 
 	std::unique_ptr<DeviceContext> DeviceContext::GetDC(HWND hWindow)
@@ -54,11 +53,11 @@ namespace swktool {
 		return std::make_unique<DeviceContext>(hWindow, hDC, DC_CLEAN_METHOD::Release);
 	}
 
-	std::unique_ptr<DeviceContext> DeviceContext::GetDC(AWindow* pWindow) {
-		HWND hWindow = pWindow->GetWindowHWND();
+	//std::unique_ptr<DeviceContext> DeviceContext::GetDC(AWindow* pWindow) {
+	//	HWND hWindow = pWindow->GetWindowHWND();
 
-		return DeviceContext::GetDC(hWindow);
-	}
+	//	return DeviceContext::GetDC(hWindow);
+	//}
 
 	std::unique_ptr<DeviceContext> DeviceContext::GetWindowDC(HWND hWindow)
 	{
@@ -66,10 +65,10 @@ namespace swktool {
 		return std::make_unique< DeviceContext>(hWindow, hDC, DC_CLEAN_METHOD::Release);
 	}
 
-	std::unique_ptr<DeviceContext> DeviceContext::GetWindowDC(AWindow* pWindow) {
-		HWND hWindow = pWindow->GetWindowHWND();
-		return DeviceContext::GetWindowDC(hWindow);
-	}
+	//std::unique_ptr<DeviceContext> DeviceContext::GetWindowDC(AWindow* pWindow) {
+	//	HWND hWindow = pWindow->GetWindowHWND();
+	//	return DeviceContext::GetWindowDC(hWindow);
+	//}
 
 
 	std::unique_ptr<DeviceContext> DeviceContext::CreateDC(LPCWSTR Driver, LPCWSTR Device, LPCWSTR szPort, const DEVMODEW* pDM)

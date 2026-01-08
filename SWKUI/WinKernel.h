@@ -2,8 +2,10 @@
 #include <Windows.h>
 #include <atomic>
 
-namespace swktool {
-	class CriticalSection {
+namespace swktool 
+{
+	class CriticalSection 
+	{
 		CRITICAL_SECTION	cs_;
 
 	public:

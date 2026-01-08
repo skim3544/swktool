@@ -6,9 +6,11 @@
 
 //#include <WinUser.h>
 
-namespace swktool {
+namespace swktool 
+{
 
-	class GDIObject {
+	class GDIObject 
+	{
 	protected:
 		HGDIOBJ  hGDIHandle_;
 

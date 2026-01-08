@@ -20,7 +20,7 @@ namespace swktool
 
 	class Window :
 		public WindowHandlerBase
-		, public WindowsRegister
+		, public IWindowsRegister
 	{
 	public:
 		// called right before register to be able to change the registration information
@@ -38,21 +38,17 @@ namespace swktool
 			HMENU hMenu = 0
 		)
 		{
-			WindowRegisterClass wc = { 0 };
-			wc.cbSize = sizeof(WindowRegisterClass);
-			wc.lpfnWndProc = SWKWindowProc;
-			wc.hInstance = GetModuleHandle(NULL);
-			wc.lpszClassName = ClassName();
-			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-			wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-			wc.hIconSm = wc.hIcon;
+			// Get the default reguster structure
+			auto wc = WindowsDefaultRegister::CreateDefault(ClassName());
 
+			// call PreRegister to allow client code to customize the setting
 			PreRegisterWindow(wc);
 
+			// register this window
 			auto atom = RegisterClassEx(&wc);
-			if (0 == atom) {
+			if (0 == atom) 
+			{
 				auto lastError = GetLastError();
-
 			}
 
 			auto handle = CreateWindowEx(
@@ -60,10 +56,13 @@ namespace swktool
 				nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(NULL),
 				this // passing this pointer here is what makes msg_routing work
 			);
+
 			if (nullptr == handle)
 			{
 				auto lastError = GetLastError();
-				wchar_t buf[256]; FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, lastError, 0, buf, 256, nullptr); MessageBox(nullptr, buf, L"CreateWindowEx failed", MB_OK);
+				wchar_t buf[256]; 
+				FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, lastError, 0, buf, 256, nullptr); 
+				MessageBox(nullptr, buf, L"CreateWindowEx failed", MB_OK);
 			}
 
 			SetHwnd(handle);
@@ -71,11 +70,10 @@ namespace swktool
 			return (handle ? TRUE : FALSE);
 		}
 
-		LRESULT OnCreate(CREATESTRUCT* lpCreateStruct) override {
-			return 0;
-		}
 		void OnClose() override { DestroyWindow(GetHwnd()); }
-		void OnDestroy() override {}
+		void OnDestroy() override {
+			PostQuitMessage(0);
+		}
 
 
 		//
@@ -113,13 +111,32 @@ namespace swktool
 			return 0;
 		}
 
-		LRESULT OnEraseBkgnd(HDC hdc) override { return 1; }
+
+		LRESULT OnEraseBkgnd(HDC hdc) override  {
+			RECT rc;
+			GetClientRect(GetHwnd(), &rc);
+			FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+			return 1; // tell Windows we erased the background
+		}
 
 		//
 		// Sizing / Moving
 		//
 		LRESULT OnSize(UINT type, int cx, int cy) override { return 0; }
 		LRESULT OnMove(int x, int y) override { return 0; }
+
+		virtual LRESULT OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS* params)
+		{
+			return DefWindowProc(GetHwnd(), WM_NCCALCSIZE, calcValidRects, (LPARAM)params);
+		}
+		virtual LRESULT OnNcPaint(HRGN hrgn)
+		{
+			return DefWindowProc(GetHwnd(), WM_NCPAINT, (WPARAM)hrgn, 0);
+		}
+		virtual LRESULT OnNcHitTest(POINT pt)
+		{
+			return DefWindowProc(GetHwnd(), WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y));
+		}
 
 		//
 		// Fallback
@@ -129,6 +146,81 @@ namespace swktool
 			return DefWindowProc(GetHwnd(), msg, wParam, lParam);
 		}
 	};
+
+	class CaptionFadeWindow : public swktool::Window
+	{
+	public:
+		static constexpr int CAPTION_HEIGHT = 32;
+
+		PCWSTR ClassName() const override { return L"CaptionFadeWindow"; }
+
+		//
+		// Remove default Windows caption & frame
+		//
+		LRESULT OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS* params) override
+		{
+			// Shrink client area upward by caption height
+			params->rgrc[0].top += CAPTION_HEIGHT;
+			return 0;
+		}
+
+		//
+		// Draw custom gradient caption bar
+		//
+		LRESULT OnNcPaint(HRGN hrgn) override
+		{
+			HDC hdc = GetWindowDC(GetHwnd());
+
+			RECT rc;
+			GetWindowRect(GetHwnd(), &rc);
+			OffsetRect(&rc, -rc.left, -rc.top);
+
+			RECT caption = { 0, 0, rc.right, CAPTION_HEIGHT };
+
+			TRIVERTEX vert[2] = {};
+			vert[0].x = 0;
+			vert[0].y = 0;
+			vert[0].Red = 0x0000;   // Blue
+			vert[0].Green = 0x0000;
+			vert[0].Blue = 0xFFFF;
+
+			vert[1].x = rc.right;
+			vert[1].y = CAPTION_HEIGHT;
+			vert[1].Red = 0xFFFF;   // White
+			vert[1].Green = 0xFFFF;
+			vert[1].Blue = 0xFFFF;
+
+			GRADIENT_RECT gRect = { 0, 1 };
+			GradientFill(hdc, vert, 2, &gRect, 1, GRADIENT_FILL_RECT_H);
+
+			// Draw window title text
+			SetBkMode(hdc, TRANSPARENT);
+			SetTextColor(hdc, RGB(0, 0, 0));
+
+			HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+			HFONT old = (HFONT)SelectObject(hdc, hFont);
+
+			RECT textRc = { 10, 7, rc.right, CAPTION_HEIGHT };
+			DrawText(hdc, L"Caption Fade Window", -1, &textRc,
+				DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+			SelectObject(hdc, old);
+			ReleaseDC(GetHwnd(), hdc);
+			return 0;
+		}
+
+		//
+		// Make the custom caption draggable
+		//
+		LRESULT OnNcHitTest(POINT pt) override
+		{
+			ScreenToClient(GetHwnd(), &pt);
+			if (pt.y < CAPTION_HEIGHT)
+				return HTCAPTION;
+			return HTCLIENT;
+		}
+	};
+
 }
 
 

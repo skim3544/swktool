@@ -26,7 +26,7 @@ namespace swktool {
 		std::wstring GetText(int BufferSize = CONTROL_STRING_BUF_SIZE) {
 			std::wstring str;
 			str.resize(BufferSize, 0);
-			UINT Result = GetDlgItemText(hDlg, ID, (LPWSTR)str.c_str(), (int)str.capacity());
+			UINT Result = GetDlgItemText(hParent, ID, (LPWSTR)str.c_str(), (int)str.capacity());
 			return str;
 		}
 

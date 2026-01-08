@@ -14,22 +14,22 @@ namespace swktool {
 		InitCommonControlsEx(&icex);
 
 		hInst = pParent->GetInstance();
-		hDlg = pParent->GetHwnd();
+		hParent = pParent->GetHwnd();
 
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			TOOLBARCLASSNAME, (LPCWSTR)Caption.c_str(),
 			Style, x, y, Height, Width,
-			hDlg, (HMENU)(UINT_PTR)ID, hInst, NULL);
+			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
 	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 
-	ToolbarCtrl::ToolbarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
+	//ToolbarCtrl::ToolbarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
 
-	}
+	//}
 }
 
 
