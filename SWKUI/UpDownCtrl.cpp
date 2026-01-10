@@ -4,9 +4,9 @@
 
 
 namespace swktool {
-	UpDownCtrl::UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID) {
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
+	UpDownCtrl::UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  IWindow* pParent, UINT CtrlID) :
+		Ctrl(pParent)
+	{
 		ID = CtrlID;
 
 		INITCOMMONCONTROLSEX icex{};
@@ -23,7 +23,7 @@ namespace swktool {
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
 
-	UpDownCtrl::UpDownCtrl(UINT CtrlID, swktool::Window* pParent) : Ctrl(CtrlID, pParent) {
+	UpDownCtrl::UpDownCtrl(UINT CtrlID, swktool::IWindow* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
 	//UpDownCtrl::UpDownCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {

@@ -4,7 +4,7 @@
 
 namespace swktool {
 
-    SysLinkCtrl::SysLinkCtrl(std::wstring HtmlLinkText, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID)
+    SysLinkCtrl::SysLinkCtrl(std::wstring HtmlLinkText, DWORD Style, int x, int y, int Width, int Height, IWindow* pParent, UINT CtrlID) : Ctrl(pParent)
     {
 		INITCOMMONCONTROLSEX icex{};
 
@@ -12,8 +12,6 @@ namespace swktool {
         icex.dwICC = ICC_LINK_CLASS;
 
         InitCommonControlsEx(&icex);
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 
 		hwndCtrl = CreateWindowEx(
@@ -27,7 +25,7 @@ namespace swktool {
 			hInst,                   // handle to application instance
 			NULL);                   // no window creation data
     }
-    SysLinkCtrl::SysLinkCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+    SysLinkCtrl::SysLinkCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
 
     }
 	//SysLinkCtrl::SysLinkCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {

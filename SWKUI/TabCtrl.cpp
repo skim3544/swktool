@@ -4,16 +4,15 @@
 
 namespace swktool {
 
-	TabCtrl::TabCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
+	TabCtrl::TabCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) : 
+		Ctrl(pParent) 
+	{
 		INITCOMMONCONTROLSEX icex{};
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_TAB_CLASSES;
 
 		InitCommonControlsEx(&icex);
-
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
@@ -22,11 +21,9 @@ namespace swktool {
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
-	TabCtrl::TabCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	TabCtrl::TabCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) 
+	{
 
 	}
-	//TabCtrl::TabCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-
-	//}
 
 }

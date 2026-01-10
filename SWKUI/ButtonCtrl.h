@@ -3,7 +3,9 @@
 
 #pragma once
 
+
 #include "Ctrl.h"
+#include "Theme.h"
 
 namespace swktool {
 
@@ -11,12 +13,15 @@ namespace swktool {
 
 	class ButtonCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
+		Theme	currentTheme_{};
+
 	public:
-		ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		ButtonCtrl(UINT CtrlID, Window* pParent);
-		ButtonCtrl(UINT CtrlID, DialogWindow* pParent);
+		ButtonCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
+		ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		ButtonCtrl(UINT CtrlID, IWindow* pParent);
 		~ButtonCtrl() { ; }
 
+		void ApplyTheme(const Theme& theme) override;
 
 		std::wstring GetText() const {
 			std::wstring str;
@@ -67,9 +72,8 @@ namespace swktool {
 		};
 
 	public:
-		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		CheckboxCtrl(UINT CtrlID, swktool::Window* pParent);
-		CheckboxCtrl(UINT CtrlID, swktool::DialogWindow* pParent);
+		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		CheckboxCtrl(UINT CtrlID, IWindow* pParent);
 		~CheckboxCtrl() { ; }
 
 
@@ -96,9 +100,8 @@ namespace swktool {
 
 	public:
 		// WS_VISIBLE | WS_CHILD|BS_GROUPBOX
-		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		RadioCtrl(UINT CtrlID, Window* pParent);
-		RadioCtrl(UINT CtrlID, DialogWindow* pParent);
+		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		RadioCtrl(UINT CtrlID, IWindow* pParent);
 		~RadioCtrl() { ; }
 
 		void Set() {

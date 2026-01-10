@@ -3,7 +3,8 @@
 
 
 namespace swktool {
-	DateTimePickerCtrl::DateTimePickerCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID)
+	DateTimePickerCtrl::DateTimePickerCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) :
+		Ctrl(pParent)
 	{
 		INITCOMMONCONTROLSEX icex{};
 
@@ -11,9 +12,6 @@ namespace swktool {
 		icex.dwICC = ICC_DATE_CLASSES;
 
 		InitCommonControlsEx(&icex);
-
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 
 		ID = CtrlID;
 
@@ -28,7 +26,7 @@ namespace swktool {
 			NULL);
 	}
 
-	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, Window* pParent) : 
+	DateTimePickerCtrl::DateTimePickerCtrl(UINT CtrlID, IWindow* pParent) : 
 		Ctrl(CtrlID, pParent) {
 
 	}

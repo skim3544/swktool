@@ -5,12 +5,11 @@
 
 
 namespace swktool {
-
+	class IWindow;
 	class AnimationCtrl : public Ctrl {
 	public:
-		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		AnimationCtrl(UINT CtrlID, Window* pParent);
-		AnimationCtrl(UINT CtrlID, DialogWindow* pParent);
+		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		AnimationCtrl(UINT CtrlID, IWindow* pParent);
 		~AnimationCtrl() { ; }
 
 		void Open(LPTSTR szName) {

@@ -155,8 +155,15 @@
 #define PROCDLG_WM_INITDIALOG(wParam, lParam, fn) \
     (LRESULT)(DWORD)(UINT)(BOOL)(fn)((HWND)(wParam), lParam)
 
+//#define PROCDLG_WM_INITDIALOG(wParam, lParam, fn) \
+//    (LRESULT)(fn)((HWND)(wParam), (LPARAM)(lParam))
+
+//#define PROCDLG_WM_COMMAND(wParam, lParam, fn) \
+//    ((fn)((WPARAM)(wParam), (LPARAM)(lParam)), 0L)
+
 #define PROCDLG_WM_COMMAND(wParam, lParam, fn) \
-    ((fn)((WPARAM)(wParam), (LPARAM)(lParam)), 0L)
+    (fn(LOWORD(wParam), HIWORD(wParam), (HWND)(lParam)), 0L)
+
 
 #define PROCDLG_WM_CLOSE(wParam, lParam, fn) \
     ((fn)(), 0L)

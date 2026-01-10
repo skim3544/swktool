@@ -78,7 +78,7 @@ namespace swktool {
 
 		// all the methods of getting device context object
 		static std::unique_ptr<DeviceContext> GetDC(HWND hWindow);
-		static std::unique_ptr<DeviceContext> GetDC(AWindow* pWindow);
+		static std::unique_ptr<DeviceContext> GetDC(IWindow* pWindow);
 		static std::unique_ptr<DeviceContext> GetDCEx(HWND  hWnd, HRGN  hrgnClip, DWORD flags);
 		//static std::unique_ptr<DeviceContext> GetDCEx(AWindow* pWindow, HRGN  hrgnClip, DWORD flags);
 		static std::unique_ptr<DeviceContext> GetWindowDC(HWND hWindow);
@@ -586,8 +586,7 @@ namespace swktool {
 			hDC = ::BeginPaint(hWndOwner, &ps);
 		}
 
-		PaintDeviceContext(Window* pWin);
-		PaintDeviceContext(DialogWindow* pWin);
+		PaintDeviceContext(IWindow* pWin);
 
 
 		~PaintDeviceContext() {

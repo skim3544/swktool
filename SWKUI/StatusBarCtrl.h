@@ -26,9 +26,8 @@ namespace swktool
 		std::unordered_map<int, std::unique_ptr<ProgressBarCtrl>> progressBars_;
 
 	public:
-		StatusBarCtrl(Window* pParent);
-		StatusBarCtrl(DialogWindow* pParent);
-		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);		
+		StatusBarCtrl(IWindow* pParent);		
+		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);		
 		~StatusBarCtrl() { ; }
 
 		// Must chain to Parent/Owner window's OnSize message

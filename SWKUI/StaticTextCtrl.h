@@ -9,9 +9,8 @@ namespace swktool {
 		const int STRING_BUF_SIZE = 255;
 
 	public:		
-		StaticTextCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		StaticTextCtrl(UINT CtrlID, Window* pParent);
-		StaticTextCtrl(UINT CtrlID, DialogWindow* pParent);
+		StaticTextCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		StaticTextCtrl(UINT CtrlID, IWindow* pParent);		
 		virtual ~StaticTextCtrl() { ; }
 	};
 }

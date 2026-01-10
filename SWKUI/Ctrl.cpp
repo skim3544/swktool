@@ -18,41 +18,42 @@
 
 
 namespace swktool {
-	Ctrl::Ctrl(Window* pParent) :
-		parentWindow(pParent), hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(-1) {
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
+	Ctrl::Ctrl(IWindow* pParent) :
+		parentWindow(pParent), hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(-1) 
+	{
+		if (pParent)
+		{
+			hParent = pParent->GetHwnd();
+			hInst = (HINSTANCE)GetWindowLongPtr(hParent, GWLP_HINSTANCE);
+		}
+		else
+		{
+			hParent = nullptr;
+			hInst = GetModuleHandle(nullptr);
+		}
 	}
 
-	//Ctrl::Ctrl(DialogWindow* pParent) :
-	//	hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(-1) {
-	//	hInst = pParent->GetInstance();
-	//	hParent = pParent->GetHwnd();
-	//}
 
-
-	Ctrl::Ctrl(UINT CtrlID, Window* pParent) :
+	Ctrl::Ctrl(UINT CtrlID, IWindow* pParent) :
 		hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(CtrlID) {
 
-		hInst = pParent->GetInstance();
 		hParent = pParent->GetHwnd();
+		hInst = (HINSTANCE)GetWindowLongPtr(hParent, GWLP_HINSTANCE);
 
 		hwndCtrl = GetDlgItem(hParent, CtrlID);
 
 		GetWindowRect(hwndCtrl, &Rect);
 	}
 
-	//Ctrl::Ctrl(UINT CtrlID, DialogWindow* pParent) :
-	//	hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(CtrlID) {
-
-	//	hInst = pParent->GetInstance();
-	//	hParent = pParent->GetHwnd();
-
-	//	hwndCtrl = GetDlgItem(hParent, CtrlID);
-
-	//	GetWindowRect(hwndCtrl, &Rect);
-
-	//}
+	Ctrl::Ctrl(HWND ExistingHandle, IWindow* pParent) :
+		hInst(nullptr),
+		hwndCtrl(ExistingHandle)
+	{
+		if (pParent)
+		{
+			hParent = pParent->GetHwnd();
+		}
+	}
 
 	void Ctrl::Enable() {
 		::EnableWindow(hwndCtrl, TRUE);

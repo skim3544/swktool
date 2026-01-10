@@ -3,13 +3,14 @@
 #include "Ctrl.h"
 
 
-namespace swktool {
+namespace swktool 
+{
+	class IWindow;
 	class UpDownCtrl : public Ctrl {
 
 	public:
-		UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID);
-		UpDownCtrl(UINT CtrlID, Window* pParent);
-		UpDownCtrl(UINT CtrlID, DialogWindow* pParent);
+		UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  IWindow* pParent, UINT CtrlID);
+		UpDownCtrl(UINT CtrlID, IWindow* pParent);
 		~UpDownCtrl() { ; }
 
 

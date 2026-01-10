@@ -3,7 +3,9 @@
 
 #include <list>
 #include <memory>
+#include <vector>
 
+#include "Theme.h"
 #include "Controls.h"
 
 
@@ -16,36 +18,44 @@ namespace swktool {
 	class ControlBinder
 	{
 	public:
-		typedef std::unique_ptr<Ctrl> TControlData;
-		typedef std::list<TControlData> TControlList;
-		typedef std::list<TControlData>::iterator TControlItr;
+		using TControlData = std::unique_ptr<Ctrl>;
+		using TControlList = std::vector<TControlData>;
+		using TControlItr = TControlList::iterator;
+		using TControlConstItr = TControlList::const_iterator;
+
 
 	private:
 		TControlList ControlList_;
 
 	public:
 		// Binds Dialog resource control with the control
-		template <class CtrlItem, class TParent = DialogWindow>
-		CtrlItem* Bind(UINT ID, TParent* pParent) {
-			std::unique_ptr<CtrlItem> data = std::make_unique<CtrlItem>(ID, pParent);
-			Ctrl* pData = dynamic_cast<Ctrl*>(data.get());
-			if (pData && pData->GetCtrlHandle() != NULL) {
-				ControlList_.push_back(std::move(data));
-			}
-			else 
-			{
-				pData = nullptr;
-			}
-			return dynamic_cast<CtrlItem*>(pData);
+		template <class CtrlItem, class TParent = IWindow>
+		CtrlItem* Bind(UINT ID, TParent* pParent) 
+		{
+			static_assert(std::is_base_of_v<Ctrl, CtrlItem>, "CtrlItem must derive from Ctrl");
+			static_assert(std::is_base_of_v<IWindow, TParent>, "TParent must derive from IWindow");
+
+			auto ctrl = std::make_unique<CtrlItem>(ID, pParent);
+			if (ctrl->GetCtrlHandle() == nullptr)
+				return nullptr;
+
+			CtrlItem* raw = ctrl.get(); 
+			ControlList_.push_back(std::move(ctrl)); 
+			return raw;
 		}
 
 		// Creates the Dialog Control dynamically
 		template <class TParent, class CtrlItem>
 		CtrlItem* Create(TParent* pParent, std::wstring Caption, DWORD dwStyle, int x, int y, int Height, int Width, UINT CtrlID)
 		{
+			static_assert(std::is_base_of_v<Ctrl, CtrlItem>, "CtrlItem must derive from Ctrl");
+			static_assert(std::is_base_of_v<IWindow, TParent>, "TParent must derive from IWindow");
+
 			std::unique_ptr<CtrlItem> data = std::make_unique<CtrlItem>(Caption, dwStyle, x, y, Height, Width, pParent, CtrlID);
+			CtrlItem* raw = data.get();
+
 			ControlList_.push_back(std::move(data));
-			return dynamic_cast<CtrlItem*>(ControlList_.rbegin()->get());
+			return raw;
 		}
 
 
@@ -58,22 +68,17 @@ namespace swktool {
 		/// <param name="ID"></param>
 		/// <returns></returns>
 		template <class CtrlItem>
-		CtrlItem* Get(UINT ID) {
+		CtrlItem* Get(UINT ID)
+		{
+			auto it = std::find_if(ControlList_.begin(), ControlList_.end(),
+				[ID](const auto& ctrl) { return ctrl->GetID() == ID; });
 
-			Ctrl* pData = nullptr;
-
-			// find it
-			TControlItr it = std::find_if(
-				ControlList_.begin(), ControlList_.end(), 
-				[&ID](const std::unique_ptr<Ctrl>& Data)
-				{ return (Data->GetID() == ID); });
-
-			// set the pointer to return if found
-			if (it != ControlList_.end())
-				pData = it->get();
-
-			return  dynamic_cast<CtrlItem*>(pData);
+			return (it != ControlList_.end())
+				? dynamic_cast<CtrlItem*>(it->get())
+				: nullptr;
 		}
+
+
 
 		/// <summary>
 		/// Gets the control pointer using the control hWnd
@@ -85,21 +90,76 @@ namespace swktool {
 		/// <returns></returns>
 		template <class CtrlItem>
 		CtrlItem* Get(HWND hWnd) {
+			auto it = std::find_if(ControlList_.begin(), ControlList_.end(),
+				[hWnd](const auto& ctrl) { return ctrl->GetCtrlHandle() == hWnd; });
 
-			Ctrl* pData = nullptr;
-
-			// find it
-			TControlItr it = std::find_if(
-				ControlList_.begin(), ControlList_.end(),
-				[&hWnd](const std::unique_ptr<Ctrl>& Data)
-				{ return (Data->GetCtrlHandle() == hWnd); });
-
-			// set the pointer to return if found
-			if (it != ControlList_.end())
-				pData = it->get();
-
-			return  dynamic_cast<CtrlItem*>(pData);
+			return (it != ControlList_.end())
+				? dynamic_cast<CtrlItem*>(it->get())
+				: nullptr;
 		}
+
+		// Remove by Control ID
+		bool Remove(UINT ID)
+		{
+			auto it = std::find_if(ControlList_.begin(), ControlList_.end(),
+				[ID](const auto& ctrl) { return ctrl->GetID() == ID; });
+
+			if (it != ControlList_.end())
+			{
+				ControlList_.erase(it);
+				return true;
+			}
+			return false;
+		}
+
+		// Remove by HWND
+		bool Remove(HWND hWnd)
+		{
+			auto it = std::find_if(ControlList_.begin(), ControlList_.end(),
+				[hWnd](const auto& ctrl) { return ctrl->GetCtrlHandle() == hWnd; });
+
+			if (it != ControlList_.end())
+			{
+				ControlList_.erase(it);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Returns collection of one specific type for group processing
+		/// Example:
+		/// 
+		/// for (auto edit : binder.GetAllOfType<EditCtrl>())
+		//		edit->SetText(L"");
+		/// </summary>
+		/// <typeparam name="CtrlItem"></typeparam>
+		/// <returns></returns>
+		template <class CtrlItem>
+		std::vector<CtrlItem*> GetAllOfType()
+		{
+			static_assert(std::is_base_of_v<Ctrl, CtrlItem>, "CtrlItem must derive from Ctrl");
+
+			std::vector<CtrlItem*> out;
+			for (auto& c : ControlList_)
+				if (auto casted = dynamic_cast<CtrlItem*>(c.get()))
+					out.push_back(casted);
+			return out;
+		}
+
+		/// <summary>
+		/// Go through all the list, set theme
+		/// </summary>
+		/// <param name="theme"></param>
+		void PropagateTheme(const Theme& theme)
+		{
+			for (auto& ctrl : ControlList_)
+				ctrl->ApplyTheme(theme);
+		}
+
+		auto begin() { return ControlList_.begin(); }
+		auto end() { return ControlList_.end(); }
+
 
 	};
 }

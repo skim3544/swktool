@@ -6,9 +6,10 @@ namespace swktool {
 		std::wstring Caption, 
 		DWORD Style, 
 		int x, int y, int Height, int Width, 
-		swktool::Window* pParent, UINT CtrlID) {
-		hInst = pParent->GetInstance();
+		swktool::IWindow* pParent, UINT CtrlID) 
+	{		
 		hParent = pParent->GetHwnd();
+		hInst = (HINSTANCE)GetWindowLongPtr(hParent, GWLP_HINSTANCE);
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindow(TEXT("EDIT"), (LPCWSTR)Caption.c_str(),
 			(DWORD)Style, x, y, Height, Width,
@@ -16,14 +17,8 @@ namespace swktool {
 	}
 
 
-	EditCtrl::EditCtrl(UINT CtrlID, Window* pParent) :
+	EditCtrl::EditCtrl(UINT CtrlID, IWindow* pParent) :
 		Ctrl(CtrlID, pParent)
 	{
 	}
-	//EditCtrl::EditCtrl(UINT CtrlID, DialogWindow* pParent) :
-	//	Ctrl(CtrlID, pParent)
-	//{
-	//}
-
-
 }

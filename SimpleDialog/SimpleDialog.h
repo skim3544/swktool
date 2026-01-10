@@ -1,7 +1,11 @@
 #pragma once
 
 #include "resource.h"
+#include "..\SWKUI\WindowHandlers.h"
+#include "..\SWKUI\WindowRegister.h"
 #include "..\SWKUI\DialogWindow.h"
+#include "..\SWKUI\Window.h"
+
 
 class MainWindow : public  swktool::Window 
 {

@@ -3,16 +3,14 @@
 #include "Ctrl.h"
 
 
-namespace swktool {
-
-	class HeaderCtrl : public Ctrl {
+namespace swktool 
+{
+	class HeaderCtrl : public Ctrl 
+	{
 	public:
-		HeaderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID);
-		HeaderCtrl(Window* pParent);
-		HeaderCtrl(DialogWindow* pParent);
-
-		HeaderCtrl(UINT CtrlID, Window* pParent);
-		HeaderCtrl(UINT CtrlID, DialogWindow* pParent);
+		HeaderCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, IWindow* pParent, UINT CtrlID);
+		HeaderCtrl(IWindow* pParent);
+		HeaderCtrl(UINT CtrlID, IWindow* pParent);
 		~HeaderCtrl() { ; }
 
 		virtual void OnSize(UINT state, int nWidth, int nHeight) override;
@@ -44,10 +42,8 @@ namespace swktool {
 			return result;
 		}
 
-
-
 	protected:
 		LRESULT DoInsertItem(HWND hwndHeader, int iInsertAfter,
-			int nWidth, LPTSTR lpsz);
+			int nWidth, LPCTSTR  lpsz);
 	};
 }

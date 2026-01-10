@@ -15,7 +15,8 @@
 #define IDC_DIALOGCONTROLS              109
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG1                     130
-#define IDD_TEST1                       130
+#define IDD_TEST1						130
+#define IDD_TEST1_DIALOG                130
 #define IDD_DIALOG2                     131
 #define IDD_TEST2                       131
 #define IDC_CHECK1                      1001

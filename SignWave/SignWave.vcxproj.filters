@@ -38,9 +38,6 @@
     <ClCompile Include="SignWave.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppSignWaveFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SignWaveWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

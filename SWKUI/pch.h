@@ -15,7 +15,6 @@
 #include "framework.h"
 #include "WinRegistration.h"
 #include "WinFrame.h"
-#include "Window.h"
 #include "MsgHandler.h"
 #include "CommonDialog.h"
 

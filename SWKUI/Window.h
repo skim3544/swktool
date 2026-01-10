@@ -2,6 +2,8 @@
 #define ___BASE_WINDOW_H___
 
 #include "targetver.h"
+#include "MsgHandler.h"
+
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
 #include <windows.h>
@@ -10,18 +12,15 @@
 #include "Drawing.h"
 #include "msg_filter.h"
 
-//#include "MDIFrameWindow.h"
-
-#include "MsgHandler.h"
 
 namespace swktool 
 {
 	LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	class Window :
-		public WindowHandlerBase
-		, public IWindowsRegister
-	{
+		  public WindowHandlerBase
+		, public IWindowsRegister		
+	{		
 	public:
 		// called right before register to be able to change the registration information
 		virtual void   PreRegisterWindow(WindowRegisterClass& wc) { ; }
@@ -143,8 +142,20 @@ namespace swktool
 		//
 		LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override
 		{
-			return DefWindowProc(GetHwnd(), msg, wParam, lParam);
+			return WindowHandlerBase::OnMessage(msg, wParam, lParam);
 		}
+
+		void ApplyTheme(const Theme& theme)
+		{
+			currentTheme_ = theme;
+
+			// Repaint window background
+			InvalidateRect(GetHwnd(), nullptr, TRUE);
+
+			// Propagate to all controls
+			binder_->PropagateTheme(theme);
+		}
+
 	};
 
 	class CaptionFadeWindow : public swktool::Window

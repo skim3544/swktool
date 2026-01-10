@@ -134,9 +134,9 @@ namespace swktool
 			handler->SetHwnd(hwnd);
 			WindowHandlerRegistry::Instance().RegisterHandler(hwnd, handler);
 			
-			handler->OnInitDialog(wParam, lParam);
+			handler->OnInitDialog((HWND)wParam, lParam);
 			
-			return handler->OnInitDialog(wParam, lParam);
+			return TRUE;
 		}
 
 		// Lookup handler for all other messages 

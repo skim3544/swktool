@@ -5,7 +5,7 @@
 
 
 namespace swktool {
-	StatusBarCtrl::StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) :
+	StatusBarCtrl::StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
 		INITCOMMONCONTROLSEX iccx{};
@@ -29,7 +29,7 @@ namespace swktool {
 		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
-	StatusBarCtrl::StatusBarCtrl(Window* pParent) : Ctrl(pParent) {
+	StatusBarCtrl::StatusBarCtrl(IWindow* pParent) : Ctrl(pParent) {
 		INITCOMMONCONTROLSEX iccx{};
 		iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		iccx.dwICC = ICC_BAR_CLASSES;

@@ -4,13 +4,14 @@
 #include "Ctrl.h"
 
 
-namespace swktool {	
+namespace swktool 
+{	
 
-	//class RebarCtrl : public Ctrl {
-	//public:
-	//	//RebarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-	//	RebarCtrl(Window* pParent);
-	//	RebarCtrl(DialogWindow* pParent);
-	//	~RebarCtrl() { ; }
-	//};
+	class RebarCtrl : public Ctrl {
+	public:
+		RebarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		RebarCtrl(IWindow* pParent);
+		//RebarCtrl(DialogWindow* pParent);
+		~RebarCtrl() { ; }
+	};
 }

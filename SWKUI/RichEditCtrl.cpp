@@ -1,14 +1,16 @@
 #include "pch.h"
 #include <Richedit.h>
 #include "RichEditCtrl.h"
+#include "WindowInterfaces.h"
 
-namespace swktool {
-	RichEditCtrl::RichEditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID)
+namespace swktool
+{
+	RichEditCtrl::RichEditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) : 
+		Ctrl(pParent) 
 	{
 		::LoadLibrary(TEXT("Msftedit.dll"));
 
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
+
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			MSFTEDIT_CLASS, (LPCWSTR)Caption.c_str(),
@@ -18,12 +20,10 @@ namespace swktool {
 	}
 
 
-	RichEditCtrl::RichEditCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	RichEditCtrl::RichEditCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) 
+	{
 
 	}
 
-	//RichEditCtrl::RichEditCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-
-	//}
 
 }

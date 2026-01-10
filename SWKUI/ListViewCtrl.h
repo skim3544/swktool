@@ -10,9 +10,8 @@ namespace swktool {
 
 	class ListViewCtrl : public Ctrl {
 	public:
-		ListViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID);
-		ListViewCtrl(UINT CtrlID, Window* pParent);
-        ListViewCtrl(UINT CtrlID, DialogWindow* pParent);
+		ListViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  IWindow* pParent, UINT CtrlID);
+		ListViewCtrl(UINT CtrlID, IWindow* pParent);
 		~ListViewCtrl() { ; }
 
         void SetView(DWORD dwView)

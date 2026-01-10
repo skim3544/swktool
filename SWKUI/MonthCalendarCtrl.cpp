@@ -2,7 +2,8 @@
 #include "MonthCalendarCtrl.h"
 
 namespace swktool {
-	MonthCalendarCtrl::MonthCalendarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID)
+	MonthCalendarCtrl::MonthCalendarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, IWindow* pParent, UINT CtrlID) :
+		Ctrl(pParent)
 	{
 		INITCOMMONCONTROLSEX icex{};
 
@@ -11,8 +12,6 @@ namespace swktool {
 
 		InitCommonControlsEx(&icex);
 
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			MONTHCAL_CLASS, (LPCWSTR)Caption.c_str(),
@@ -21,7 +20,7 @@ namespace swktool {
 	}
 
 
-	MonthCalendarCtrl::MonthCalendarCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	MonthCalendarCtrl::MonthCalendarCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 

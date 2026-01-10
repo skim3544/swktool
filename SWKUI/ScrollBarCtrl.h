@@ -2,14 +2,13 @@
 
 #include "Ctrl.h"
 
-
+class IWindow;
 namespace swktool {	
 
 	class ScrollBarCtrl : public Ctrl {
 	public:
-		ScrollBarCtrl(DWORD Style, Window* pParent);
-		ScrollBarCtrl(UINT CtrlID, Window* pParent);
-		ScrollBarCtrl(UINT CtrlID, DialogWindow* pParent);
+		ScrollBarCtrl(DWORD Style, IWindow* pParent);
+		ScrollBarCtrl(UINT CtrlID, IWindow* pParent);		
 		~ScrollBarCtrl() { ; }
 	};
 
@@ -18,7 +17,7 @@ namespace swktool {
 		int BarHeight_;
 
 	public:
-		HScrollBarCtrl(Window* pParent, int sbHeight = SM_CXHSCROLL);
+		HScrollBarCtrl(IWindow* pParent, int sbHeight = SM_CXHSCROLL);
 		virtual void OnSize(UINT state, int nWidth, int nHeight);
 	};
 
@@ -26,7 +25,7 @@ namespace swktool {
 		int BarWidth_;
 
 	public:
-		VScrollBarCtrl(Window* pParent, int sbWidth = SM_CXVSCROLL);
+		VScrollBarCtrl(IWindow* pParent, int sbWidth = SM_CXVSCROLL);
 		virtual void OnSize(UINT state, int nWidth, int nHeight);
 	};
 

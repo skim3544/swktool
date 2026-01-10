@@ -53,11 +53,10 @@ namespace swktool {
 		return std::make_unique<DeviceContext>(hWindow, hDC, DC_CLEAN_METHOD::Release);
 	}
 
-	//std::unique_ptr<DeviceContext> DeviceContext::GetDC(AWindow* pWindow) {
-	//	HWND hWindow = pWindow->GetWindowHWND();
-
-	//	return DeviceContext::GetDC(hWindow);
-	//}
+	std::unique_ptr<DeviceContext> DeviceContext::GetDC(IWindow* pWindow) {
+		HWND hWindow = pWindow->GetHwnd();
+		return DeviceContext::GetDC(hWindow);
+	}
 
 	std::unique_ptr<DeviceContext> DeviceContext::GetWindowDC(HWND hWindow)
 	{
@@ -313,19 +312,13 @@ namespace swktool {
 
 
 
-	PaintDeviceContext::PaintDeviceContext(Window* pWin) :		
+	PaintDeviceContext::PaintDeviceContext(IWindow* pWin) :		
 		DeviceContext(pWin ? pWin->GetHwnd() : nullptr, nullptr, DC_CLEAN_METHOD::None)
 	{
 		assert(pWin != nullptr);
 		hDC = ::BeginPaint(hWndOwner, &ps);
 	}
 
-	PaintDeviceContext::PaintDeviceContext(DialogWindow* pWin) :
-		DeviceContext(pWin ? pWin->GetHwnd() : nullptr, nullptr, DC_CLEAN_METHOD::None)
-	{
-		assert(pWin != nullptr);
-		hDC = ::BeginPaint(hWndOwner, &ps);
-	}
 
 
 

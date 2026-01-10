@@ -32,12 +32,15 @@
     <ClInclude Include="MDIChildWindow.h" />
     <ClInclude Include="MDIFrameWindow.h" />
     <ClInclude Include="MonthCalendarCtrl.h" />
+    <ClInclude Include="MsgLoop.h" />
+    <ClInclude Include="MsgProcs.h" />
     <ClInclude Include="PagerCtrl.h" />
     <ClInclude Include="RebarCtrl.h" />
     <ClInclude Include="RichEditCtrl.h" />
     <ClInclude Include="ScrollBarCtrl.h" />
     <ClInclude Include="SysLinkCtrl.h" />
     <ClInclude Include="TabCtrl.h" />
+    <ClInclude Include="Theme.h" />
     <ClInclude Include="ToolbarCtrl.h" />
     <ClInclude Include="TooltipCtrl.h" />
     <ClInclude Include="TreeViewCtrl.h" />
@@ -68,12 +71,16 @@
     <ClInclude Include="UpDownCtrl.h" />
     <ClInclude Include="WinAccelerator.h" />
     <ClInclude Include="WinClipboard.h" />
+    <ClInclude Include="WindowInterfaces.h" />
+    <ClInclude Include="WindowRegister.h" />
+    <ClInclude Include="WindowHandlers.h" />
+    <ClInclude Include="WindowRegistry.h" />
     <ClInclude Include="WinFile.h" />
     <ClInclude Include="WinFrame.h" />
+    <ClInclude Include="WinHandle.h" />
     <ClInclude Include="WinMenu.h" />
     <ClInclude Include="WinRegistration.h" />
     <ClInclude Include="WinKernel.h" />
-    <ClInclude Include="WinEventHandler.h" />
     <ClInclude Include="WinMemory.h" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +100,7 @@
       <FileType>CppCode</FileType>
     </ClInclude>
     <ClCompile Include="MsgHandler.cpp" />
+    <ClCompile Include="RebarCtrl.cpp" />
     <ClCompile Include="RichEditCtrl.cpp" />
     <ClCompile Include="ScrollBarCtrl.cpp" />
     <ClCompile Include="StatusBarCtrl.cpp" />
@@ -123,10 +131,10 @@
     <ClCompile Include="SWKUI.cpp" />
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="WinClipboard.cpp" />
+    <ClCompile Include="WindowHandlers.cpp" />
     <ClCompile Include="WinFrame.cpp" />
     <ClCompile Include="WinMemory.cpp" />
     <ClCompile Include="WinRegistration.cpp" />
-    <ClCompile Include="WinEventHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
@@ -203,6 +211,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -220,6 +229,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>

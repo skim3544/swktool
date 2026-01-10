@@ -4,10 +4,12 @@
 #include <Windows.h>
 #include <windowsx.h>
 #include <string>
+#include "Theme.h"
 
 
-
-namespace swktool {	
+namespace swktool 
+{	
+	class IWindow;
 
 	class Ctrl 
 	{
@@ -24,25 +26,14 @@ namespace swktool {
 
 		RECT Rect = { };
 
-		Window* parentWindow = nullptr;
+		IWindow* parentWindow = nullptr;
 
 	public:
 		Ctrl() = default;
-		Ctrl(Window* pParent);
-		Ctrl(UINT CtrlID, Window* pParent);
-
-		//Ctrl(UINT CtrlID, HINSTANCE h, HWND hDialog, HWND hControl) :
-		//	hInst(h), hwndCtrl(hControl), hParent(hDialog), ID(CtrlID) {
-		//	;
-
-		//	GetWindowRect(hwndCtrl, &Rect);
-		//}
-		//Ctrl(HWND hwnd) : 
-		//	hInst(nullptr), hwndCtrl(hwnd), hParent(nullptr), ID(-1) { ; }				
-		//Ctrl(DialogWindow* pParent);
-		
-		
-		virtual ~Ctrl() { ; }
+		Ctrl(IWindow* pParent);
+		Ctrl(UINT CtrlID, IWindow* pParent);
+		Ctrl(HWND ExistingHandle, IWindow* pParent);
+		virtual ~Ctrl() = default;
 
 		HWND GetCtrlHandle() const {
 			return hwndCtrl;
@@ -111,6 +102,7 @@ namespace swktool {
 		}
 
 		virtual void OnSize(UINT state, int nWidth, int nHeight) {}
+		virtual void ApplyTheme(const Theme& theme) {};
 	};
 }
 

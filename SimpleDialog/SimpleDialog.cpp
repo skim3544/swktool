@@ -1,4 +1,8 @@
 #include "framework.h"
+
+#include "..\SWKUI\WindowHandlers.h"
+#include "..\SWKUI\WindowRegister.h"
+
 #include "..\SWKUI\MsgHandler.h"
 #include "..\SWKUI\msg_filter.h"
 #include "..\SWKUI\Window.h"
@@ -30,14 +34,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UpdateWindow(win.GetHwnd());
 
     // Run the message loop.
-
-    MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return 0;
+    swktool::AppMsgLoop MsgLoop;
+    return MsgLoop.Run();
 }
 

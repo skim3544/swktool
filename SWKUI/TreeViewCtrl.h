@@ -5,13 +5,13 @@
 
 namespace swktool {
 	class ImageList;
-
-	class TreeViewCtrl : public Ctrl {
+	class IWindow;
+	class TreeViewCtrl : public Ctrl 
+	{
 
 	public:
-		TreeViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		TreeViewCtrl(UINT CtrlID, Window* pParent);
-		TreeViewCtrl(UINT CtrlID, DialogWindow* pParent);
+		TreeViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		TreeViewCtrl(UINT CtrlID, IWindow* pParent);
 		~TreeViewCtrl() { ; }
 
 		BOOL GetCheckState(HTREEITEM hItem);
@@ -42,7 +42,7 @@ namespace swktool {
 		BOOL GetISearchString(LPCTSTR pstr);
 		BOOL GetItem(LPTVITEM pitem);
 		int GetItemHeight();
-		BOOL GetItemPartRect(HTREEITEM hitem, RECT* prc);
+		//BOOL GetItemPartRect(HTREEITEM hitem, RECT* prc);
 
 		BOOL GetItemRect(HTREEITEM hitem, LPRECT prc, BOOL code);
 		UINT GetItemState(HTREEITEM hti, UINT mask);

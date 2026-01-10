@@ -5,9 +5,7 @@
 #include "ImageList.h"
 
 namespace swktool {
-	TreeViewCtrl::TreeViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
+	TreeViewCtrl::TreeViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) : Ctrl(pParent){
 
 
 		// Ensure that the common control DLL is loaded. 
@@ -19,7 +17,7 @@ namespace swktool {
 			Style, x, y, Height, Width,
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
-	TreeViewCtrl::TreeViewCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	TreeViewCtrl::TreeViewCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
 

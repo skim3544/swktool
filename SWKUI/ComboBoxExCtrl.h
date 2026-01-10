@@ -4,13 +4,13 @@
 
 namespace swktool {	
 
+	class IWindow;
 	class ComboboxExCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
 
 	public:
-		ComboboxExCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID);
-		ComboboxExCtrl(UINT CtrlID, Window* pParent);
-		ComboboxExCtrl(UINT CtrlID, DialogWindow* pParent);
+		ComboboxExCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		ComboboxExCtrl(UINT CtrlID, IWindow* pParent);
 		~ComboboxExCtrl() { ; }
 
 		std::wstring GetText() {

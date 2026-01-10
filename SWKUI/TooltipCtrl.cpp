@@ -3,16 +3,14 @@
 #include "TooltipCtrl.h"
 
 namespace swktool {
-	TooltipCtrl::TooltipCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
+	TooltipCtrl::TooltipCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) : Ctrl(pParent)
+	{
 		INITCOMMONCONTROLSEX icex;
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_BAR_CLASSES;
 
 		InitCommonControlsEx(&icex);
-
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
@@ -23,16 +21,15 @@ namespace swktool {
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 
 	}
-	TooltipCtrl::TooltipCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	TooltipCtrl::TooltipCtrl(UINT CtrlID, IWindow* pParent) : 
+		Ctrl(CtrlID, pParent) 
+	{
 		INITCOMMONCONTROLSEX icex;
 
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_BAR_CLASSES;
 
 		InitCommonControlsEx(&icex);
-
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 
 		hwndCtrl = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,

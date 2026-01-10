@@ -2,9 +2,8 @@
 #include "ComboboxExCtrl.h"
 
 namespace swktool {
-	ComboboxExCtrl::ComboboxExCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, Window* pParent, UINT CtrlID) {
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
+	ComboboxExCtrl::ComboboxExCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) : Ctrl(pParent) 
+	{
 		ID = CtrlID;
 
 		INITCOMMONCONTROLSEX icex{};
@@ -20,7 +19,7 @@ namespace swktool {
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
 
-	ComboboxExCtrl::ComboboxExCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	ComboboxExCtrl::ComboboxExCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
 	}
 
 	//ComboboxExCtrl::ComboboxExCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {

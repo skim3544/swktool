@@ -2,7 +2,8 @@
 #include "ListViewCtrl.h"
 
 namespace swktool {
-	ListViewCtrl::ListViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, Window* pParent, UINT CtrlID)
+	ListViewCtrl::ListViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height, IWindow* pParent, UINT CtrlID) :
+		Ctrl(pParent)
 	{
 		INITCOMMONCONTROLSEX icex{};
 
@@ -11,8 +12,6 @@ namespace swktool {
 
 		InitCommonControlsEx(&icex);
 
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
 		ID = CtrlID;
 		hwndCtrl = ::CreateWindowEx(0,
 			WC_LISTVIEW, (LPCWSTR)Caption.c_str(),
@@ -22,13 +21,9 @@ namespace swktool {
 	}
 
 
-	ListViewCtrl::ListViewCtrl(UINT CtrlID, Window* pParent) : Ctrl(CtrlID, pParent) {
+	ListViewCtrl::ListViewCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
 
 	}
-
-	//ListViewCtrl::ListViewCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-
-	//}
 
 
 }

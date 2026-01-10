@@ -10,7 +10,8 @@
 class swktool::Window;
 class swktool::ButtonCtrl;
 
-class Test1Dlg : public swktool::DialogWindow {
+class Test1Dlg : public swktool::DialogWindow 
+{
 	swktool::ControlBinder binder_;
 
 	swktool::StaticTextCtrl* pStaticText_;
@@ -21,14 +22,14 @@ class Test1Dlg : public swktool::DialogWindow {
 	swktool::RadioCtrl* Radio2;
 
 public:
-	Test1Dlg(UINT ID, swktool::Window* pParent) :
-		DialogWindow(ID, pParent) {
+	Test1Dlg(UINT ID, swktool::IWindow* pParent) :
+		DialogWindow(ID, pParent) 
+	{
 
 	}
 
-	virtual INT_PTR OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam) override {
-		swktool::DialogWindow::OnInitDialog(hwndFocusedCtrl, lParam);
-
+	virtual INT_PTR OnInitDialog(HWND hwndFocusedCtrl, LPARAM lParam) override 
+	{
 		// change the static text prompt
 		pStaticText_ = binder_.Bind<swktool::StaticTextCtrl>(IDC_STATIC1, this);
 		pStaticText_->SetText(TEXT("Please enter your name:"));

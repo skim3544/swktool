@@ -10,8 +10,7 @@
 #include <memory>
 #include <mutex>
 
-#include "Window.h"
-#include "DialogWindow.h"
+#include "MsgHandler.h"
 
 //#include "ModelessDialogWindow.h"
 //#include "WinFrame.h"

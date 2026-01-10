@@ -1,4 +1,8 @@
+
+#include <Windows.h>
+
 //#include "framework.h"
+
 #include "..\SWKUI\MsgHandler.h"
 //#include "..\SWKUI\msg_filter.h"
 #include "..\SWKUI\Window.h"
@@ -6,23 +10,24 @@
 //#include "..\SWKUI\DialogWindow.h"
 //#include "..\SWKBase\DebugStream.h"
 #include "..\SWKUI\StatusBarCtrl.h"
-//#include "..\SWKUI\HeaderCtrl.h"
-//#include "..\SWKUI\RebarCtrl.h"
+#include "..\SWKUI\HeaderCtrl.h"
+#include "..\SWKUI\RebarCtrl.h"
 #include "..\SWKUI\ScrollBarCtrl.h"
 //
 //
 #include "Resource.h"
 //
-//#include "Test1Dlg.h"
-//#include "Test2Dlg.h"
+#include "Test1Dlg.h"
+#include "Test2Dlg.h"
 //
 //
-class MainWindow : public  swktool::Window 
+class MainWindow : 
+    public swktool::Window 
 {
 protected:
     std::unique_ptr<swktool::StatusBarCtrl> StatusBar_;
-//    std::unique_ptr<swktool::HeaderCtrl> HeaderCtrl_;
-//    //std::unique_ptr<swktool::RebarCtrl> RebarCtrl_;
+    std::unique_ptr<swktool::HeaderCtrl> HeaderCtrl_;
+    std::unique_ptr<swktool::RebarCtrl> RebarCtrl_;
     //std::unique_ptr<swktool::HScrollBarCtrl> HScrollBar_;
 //    
 public:
@@ -33,7 +38,7 @@ public:
     void PreRegisterWindow(WindowRegisterClass& wc) override 
     {
         wc.style = CS_HREDRAW | CS_VREDRAW;
-        wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+        wc.hbrBackground = (HBRUSH)(COLOR_WINDOW  + 1);
         wc.hInstance = ::GetModuleHandle(NULL);
         wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_DIALOGCONTROLS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
@@ -47,34 +52,49 @@ public:
     {
         // status bar
         StatusBar_ = std::make_unique<swktool::StatusBarCtrl>(TEXT("Status"), 0, 0, 0, 0, 0, this, 0);
-        int iRightEdge[] = {500, 300, -1};
-        StatusBar_->SetParts(iRightEdge, _countof(iRightEdge));
-        StatusBar_->SetText(TEXT("Hello World"));
+        if (StatusBar_)
+        {
+            int iRightEdge[] = {500, 300, -1};
+            StatusBar_->SetParts(iRightEdge, _countof(iRightEdge));
+            StatusBar_->SetText(TEXT("Hello World"));
 
-        //StatusBar_->SetStatusText(2, TEXT("Hello World2"));
-        auto bar = StatusBar_->AddProgressBarToPart(2);
-        bar->SetRange(0, 100);
-        bar->SetPosition(0);
+            StatusBar_->SetStatusText(2, TEXT("Hello World2"));
+            auto bar = StatusBar_->AddProgressBarToPart(2);
+            bar->SetRange(0, 100);
+            bar->SetPosition(0);
+        }
 
-//        //RebarCtrl_ = std::make_unique<swktool::RebarCtrl>(this);
+        RebarCtrl_ = std::make_unique<swktool::RebarCtrl>(this);
+        RebarCtrl_->Show();
 //
 //        HScrollBar_ = std::make_unique<swktool::HScrollBarCtrl>(this);
 //
 //        //// Add header control with 2 header labels
-//        HeaderCtrl_ = std::make_unique<swktool::HeaderCtrl>(this);
-//        HeaderCtrl_->InsertItem(0, 300, (WCHAR*)L"Test1");
-//        HeaderCtrl_->InsertItem(1, 300, (WCHAR*)L"Test2");
-//
+        HeaderCtrl_ = std::make_unique<swktool::HeaderCtrl>(this);
+        HeaderCtrl_->InsertItem(0, 300, (WCHAR*)L"Test1");
+        HeaderCtrl_->InsertItem(1, 600, (WCHAR*)L"Test2");
+        HeaderCtrl_->Show();
+
+
         return TRUE;
     }
 //
     virtual LRESULT OnSize(UINT state, int nWidth, int nHeight) 
     {
-        StatusBar_->OnSize(state, nWidth, nHeight);
-//        HeaderCtrl_->OnSize(state, nWidth, nHeight);
+        if (StatusBar_)
+        {
+            StatusBar_->OnSize(state, nWidth, nHeight);
+        }
+
+        if (HeaderCtrl_)
+        {
+            HeaderCtrl_->MoveWindow(0, 0, nWidth, 25);
+        }
         //HScrollBar_->OnSize(state, nWidth, nHeight);
-//
-//        //RebarCtrl_->OnSize(state, nWidth, nHeight);    
+
+        if (RebarCtrl_)
+            RebarCtrl_->MoveWindow(0, 0, nWidth, 25);
+
         return 0;
     }
 //
@@ -155,9 +175,29 @@ public:
         case IDM_EXIT:
             StatusBar_->SetText(TEXT("Exit..."));
             OnClose();
+            break;
+
+        case IDM_FILE_TEST1:
+            StatusBar_->SetText(TEXT("Dialog Test 1"));
+            {
+                ShowTest1Dialog();
+            }
+            StatusBar_->SetText(TEXT(""));
+            break;
+
+        default:
+            return WindowHandlerBase::OnCommand(id, code,control);
         }
         return 0; 
     }
+
+    void ShowTest1Dialog()
+    {
+        Test1Dlg dlg(IDD_TEST1, this);  // parent is IWindow*
+
+        auto val = dlg.ShowDialog();   // clean, simple, and consistent
+    }
+
 };
 
 
@@ -166,6 +206,8 @@ public:
 //
 
 
+#pragma comment(lib, "SWKBase.lib")
+#pragma comment(lib, "SWKUI.lib")
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,

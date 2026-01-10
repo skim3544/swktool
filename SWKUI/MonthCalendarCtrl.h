@@ -4,12 +4,11 @@
 
 
 namespace swktool {	
-
+	class IWindow;
 	class MonthCalendarCtrl : public Ctrl {
 	public:
-		MonthCalendarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  Window* pParent, UINT CtrlID);
-		MonthCalendarCtrl(UINT CtrlID, Window* pParent);
-		MonthCalendarCtrl(UINT CtrlID, DialogWindow* pParent);
+		MonthCalendarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  IWindow* pParent, UINT CtrlID);
+		MonthCalendarCtrl(UINT CtrlID, IWindow* pParent);		
 		~MonthCalendarCtrl() { ; }
 
 		RECT GetMinReqRect() const {

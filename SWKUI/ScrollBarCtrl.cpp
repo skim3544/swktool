@@ -3,16 +3,13 @@
 
 namespace swktool {
 
-	ScrollBarCtrl::ScrollBarCtrl(DWORD Style, Window* pParent) 
+	ScrollBarCtrl::ScrollBarCtrl(DWORD Style, IWindow* pParent) : Ctrl(pParent)
 	{
-		hInst = pParent->GetInstance();
-		hParent = pParent->GetHwnd();
-
 		Style = Style | WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL;
 
 		hwndCtrl = ::CreateWindowEx(0,
-//				TEXT("SCROLLBAR"), 
-			(LPCWSTR)pParent->ClassName(),
+				TEXT("SCROLLBAR"), 
+//			(LPCWSTR)pParent->ClassName(),
 			L"Text",
 				Style, 
 			CW_USEDEFAULT,         // default horizontal position 
@@ -40,7 +37,7 @@ namespace swktool {
 		UpdateWindow(hwndCtrl);
 	}
 
-	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, Window* pParent) : 
+	ScrollBarCtrl::ScrollBarCtrl(UINT CtrlID, IWindow* pParent) : 
 		Ctrl(CtrlID, pParent) 
 	{
 
@@ -52,7 +49,7 @@ namespace swktool {
 
 	//}
 
-	HScrollBarCtrl::HScrollBarCtrl(Window* pParent, int sbHeight) :
+	HScrollBarCtrl::HScrollBarCtrl(IWindow* pParent, int sbHeight) :
 		Ctrl( pParent),
 		BarHeight_(sbHeight)
 	{
@@ -90,7 +87,7 @@ namespace swktool {
 		UpdateWindow(hwndCtrl);
 	}
 
-	VScrollBarCtrl::VScrollBarCtrl(Window* pParent, int sbWidth) :
+	VScrollBarCtrl::VScrollBarCtrl(IWindow* pParent, int sbWidth) :
 		Ctrl(pParent), BarWidth_(sbWidth)
 	{
 		RECT rect;
