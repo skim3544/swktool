@@ -4,13 +4,14 @@
 #include <string>
 #include "Logger.h"
 
-namespace swktool {
+namespace swktool 
+{
 
     /// <summary>
     ///  Exception crash handler
     ///  based on https://www.codeproject.com/Articles/207464/Exception-Handling-in-Visual-Cplusplus
     /// </summary>
-    class CCrashHandler32
+    class CCrashHandler
     {
         static ILogger*  pLogger;    
         static MINIDUMP_TYPE    MemDumpType_;
@@ -18,13 +19,17 @@ namespace swktool {
 
     public:
         // Destructor
-        virtual ~CCrashHandler32() { ; }
+        virtual ~CCrashHandler() { ; }
 
         void Configure(bool bDumpMemoryOnCrash, MINIDUMP_TYPE oType = MiniDumpNormal) {
             DumpMemory_ = bDumpMemoryOnCrash;
             MemDumpType_ = oType;
         }
 
+        static void EnableMemoryDumpFile(bool bDumpMemoryOnCrash) 
+        {
+            DumpMemory_ = bDumpMemoryOnCrash;
+        }
         // Sets exception handlers that work on per-process basis
         static void SetProcessExceptionHandlers();
 
@@ -35,10 +40,11 @@ namespace swktool {
             pLogger = Logger;
         }
 
-        // Collects current process state.
-        static void GetExceptionPointers(
-            DWORD dwExceptionCode,
-            EXCEPTION_POINTERS** pExceptionPointers);
+        static void GetExceptionPointers(DWORD code, EXCEPTION_POINTERS& out);
+        //// Collects current process state.
+        //static void GetExceptionPointers(
+        //    DWORD dwExceptionCode,
+        //    EXCEPTION_POINTERS** pExceptionPointers);
 
         static void CreateLog(EXCEPTION_POINTERS* pExcPtrs);
 
@@ -73,6 +79,37 @@ namespace swktool {
         static std::string GetExceptionDesc(DWORD Code);
 
     protected:
+        static void HandleCrash(unsigned code, EXCEPTION_POINTERS* ep);
         static void WalkStack(struct _EXCEPTION_POINTERS* ep);
     };
+
+    /// <summary>
+    /// RAII version of process-handler hook
+    /// </summary>
+    struct CrashHandlerProcessScope 
+    {
+        CrashHandlerProcessScope(bool bCreateDunpFile = TRUE) 
+        {
+            CCrashHandler::EnableMemoryDumpFile(bCreateDunpFile);
+            CCrashHandler::SetProcessExceptionHandlers();
+        }
+    };
+
+
+    /// <summary>
+    /// RAII version of thread-handler hook
+    /// Every new thread created should start with this object
+    /// </summary>
+    struct CrashHandlerScope 
+    {
+        CrashHandlerScope() {
+            CCrashHandler::SetThreadExceptionHandlers();
+        }
+
+        // Nothing special to clean up — handlers stay installed
+        ~CrashHandlerScope() = default;
+    };
+
+
+
 }

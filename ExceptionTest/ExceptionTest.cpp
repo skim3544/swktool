@@ -2,20 +2,34 @@
 //
 
 #include <iostream>
+
 #include "../SWKBase/Exception.h"
 #include "../SWKBase/Logger.h"
 #include "../SWKBase/IOC.h"
-
-
-int RetZero() {
-    return 0;
-}
-
-
-swktool::IOCContainer& GetDI() {
+#include "../SWKBase/TraceBuffer.h"
+#include "../SWKBase/TraceMacros.h"
+ 
+swktool::IOCContainer& GetIOC() 
+{
     static swktool::IOCContainer oIOC;
     return oIOC;
 }
+
+void foo1()
+{
+    TRACE_SCOPE();
+    
+    TRACE("Setting pointer to nullptr");
+    int* p = nullptr;
+    
+    *p = 123; // Access violation
+}
+
+void SuccessfulCall()
+{
+    TRACE_SCOPE();    
+}
+
 
 void foo()
 {
@@ -37,37 +51,23 @@ void foo()
 
 int main()
 {
+    TRACE_SCOPE();
     using namespace swktool;
 
-    GetDI().Register<ILogger, Logger>(object_type::Singleton);
+    CrashHandlerProcessScope scope_hook;
+    CrashHandlerScope thread_hook;
 
-    auto* pLogger = GetDI().Resolve<ILogger, Logger>();
+    GetIOC().Register<ILogger, Logger>(object_type::Singleton);
+
+    auto* pLogger = GetIOC().ResolveRaw<ILogger>();
     pLogger->init(TEXT("Exception.log"));
     pLogger->Register("Exception", LogLevel::STATUS);
-
-    CCrashHandler32::SetLogger(pLogger);
+    CCrashHandler::SetLogger(pLogger);
     
-    CCrashHandler32::SetProcessExceptionHandlers();
-    CCrashHandler32::SetThreadExceptionHandlers();
+    pLogger->Log(swktool::LogLevel::STATUS, "STARTING");
+    SuccessfulCall();
 
-
-    __try {
-        foo();
- /*       char C;
-        char* ptr = &C;
-        *ptr = 'A';
-        *(ptr + 4096) = 'C';
-
-        int value = 1000;
-        int value2 = value / RetZero();
-        std::cout << "Hello World!\n";*/
-    }
-    __except (swktool::CCrashHandler32::seh_filter(GetExceptionCode(), GetExceptionInformation()))
-    {
-         ExitProcess(1);
-    }
-
-
+    foo1();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

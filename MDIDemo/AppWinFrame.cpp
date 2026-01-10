@@ -1,6 +1,6 @@
 #include "AppWinFrame.h"
-#include "TestMDIFrameWindow.h"
-#include "..\SWKBase\Logger.h"
+//#include "TestMDIFrameWindow.h"
+//#include "..\SWKBase\Logger.h"
 
 //
 //std::shared_ptr<swktool::Window> AppWindowFrame::CreateWin(LPCWSTR WinClassName, LPCWSTR WinTitle, HMENU hMDIMenu, int nCmdShow)

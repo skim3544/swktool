@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -156,9 +157,12 @@
   <ItemGroup>
     <ClInclude Include="DebugStream.h" />
     <ClInclude Include="Exception.h" />
+    <ClInclude Include="FileStreamBuf.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IOC.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="LoggerStream.h" />
+    <ClInclude Include="OpenOptions.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ResourceMan.h" />
     <ClInclude Include="TBuffer.h" />
@@ -167,12 +171,18 @@
     <ClInclude Include="TCPFactory.h" />
     <ClInclude Include="TCPServer.h" />
     <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="TraceBuffer.h" />
+    <ClInclude Include="TraceMacros.h" />
+    <ClInclude Include="WinFile.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DebugStream.cpp" />
     <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="FileStreamBuf.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="LoggerStream.cpp" />
+    <ClCompile Include="OpenOptions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -182,6 +192,7 @@
     <ClCompile Include="TCPClient.cpp" />
     <ClCompile Include="TCPComm.cpp" />
     <ClCompile Include="TCPServer.cpp" />
+    <ClCompile Include="WinFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

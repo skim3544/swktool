@@ -1,6 +1,8 @@
 #ifndef ___MSG__CRACKER_H___
 #define ___MSG__CRACKER_H___
 
+#pragma once
+
 // Windows Message Cracker
 //  Based on Windowsx.h message cracker, minus the HWND parameter
 //  Modified to pass wParam to OnCommand

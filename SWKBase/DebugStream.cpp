@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "DebugStream.h"
 
-namespace swktool {
-
+namespace swktool 
+{
 	DebugStreamA DebugOut;
 	DebugStreamW WDebugOut;
 }

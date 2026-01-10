@@ -17,7 +17,8 @@
 #include "WinKernel.h"
 #include "WinClipboard.h"
 #include "WinMemory.h"
-#include "WinFile.h"
+
+#include "..\SWKBase\WinFile.h"
 
 // Controls
 #include "Ctrl.h"

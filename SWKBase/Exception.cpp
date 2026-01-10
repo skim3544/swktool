@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "Exception.h"
 #include <signal.h>
+
 #include <DbgHelp.h>
+#ifndef MAX_SYM_NAME
+    #define MAX_SYM_NAME 256
+#endif
+
 #include <new.h>
 #include <exception>
 #include <tchar.h>
@@ -9,6 +14,7 @@
 #include <string>
 #include <iomanip>
 #include "Logger.h"
+#include "TraceBuffer.h"
 
 
 #pragma intrinsic(_ReturnAddress)
@@ -16,132 +22,75 @@
 
 #pragma comment(lib, "Dbghelp.lib")
 
-namespace swktool {
-    ILogger* CCrashHandler32::pLogger = nullptr;
-    MINIDUMP_TYPE    CCrashHandler32::MemDumpType_ = MiniDumpNormal;
-    bool CCrashHandler32::DumpMemory_ = true;
+namespace swktool 
+{
+    ILogger* CCrashHandler::pLogger = nullptr;
+    MINIDUMP_TYPE    CCrashHandler::MemDumpType_ = MiniDumpNormal;
+    bool CCrashHandler::DumpMemory_ = true;
 
+    void CCrashHandler::HandleCrash(unsigned code, EXCEPTION_POINTERS* ep)
+    {
+        if (!ep) 
+        {
+            EXCEPTION_POINTERS local{};
+            GetExceptionPointers(code, local);
+            ep = &local;
+        }
 
-    LONG WINAPI CCrashHandler32::SehHandler(PEXCEPTION_POINTERS pExceptionPtrs) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
-        return 0l;
+        CreateLog(ep);
+        if (DumpMemory_)
+            CreateMiniDump(ep);
     }
 
-    void __cdecl CCrashHandler32::TerminateHandler() {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
 
+    LONG WINAPI CCrashHandler::SehHandler(PEXCEPTION_POINTERS ep) {        
 
-        CCrashHandler32::seh_filter(0, pExPointers);
-
-    }
-    void __cdecl CCrashHandler32::UnexpectedHandler() {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+        HandleCrash(ep->ExceptionRecord->ExceptionCode, ep);
+        return EXCEPTION_EXECUTE_HANDLER;
     }
 
-    void __cdecl CCrashHandler32::PureCallHandler() {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void __cdecl CCrashHandler::TerminateHandler() {
+        HandleCrash(STATUS_FATAL_APP_EXIT, nullptr);
     }
 
-    void __cdecl CCrashHandler32::InvalidParameterHandler(const wchar_t* expression,
+    void __cdecl CCrashHandler::UnexpectedHandler() {
+        HandleCrash(STATUS_FATAL_APP_EXIT, nullptr);
+    }
+
+    void __cdecl CCrashHandler::PureCallHandler() {
+        HandleCrash(STATUS_ILLEGAL_INSTRUCTION, nullptr);
+    }
+
+    void __cdecl CCrashHandler::InvalidParameterHandler(const wchar_t* expression,
         const wchar_t* function, const wchar_t* file,
         unsigned int line, uintptr_t pReserved) 
     {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);                
-
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
+        HandleCrash(STATUS_INVALID_PARAMETER, nullptr);
     }
 
-    int __cdecl CCrashHandler32::NewHandler(size_t) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    int __cdecl CCrashHandler::NewHandler(size_t) {
+        HandleCrash(STATUS_NO_MEMORY, nullptr);
         return 0;
     }
 
-    void CCrashHandler32::SigabrtHandler(int) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
+    void CCrashHandler::SigabrtHandler(int) {        
+        HandleCrash(STATUS_FATAL_APP_EXIT, nullptr);
 
     }
-    void CCrashHandler32::SigfpeHandler(int /*code*/, int subcode) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void CCrashHandler::SigfpeHandler(int /*code*/, int subcode) {
+        HandleCrash(EXCEPTION_FLT_DIVIDE_BY_ZERO, nullptr);
     }
-    void CCrashHandler32::SigintHandler(int) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void CCrashHandler::SigintHandler(int) {
+        HandleCrash(STATUS_CONTROL_C_EXIT, nullptr);
     }
-    void CCrashHandler32::SigillHandler(int) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void CCrashHandler::SigillHandler(int) {
+        HandleCrash(EXCEPTION_ILLEGAL_INSTRUCTION, nullptr);
     }
-    void CCrashHandler32::SigsegvHandler(int) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void CCrashHandler::SigsegvHandler(int) {
+        HandleCrash(EXCEPTION_ACCESS_VIOLATION, nullptr);
     }
-    void CCrashHandler32::SigtermHandler(int) {
-        if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-        EXCEPTION_POINTERS* pExPointers = new EXCEPTION_POINTERS;
-        CCrashHandler32::GetExceptionPointers(0, &pExPointers);
-
-
-        CCrashHandler32::seh_filter(0, pExPointers);
-
+    void CCrashHandler::SigtermHandler(int) {
+        HandleCrash(STATUS_FATAL_APP_EXIT, nullptr);
     }
     
     /// <summary>
@@ -153,11 +102,22 @@ namespace swktool {
     /// </summary>
     /// <param name="pExceptionPtrs"></param>
     /// <returns></returns>
-    LONG CCrashHandler32::VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionPtrs) {
+    LONG CCrashHandler::VectoredExceptionHandler(PEXCEPTION_POINTERS ep)
+    {
+        const auto code = ep->ExceptionRecord->ExceptionCode;
 
-        if (pExceptionPtrs->ExceptionRecord->ExceptionCode == STATUS_HEAP_CORRUPTION) {
-            if (pLogger != nullptr) pLogger->Log(LogLevel::STATUS, __FUNCTION__);
-            CCrashHandler32::seh_filter(STATUS_HEAP_CORRUPTION, pExceptionPtrs);
+        if (code == STATUS_HEAP_CORRUPTION)
+        {
+            if (pLogger)
+                pLogger->Log(LogLevel::STATUS, __FUNCTION__);
+
+            static bool handling = false;
+            if (handling)
+                return EXCEPTION_CONTINUE_SEARCH;
+
+            handling = true;
+            HandleCrash(code, ep);
+            handling = false;
 
             return EXCEPTION_EXECUTE_HANDLER;
         }
@@ -165,7 +125,8 @@ namespace swktool {
         return EXCEPTION_CONTINUE_SEARCH;
     }
 
-    void CCrashHandler32::SetProcessExceptionHandlers()
+
+    void CCrashHandler::SetProcessExceptionHandlers()
     {
         // Install top-level SEH handler
         SetUnhandledExceptionFilter(SehHandler);
@@ -201,7 +162,7 @@ namespace swktool {
         signal(SIGTERM, SigtermHandler);
     }
 
-    void CCrashHandler32::SetThreadExceptionHandlers()
+    void CCrashHandler::SetThreadExceptionHandlers()
     {
 
         // Catch terminate() calls. 
@@ -231,57 +192,22 @@ namespace swktool {
     }
 
 
-    void CCrashHandler32::GetExceptionPointers(DWORD dwExceptionCode, EXCEPTION_POINTERS** ppExceptionPointers) {
-        // The following code was taken from VC++ 8.0 CRT (invarg.c: line 104)
+    void CCrashHandler::GetExceptionPointers(DWORD code, EXCEPTION_POINTERS& out)
+    {
+        static EXCEPTION_RECORD record{};
+        static CONTEXT context{};
 
-        EXCEPTION_RECORD ExceptionRecord;
-        CONTEXT ContextRecord;
-        memset(&ContextRecord, 0, sizeof(CONTEXT));
+        RtlCaptureContext(&context);
 
-#ifdef _X86_
-        __asm {
-            mov dword ptr[ContextRecord.Eax], eax
-            mov dword ptr[ContextRecord.Ecx], ecx
-            mov dword ptr[ContextRecord.Edx], edx
-            mov dword ptr[ContextRecord.Ebx], ebx
-            mov dword ptr[ContextRecord.Esi], esi
-            mov dword ptr[ContextRecord.Edi], edi
-            mov word ptr[ContextRecord.SegSs], ss
-            mov word ptr[ContextRecord.SegCs], cs
-            mov word ptr[ContextRecord.SegDs], ds
-            mov word ptr[ContextRecord.SegEs], es
-            mov word ptr[ContextRecord.SegFs], fs
-            mov word ptr[ContextRecord.SegGs], gs
-            pushfd
-            pop[ContextRecord.EFlags]
-        }
-        ContextRecord.ContextFlags = CONTEXT_CONTROL;
-#pragma warning(push)
-#pragma warning(disable:4311)
-        ContextRecord.Eip = (ULONG)_ReturnAddress();
-        ContextRecord.Esp = (ULONG)_AddressOfReturnAddress();
-#pragma warning(pop)
-        ContextRecord.Ebp = *((ULONG*)_AddressOfReturnAddress() - 1);
-#elif defined (_IA64_) || defined (_AMD64_)
-        /* Need to fill up the Context in IA64 and AMD64. */
-        RtlCaptureContext(&ContextRecord);
-#else  /* defined (_IA64_) || defined (_AMD64_) */
-        ZeroMemory(&ContextRecord, sizeof(ContextRecord));
-#endif  /* defined (_IA64_) || defined (_AMD64_) */
-        ZeroMemory(&ExceptionRecord, sizeof(EXCEPTION_RECORD));
-        ExceptionRecord.ExceptionCode = dwExceptionCode;
-        ExceptionRecord.ExceptionAddress = _ReturnAddress();
+        record.ExceptionCode = code;
+        record.ExceptionAddress = _ReturnAddress();
 
-        EXCEPTION_RECORD* pExceptionRecord = new EXCEPTION_RECORD;
-        memcpy(pExceptionRecord, &ExceptionRecord, sizeof(EXCEPTION_RECORD));
-        CONTEXT* pContextRecord = new CONTEXT;
-        memcpy(pContextRecord, &ContextRecord, sizeof(CONTEXT));
-        *ppExceptionPointers = new EXCEPTION_POINTERS;
-        (*ppExceptionPointers)->ExceptionRecord = pExceptionRecord;
-        (*ppExceptionPointers)->ContextRecord = pContextRecord;
+        out.ExceptionRecord = &record;
+        out.ContextRecord = &context;
     }
 
-    void CCrashHandler32::CreateLog(EXCEPTION_POINTERS* pExcPtrs) {
+
+    void CCrashHandler::CreateLog(EXCEPTION_POINTERS* pExcPtrs) {
         if (pLogger == nullptr) return;
 
         std::ostringstream str;
@@ -309,88 +235,52 @@ namespace swktool {
 
         // Walk the stack
         WalkStack(pExcPtrs);
+
+
+        pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE START OF TRACE BUFFER ===\r\n");
+        TraceBuffer::DumpGrouped(pLogger);
+        pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE END OF TRACE BUFFER ===\r\n");
     }
 
-    // This method creates minidump of the process
-    void CCrashHandler32::CreateMiniDump(EXCEPTION_POINTERS* pExcPtrs)
+    void CCrashHandler::CreateMiniDump(EXCEPTION_POINTERS* pExcPtrs)
     {
-        HMODULE hDbgHelp = NULL;
-        HANDLE hFile = NULL;
-        MINIDUMP_EXCEPTION_INFORMATION mei;
-        MINIDUMP_CALLBACK_INFORMATION mci;
-
-        // Load dbghelp.dll
-        hDbgHelp = LoadLibrary(_T("dbghelp.dll"));
-        if (hDbgHelp == NULL)
-        {
-            // Error - couldn't load dbghelp.dll
-            return;
-        }
-
-        // Create the minidump file
-        hFile = CreateFile(
+        // Create the dump file
+        HANDLE hFile = CreateFile(
             _T("crashdump.dmp"),
             GENERIC_WRITE,
             0,
-            NULL,
+            nullptr,
             CREATE_ALWAYS,
             FILE_ATTRIBUTE_NORMAL,
-            NULL);
+            nullptr);
 
         if (hFile == INVALID_HANDLE_VALUE)
-        {
-            // Couldn't create file
             return;
-        }
 
-        // Write minidump to the file
+        MINIDUMP_EXCEPTION_INFORMATION mei{};
         mei.ThreadId = GetCurrentThreadId();
         mei.ExceptionPointers = pExcPtrs;
         mei.ClientPointers = FALSE;
-        mci.CallbackRoutine = NULL;
-        mci.CallbackParam = NULL;
 
-        typedef BOOL(WINAPI* LPMINIDUMPWRITEDUMP)(
-            HANDLE hProcess,
-            DWORD ProcessId,
-            HANDLE hFile,
-            MINIDUMP_TYPE DumpType,
-            CONST PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-            CONST PMINIDUMP_USER_STREAM_INFORMATION UserEncoderParam,
-            CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+        MINIDUMP_CALLBACK_INFORMATION mci{};
+        mci.CallbackRoutine = nullptr;
+        mci.CallbackParam = nullptr;
 
-        LPMINIDUMPWRITEDUMP pfnMiniDumpWriteDump =
-            (LPMINIDUMPWRITEDUMP)GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
-        if (!pfnMiniDumpWriteDump)
-        {
-            // Bad MiniDumpWriteDump function
-            return;
-        }
-
-        HANDLE hProcess = GetCurrentProcess();
-        DWORD dwProcessId = GetCurrentProcessId();
-
-        BOOL bWriteDump = pfnMiniDumpWriteDump(
-            hProcess,
-            dwProcessId,
+        // Direct call — no LoadLibrary, no GetProcAddress
+        MiniDumpWriteDump(
+            GetCurrentProcess(),
+            GetCurrentProcessId(),
             hFile,
             MemDumpType_,
             &mei,
-            NULL,
+            nullptr,
             &mci);
 
-        if (!bWriteDump)
-        {
-            // Error writing dump.
-            return;
-        }
-
-        // Close file
         CloseHandle(hFile);
-
-        // Unload dbghelp.dll
-        FreeLibrary(hDbgHelp);
     }
+
+   
+
 
     // Use the following filter
     // void main() {
@@ -412,20 +302,20 @@ namespace swktool {
     //    return pRetAddr;
     //}
 
-    int CCrashHandler32::seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep) {
+    int CCrashHandler::seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep) {
         
         // Create exception log
-        CCrashHandler32::CreateLog(ep);
+        CCrashHandler::CreateLog(ep);
 
         // Create Memory Dump
         if (DumpMemory_) {
-            CCrashHandler32::CreateMiniDump(ep);
+            CCrashHandler::CreateMiniDump(ep);
         }
 
         return EXCEPTION_EXECUTE_HANDLER;
     }
 
-    std::string CCrashHandler32::GetExceptionDesc(DWORD Code) {
+    std::string CCrashHandler::GetExceptionDesc(DWORD Code) {
         struct { 
             DWORD Code;
             LPCSTR Desc;
@@ -454,93 +344,109 @@ namespace swktool {
         return Desc;
     }
     
-    
-    using Address = uint64_t;
-
-    Address* StackTop(CONTEXT& context) {
-#if defined(_IA64_) || defined(_AMD64_)
-        Address* Ptr = reinterpret_cast<Address*>(context.Rsp);
-#else
-        Address* Ptr = reinterpret_cast<Address*>(context.Esp);
-#endif
-        return Ptr;
-    }
-
-
-    void CCrashHandler32::WalkStack(struct _EXCEPTION_POINTERS* ep) {
-        if (pLogger == nullptr) return;
-
-        return;
+       
+    void CCrashHandler::WalkStack(EXCEPTION_POINTERS* ep)
+    {
+        if (!pLogger || !ep || !ep->ContextRecord)
+            return;
 
         std::ostringstream s;
-        CONTEXT& context = *(ep->ContextRecord);
+        s << "Call stack:" << std::endl;
 
-        char symbol_mem[sizeof(IMAGEHLP_SYMBOL) + 256]{};
-        IMAGEHLP_SYMBOL* symbol = (IMAGEHLP_SYMBOL*)symbol_mem;
-        
         HANDLE process = GetCurrentProcess();
-        SymInitialize(process, NULL, TRUE);
-
-        DWORD64 displacement;
-        char name[256]{};
-        STACKFRAME64         stack{};
-        //copyString(out, max_size, "Crash callstack:\n");
-        //memset(&stack, 0, sizeof(STACKFRAME64));
-        
         HANDLE thread = GetCurrentThread();
-        displacement = 0;
-        DWORD machineType;
+
+        // Initialize DbgHelp once per process.
+        static bool s_symInitialized = false;
+        if (!s_symInitialized)
+        {
+            if (SymInitialize(process, nullptr, TRUE))
+            {
+                SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
+                s_symInitialized = true;
+            }
+            else
+            {
+                s << "  <SymInitialize failed>" << std::endl;
+                pLogger->Log(LogLevel::STATUS, s);
+                return;
+            }
+        }
+
+        CONTEXT context = *ep->ContextRecord; // work on a copy, not the original
+
+        STACKFRAME64 frame{};
+        DWORD machineType = 0;
+
 #ifdef _WIN64
-        machineType = IMAGE_FILE_MACHINE_IA64;
-        stack.AddrPC.Offset = context.Rip;
-        stack.AddrPC.Mode = AddrModeFlat;
-        stack.AddrStack.Offset = context.Rsp;
-        stack.AddrStack.Mode = AddrModeFlat;
-        stack.AddrFrame.Offset = context.Rbp;
-        stack.AddrFrame.Mode = AddrModeFlat;
+        machineType = IMAGE_FILE_MACHINE_AMD64;
+        frame.AddrPC.Offset = context.Rip;
+        frame.AddrPC.Mode = AddrModeFlat;
+        frame.AddrFrame.Offset = context.Rbp;
+        frame.AddrFrame.Mode = AddrModeFlat;
+        frame.AddrStack.Offset = context.Rsp;
+        frame.AddrStack.Mode = AddrModeFlat;
 #else
         machineType = IMAGE_FILE_MACHINE_I386;
-        stack.AddrPC.Offset = context.Eip;
-        stack.AddrPC.Mode = AddrModeFlat;
-        stack.AddrStack.Offset = context.Esp;
-        stack.AddrStack.Mode = AddrModeFlat;
-        stack.AddrFrame.Offset = context.Ebp;
-        stack.AddrFrame.Mode = AddrModeFlat;
+        frame.AddrPC.Offset = context.Eip;
+        frame.AddrPC.Mode = AddrModeFlat;
+        frame.AddrFrame.Offset = context.Ebp;
+        frame.AddrFrame.Mode = AddrModeFlat;
+        frame.AddrStack.Offset = context.Esp;
+        frame.AddrStack.Mode = AddrModeFlat;
 #endif
-        BOOL result = false;
-        DWORD ErrorCode = 0;
-        DWORD count = 0;
-        Address* pCurrentStackPtr = StackTop(context);
-        do
+
+        // Symbol buffer
+        BYTE symbolBuffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = {};
+        PSYMBOL_INFO pSymbol = reinterpret_cast<PSYMBOL_INFO>(symbolBuffer);
+        pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+        pSymbol->MaxNameLen = MAX_SYM_NAME;
+
+        const int maxFrames = 128;
+        int frameCount = 0;
+
+        while (frameCount < maxFrames)
         {
-            
+            BOOL ok = StackWalk64(
+                machineType,
+                process,
+                thread,
+                &frame,
+                &context,
+                nullptr,
+                SymFunctionTableAccess64,
+                SymGetModuleBase64,
+                nullptr);
 
-            //result = StackWalk64(machineType,
-            //    process,
-            //    thread,
-            //    &stack,
-            //    &context,
-            //    NULL,
-            //    SymFunctionTableAccess,
-            //    SymGetModuleBase,
-            //    NULL);
-            count = count + 1;
-            symbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
-            symbol->MaxNameLength = 255;
+            if (!ok || frame.AddrPC.Offset == 0)
+                break;
 
-            //SymGetSymFromAddr64(process, (DWORD64)stack.AddrFrame.Offset, &displacement, symbol);
-            //SymGetSymFromAddr64(process, (DWORD64)CurrentStackPtr, &displacement, symbol);
-            SymGetSymFromAddr(process, (DWORD)*pCurrentStackPtr, 0, symbol);
-            UnDecorateSymbolName(symbol->Name, (PSTR)name, 256, UNDNAME_COMPLETE);
-            std::string FuncName = symbol->Name;
-            if (FuncName.length() > 0)
-                s << symbol->Name << std::endl;
+            DWORD64 address = frame.AddrPC.Offset;
+            DWORD64 displacement = 0;
 
-            pCurrentStackPtr = pCurrentStackPtr + 1;            
+            if (SymFromAddr(process, address, &displacement, pSymbol))
+            {
+                s << "  " << pSymbol->Name << " + 0x"
+                    << std::hex << displacement << std::dec
+                    << " [0x" << std::hex << address << std::dec << "]"
+                    << std::endl;
+            }
+            else
+            {
+                s << "  <unknown> [0x"
+                    << std::hex << address << std::dec << "]"
+                    << std::endl;
+            }
 
-        } while (count < 4096);
+            ++frameCount;
+        }
+
+        if (frameCount == 0)
+            s << "  <no frames captured>" << std::endl;
+
         pLogger->Log(LogLevel::STATUS, s);
     }
+
 }
 
 

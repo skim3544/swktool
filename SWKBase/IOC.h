@@ -1,194 +1,181 @@
 #pragma once
 
+#include <typeindex>
 #include <typeinfo>
-#include <string>
+#include <unordered_map>
 #include <memory>
-#include <list>
-#include <vector>
-#include <assert.h>
-//#include "../SWKBase/DebugStream.h"
+#include <functional>
+#include <mutex>
+#include <stdexcept>
+#include <utility>
 
 namespace swktool {
-	// supports two object creation type
-	//   Instance = every time resolve is requested, new object is allocated
-	//   Singleton = returns single ton object when reserve is requested
-	enum class object_type {
-		Instance,
-		Singleton,
-	};
 
-	/// <summary>
-	/// IOC Object factory
-	/// Keep track of registration parameter(s)
-	/// use registration parameter to create proper objects on heap
-	/// </summary>
-	class IOCFactory {
-		object_type type_;
+    enum class object_type {
+        Instance,
+        Singleton,
+    };
 
-	public:
-		IOCFactory() :
-			type_(object_type::Instance)
-		{
-			;
-		}
-		IOCFactory(object_type CreateType) :
-			type_(CreateType) {
+    class IOCContainer {
+    public:
+        IOCContainer() = default;
+        ~IOCContainer() = default;
 
-		}
+        IOCContainer(const IOCContainer&) = delete;
+        IOCContainer& operator=(const IOCContainer&) = delete;
 
-		IOCFactory(const IOCFactory& O) {
-			type_ = O.type_;
-		}
+        IOCContainer(IOCContainer&&) = default;
+        IOCContainer& operator=(IOCContainer&&) = default;
 
-		object_type getType() const {
-			return type_;
-		}
+        // Register I -> T with lifetime
+        template<typename I, typename T>
+        void Register(object_type lifetime = object_type::Instance) {
+            static_assert(std::is_base_of_v<I, T> || std::is_same_v<I, T>,
+                "T must derive from I or be the same type");
 
-		template <typename T, typename... Args>
-		T* Create(Args&&... args) const {
-			// requesting new instance
-			if (type_ == object_type::Instance) {
-				return new T(std::forward<Args>(args)...);
-			}
-			// requesting singleton
-			else if (type_ == object_type::Singleton) {
-				static T data(std::forward<Args>(args)...);
-				return &data;
-			}
-			return nullptr;
-		}
-	};
+            const std::type_index key(typeid(I));
 
+            std::lock_guard<std::mutex> lock(mutex_);
 
-	/// <summary>
-	/// ties interface and object factory together
-	/// object factory is then used to create the actual object depending on the registration data
-	/// </summary>
-	struct IOCData {
-	public:
-		IOCData(const std::string& oType_name, IOCFactory oFactory) :
-			type_name_(oType_name),
-			factory_(oFactory)
-		{
-		}
+            // If already registered, you can either:
+            //  - throw, or
+            //  - allow overwrite. Here, we throw to avoid silent surprises.
+            auto it = registrations_.find(key);
+            if (it != registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface already registered");
+            }
 
-		IOCData(const IOCData& Other) {
-			type_name_ = Other.type_name_;
-			factory_ = Other.factory_;
-		}
+            Registration reg;
+            reg.lifetime = lifetime;
+            reg.factory = [](void* argsTuplePtr) -> std::shared_ptr<void> {
+                // Default factory without args: T must be default-constructible
+                return std::make_shared<T>();
+                };
 
-		std::string GetTypeName() const {
-			return type_name_;
-		}
+            registrations_.emplace(key, std::move(reg));
+        }
 
-		IOCFactory& GetFactory() {
-			return factory_;
-		}
+        // Register I -> T with a custom factory (for constructor args, etc.)
+        template<typename I, typename T, typename Factory>
+        void RegisterFactory(object_type lifetime, Factory&& factory) {
+            static_assert(std::is_base_of_v<I, T> || std::is_same_v<I, T>,
+                "T must derive from I or be the same type");
 
-		std::string type_name_;
-		IOCFactory  factory_;
-	};
+            const std::type_index key(typeid(I));
 
+            std::lock_guard<std::mutex> lock(mutex_);
 
+            auto it = registrations_.find(key);
+            if (it != registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface already registered");
+            }
 
-	class IOCContainer {
-		using IOCList = std::vector<IOCData>;
-		using IOCListItr = std::vector<IOCData>::iterator;
+            Registration reg;
+            reg.lifetime = lifetime;
 
-	public:
-		/// <summary>
-		/// registers the interface with the Class
-		/// </summary>
-		/// <typeparam name="I">Interface</typeparam>
-		/// <typeparam name="T">Class T</typeparam>
-		/// <param name="Type"></param>
-		template<typename I, class T>
-		void Register(object_type Type = object_type::Instance) {
-			IOCData* pDataExists = FindData<I, T>();
-			if (pDataExists == nullptr) {
-				IOCData Data((char*)typeid(I).name(), IOCFactory(Type));
+            // Wrap the factory into a type-erased std::function
+            // Factory is expected to return std::shared_ptr<T> and take arbitrary args.
+            reg.factory = [f = std::forward<Factory>(factory)](void* argsTuplePtr) -> std::shared_ptr<void> {
+                // argsTuplePtr is optional; if you need args, use ResolveWithFactoryArgs below.
+                (void)argsTuplePtr;
+                std::shared_ptr<T> ptr = f();
+                return std::static_pointer_cast<void>(ptr);
+                };
 
-				//			DebugOut << "TypeName = " << Data.GetTypeName().c_str() << std::endl;
-				mList.push_back(Data);
-			}
-		}
+            registrations_.emplace(key, std::move(reg));
+        }
 
-		/// <summary>
-		/// Create the proper object and returns the pointer
-		/// </summary>
-		/// <typeparam name="I">Interface</typeparam>
-		/// <typeparam name="T">Class to create</typeparam>
-		/// <typeparam name="...Args">arguments to pass to the constructor of the T</typeparam>
-		/// <param name="...args"></param>
-		/// <returns></returns>
-		template<typename I, class T, typename... Args>
-		T* Resolve(Args&&... args) {
-			T* pCreatedData = nullptr;
-			IOCData* pIOCData = FindData<I, T>();
-			if (pIOCData) {
-				// use its factory to create the object
-				pCreatedData = pIOCData->GetFactory().Create<T>(std::forward<Args>(args)...);
-			}
+        // Resolve as shared_ptr<I>
+        template<typename I>
+        std::shared_ptr<I> ResolveShared() {
+            const std::type_index key(typeid(I));
 
-			// cannot resolve
-			assert(pCreatedData != nullptr);
-			return pCreatedData;
-		}
-		template<typename I, class T, typename... Args>
-		T GetInstance(Args&&... args) {
-			return Resolve<I, T>(std::forward<Args>(args)...);
-		}
-		/// <summary>
-		/// Resolve, but the pointer is assigned to std::unique_ptr
-		/// </summary>
-		/// <typeparam name="I"></typeparam>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="...Args"></typeparam>
-		/// <param name="...args"></param>
-		/// <returns></returns>
-		template<typename I, class T, typename... Args>
-		std::unique_ptr<T> Resolve_Unique(Args&&... args) {
-			IOCData* pIOCData = FindData<I, T>();
-			assert(pIOCData != nullptr);
-			// can't assign singleton to unique_ptr
-			assert(pIOCData->GetFactory().getType() != object_type::Singleton);
-			return std::unique_ptr<T>(pIOCData->GetFactory().Create<T>(std::forward<Args>(args)...));
-		}
+            std::lock_guard<std::mutex> lock(mutex_);
 
-		/// <summary>
-		/// Resolve, but the pointer is assigned to shared_ptr
-		/// </summary>
-		/// <typeparam name="I"></typeparam>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="...Args"></typeparam>
-		/// <param name="...args"></param>
-		/// <returns></returns>
-		template<typename I, class T, typename... Args>
-		std::shared_ptr<T> Resolve_Shared(Args&&... args) {
-			IOCData* pIOCData = FindData<I, T>();
-			assert(pIOCData != nullptr);
-			// can't assign singleton to unique_ptr
-			assert(pIOCData->GetFactory().getType() != object_type::Singleton);
-			return std::shared_ptr<T>(pIOCData->GetFactory().Create<T>(std::forward<Args>(args)...));
-		}
+            auto it = registrations_.find(key);
+            if (it == registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface not registered");
+            }
 
-	private:
-		// finds IOC data item from the IOCList
-		template<typename I, class T>
-		IOCData* FindData() {
-			IOCData* pIOCData = nullptr;
+            Registration& reg = it->second;
 
-			// Find the data by the name
-			IOCListItr itrFind = std::find_if(mList.begin(), mList.end(), [](const IOCData& oData) {
-				return (oData.GetTypeName() == typeid(I).name()); });
-			if (itrFind != mList.end()) {
-				IOCData& Data = *itrFind;
-				pIOCData = &Data;
-			}
-			return pIOCData;
-		}
+            if (reg.lifetime == object_type::Singleton) {
+                if (!reg.singletonInstance) {
+                    reg.singletonInstance = reg.factory(nullptr);
+                }
+                return std::static_pointer_cast<I>(reg.singletonInstance);
+            }
 
-	private:
-		IOCList mList;
-	};
-}
+            // Instance
+            std::shared_ptr<void> obj = reg.factory(nullptr);
+            return std::static_pointer_cast<I>(obj);
+        }
+
+        // Resolve as unique_ptr<I> (only valid for Instance lifetime)
+        template<typename I>
+        std::unique_ptr<I> ResolveUnique() {
+            const std::type_index key(typeid(I));
+
+            std::lock_guard<std::mutex> lock(mutex_);
+
+            auto it = registrations_.find(key);
+            if (it == registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface not registered");
+            }
+
+            Registration& reg = it->second;
+
+            if (reg.lifetime == object_type::Singleton) {
+                throw std::runtime_error("IOCContainer: cannot resolve singleton as unique_ptr");
+            }
+
+            std::shared_ptr<void> obj = reg.factory(nullptr);
+            I* raw = static_cast<I*>(obj.get());
+
+            // Transfer ownership into unique_ptr by forgetting about the shared_ptr.
+            // This assumes the factory creates a new object each time and does not
+            // share ownership elsewhere.
+            obj.reset();
+
+            return std::unique_ptr<I>(raw);
+        }
+
+        // Resolve as raw pointer (shared lifetime unless Instance + custom usage)
+        template<typename I>
+        I* ResolveRaw() {
+            return ResolveShared<I>().get();
+        }
+
+        // TryResolve variant that returns nullptr instead of throwing
+        template<typename I>
+        std::shared_ptr<I> TryResolveShared() noexcept {
+            try {
+                return ResolveShared<I>();
+            }
+            catch (...) {
+                return nullptr;
+            }
+        }
+
+        bool IsRegistered(std::type_index key) const {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return registrations_.find(key) != registrations_.end();
+        }
+
+        template<typename I>
+        bool IsRegistered() const {
+            return IsRegistered(std::type_index(typeid(I)));
+        }
+
+    private:
+        struct Registration {
+            object_type lifetime{};
+            std::function<std::shared_ptr<void>(void*)> factory;
+            std::shared_ptr<void> singletonInstance;
+        };
+
+        mutable std::mutex mutex_;
+        std::unordered_map<std::type_index, Registration> registrations_;
+    };
+
+} // namespace swktool

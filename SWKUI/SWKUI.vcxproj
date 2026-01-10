@@ -25,6 +25,7 @@
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Brush.h" />
     <ClInclude Include="ComboBoxExCtrl.h" />
+    <ClInclude Include="FileEnums.h" />
     <ClInclude Include="GDIObject.h" />
     <ClInclude Include="HeaderCtrl.h" />
     <ClInclude Include="ImageList.h" />
@@ -75,7 +76,6 @@
     <ClInclude Include="WindowRegister.h" />
     <ClInclude Include="WindowHandlers.h" />
     <ClInclude Include="WindowRegistry.h" />
-    <ClInclude Include="WinFile.h" />
     <ClInclude Include="WinFrame.h" />
     <ClInclude Include="WinHandle.h" />
     <ClInclude Include="WinMenu.h" />

@@ -57,6 +57,24 @@
     <ClInclude Include="xml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TraceBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WinFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileStreamBuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggerStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -84,6 +102,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileStreamBuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoggerStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

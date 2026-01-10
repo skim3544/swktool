@@ -4,4 +4,4 @@
 #include "../SWKBase/IOC.h"
 
 
-swktool::IOCContainer& GetDI();
+swktool::IOCContainer& GetIOC();
