@@ -109,7 +109,7 @@ namespace swktool
 
 	class LoggerStream;
 	class CriticalSection;
-	class Logger : public ILogger 
+	class Logger : public virtual ILogger 
 	{
 		using LogLevelList = std::vector<ClassLoggingData>;
 		//using LogLevelList = std::unordered_set<std::string>

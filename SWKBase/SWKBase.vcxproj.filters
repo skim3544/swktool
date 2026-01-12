@@ -48,7 +48,7 @@
     <ClInclude Include="Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Exception.h">
+    <ClInclude Include="CrashHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IOC.h">
@@ -73,6 +73,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TraceMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppBootstreap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -114,6 +123,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoggerStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppBootstrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

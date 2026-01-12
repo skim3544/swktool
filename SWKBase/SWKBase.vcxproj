@@ -155,8 +155,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AppBootstreap.h" />
+    <ClInclude Include="AppContext.h" />
     <ClInclude Include="DebugStream.h" />
-    <ClInclude Include="Exception.h" />
+    <ClInclude Include="CrashHandler.h" />
     <ClInclude Include="FileStreamBuf.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IOC.h" />
@@ -165,6 +167,7 @@
     <ClInclude Include="OpenOptions.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ResourceMan.h" />
+    <ClInclude Include="ServiceProvider.h" />
     <ClInclude Include="TBuffer.h" />
     <ClInclude Include="TCPClient.h" />
     <ClInclude Include="TCPComm.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AppBootstrap.cpp" />
     <ClCompile Include="DebugStream.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="FileStreamBuf.cpp" />

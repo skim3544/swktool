@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Exception.h"
+#include "CrashHandler.h"
 #include <signal.h>
 
 #include <DbgHelp.h>
@@ -27,6 +27,7 @@ namespace swktool
     ILogger* CCrashHandler::pLogger = nullptr;
     MINIDUMP_TYPE    CCrashHandler::MemDumpType_ = MiniDumpNormal;
     bool CCrashHandler::DumpMemory_ = true;
+    bool CCrashHandler::CallTrace_ = true;
 
     void CCrashHandler::HandleCrash(unsigned code, EXCEPTION_POINTERS* ep)
     {
@@ -236,10 +237,12 @@ namespace swktool
         // Walk the stack
         WalkStack(pExcPtrs);
 
-
-        pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE START OF TRACE BUFFER ===\r\n");
-        TraceBuffer::DumpGrouped(pLogger);
-        pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE END OF TRACE BUFFER ===\r\n");
+        if (CallTrace_)
+        {
+            pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE START OF TRACE BUFFER ===\r\n");
+            TraceBuffer::DumpGrouped(pLogger);
+            pLogger->Log(LogLevel::STATUS, "\r\n=== TRACE END OF TRACE BUFFER ===\r\n");
+        }
     }
 
     void CCrashHandler::CreateMiniDump(EXCEPTION_POINTERS* pExcPtrs)

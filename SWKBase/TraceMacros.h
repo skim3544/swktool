@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 // Set to 0 to completely disable tracing
 #ifndef SWK_TRACE_ENABLED
 #define SWK_TRACE_ENABLED 1

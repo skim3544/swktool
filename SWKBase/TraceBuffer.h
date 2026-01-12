@@ -15,14 +15,15 @@
 
 namespace swktool 
 {
-    class ILogger;
     static constexpr size_t TRACE_CAPACITY = 4096;
+    static constexpr size_t TRACE_MSG_CAP = 128;     // max chars per chunk
+    static constexpr size_t TRACE_MSG_BUF = TRACE_MSG_CAP + 1; // +1 for '\0'
 
     struct TraceEntry {
         const char* function;      // __FUNCTION__ literal
         uint64_t    timestamp;     // GetTickCount64 or QPC
         uint32_t    threadId;
-        char        message[128];  // fixed-size chunk
+        char        message[TRACE_MSG_BUF];  // fixed-size chunk
     };
 
     class TraceBuffer {
@@ -31,12 +32,13 @@ namespace swktool
         {
             // Format full message into a temporary stack buffer
             char fullMsg[1024];
+
             va_list args;
             va_start(args, fmt);
             vsnprintf(fullMsg, sizeof(fullMsg), fmt, args);
             va_end(args);
 
-            size_t len = strlen(fullMsg);
+            const size_t len = strlen(fullMsg);
             size_t offset = 0;
 
             while (offset < len) {
@@ -49,10 +51,12 @@ namespace swktool
                 e.timestamp = GetTickCount64();
                 e.threadId = GetCurrentThreadId();
 
-                // Copy up to 128 bytes
-                size_t chunk = (len - offset > 128) ? 128 : (len - offset);
+                // Copy up to TRACE_MSG_CAP bytes
+                const size_t remaining = len - offset;
+                const size_t chunk = (remaining > TRACE_MSG_CAP) ? TRACE_MSG_CAP : remaining;
+
                 memcpy(e.message, fullMsg + offset, chunk);
-                e.message[chunk] = '\0';
+                e.message[chunk] = '\0'; // always safe
 
                 offset += chunk;
             }

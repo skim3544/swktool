@@ -1,42 +1,93 @@
 #pragma once
 #include <Windows.h>
+#include "Logger.h"
 #include <DbgHelp.h>
 #include <string>
-#include "Logger.h"
+#include "AppBootstreap.h"
 
 namespace swktool 
-{
+{    
+    class ICrashHandler
+    {
+    public:
+        virtual ~ICrashHandler() = default;
+
+        // Inject logger after resolving both services
+        virtual void SetLogger(ICrashLogger* logger) = 0;
+
+        // enable or disable memory dump
+        virtual void EnableMemoryDump(bool bEnable) = 0;
+
+        virtual void EnableCallTrace(bool bEnable) = 0;
+
+        // Install SEH/VEH handlers, configure minidump, etc.
+        virtual void Install() = 0;
+    };
+
 
     /// <summary>
     ///  Exception crash handler
     ///  based on https://www.codeproject.com/Articles/207464/Exception-Handling-in-Visual-Cplusplus
     /// </summary>
-    class CCrashHandler
+    class CCrashHandler : public ICrashHandler
     {
-        static ILogger*  pLogger;    
+        static ILogger* pLogger;
         static MINIDUMP_TYPE    MemDumpType_;
         static bool             DumpMemory_;
+        static bool             CallTrace_;
 
     public:
         // Destructor
-        virtual ~CCrashHandler() { ; }
+        virtual ~CCrashHandler() = default;
+
+        // Install SEH/VEH handlers, configure minidump, etc.
+        void Install() override
+        {
+            SetProcessExceptionHandlers();
+            SetThreadExceptionHandlers();
+        }
+
+        // Inject logger after resolving both services
+        void SetLogger(ICrashLogger* logger) override
+        {
+            InternalSetLogger(static_cast<ILogger*>(logger));
+        }
+
+
+        // enable or disable memory dump
+        void EnableMemoryDump(bool bEnable) override
+        {
+            EnableMemoryDumpFile(bEnable);
+        }
+        void EnableCallTrace(bool bEnable) override
+        {
+            EnableCallTraceReport(bEnable);
+        }
+
 
         void Configure(bool bDumpMemoryOnCrash, MINIDUMP_TYPE oType = MiniDumpNormal) {
             DumpMemory_ = bDumpMemoryOnCrash;
             MemDumpType_ = oType;
         }
 
+
         static void EnableMemoryDumpFile(bool bDumpMemoryOnCrash) 
         {
             DumpMemory_ = bDumpMemoryOnCrash;
         }
+
+        static void EnableCallTraceReport(bool bCallTraceReport)
+        {
+            CallTrace_ = bCallTraceReport;
+        }
+
         // Sets exception handlers that work on per-process basis
         static void SetProcessExceptionHandlers();
 
         // Installs C++ exception handlers that function on per-thread basis
         static void SetThreadExceptionHandlers();
 
-        static void SetLogger(ILogger* Logger) {
+        static void InternalSetLogger(ILogger* Logger) {
             pLogger = Logger;
         }
 
@@ -77,6 +128,35 @@ namespace swktool
         static int seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep);
 
         static std::string GetExceptionDesc(DWORD Code);
+
+
+
+
+        typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+
+        std::wstring GetWindowsVersionString()
+        {
+            HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
+            if (!hMod) return L"Unknown Windows version";
+
+            auto fn = (RtlGetVersionPtr)::GetProcAddress(hMod, "RtlGetVersion");
+            if (!fn) return L"Unknown Windows version";
+
+            RTL_OSVERSIONINFOW rovi = { 0 };
+            rovi.dwOSVersionInfoSize = sizeof(rovi);
+
+            if (fn(&rovi) != 0)
+                return L"Unknown Windows version";
+
+            wchar_t buffer[256];
+            swprintf_s(buffer, L"Windows %lu.%lu (Build %lu), %s",
+                rovi.dwMajorVersion,
+                rovi.dwMinorVersion,
+                rovi.dwBuildNumber,
+                rovi.szCSDVersion[0] ? rovi.szCSDVersion : L"");
+
+            return buffer;
+        }
 
     protected:
         static void HandleCrash(unsigned code, EXCEPTION_POINTERS* ep);

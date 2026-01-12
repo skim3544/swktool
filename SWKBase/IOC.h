@@ -85,6 +85,46 @@ namespace swktool {
             registrations_.emplace(key, std::move(reg));
         }
 
+
+        // Register I -> T with perfect-forwarding constructor arguments
+        template<typename I, typename T>
+        void RegisterFactoryWithArgs(object_type lifetime = object_type::Instance) {
+            static_assert(std::is_base_of_v<I, T> || std::is_same_v<I, T>,
+                "T must derive from I or be the same type");
+
+            const std::type_index key(typeid(I));
+
+            std::lock_guard<std::mutex> lock(mutex_);
+
+            if (registrations_.find(key) != registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface already registered");
+            }
+
+            Registration reg;
+            reg.lifetime = lifetime;
+
+            // Factory that unpacks a tuple of forwarded args
+            reg.factory = [](void* argsTuplePtr) -> std::shared_ptr<void> {
+                if (!argsTuplePtr) {
+                    throw std::runtime_error("IOCContainer: missing constructor args");
+                }
+
+                auto& tuple = *static_cast<std::tuple<>*>(argsTuplePtr);
+
+                return std::apply(
+                    [](auto&&... unpacked) {
+                        return std::static_pointer_cast<void>(
+                            std::make_shared<T>(std::forward<decltype(unpacked)>(unpacked)...)
+                        );
+                    },
+                    tuple
+                );
+                };
+
+            registrations_.emplace(key, std::move(reg));
+        }
+
+
         // Resolve as shared_ptr<I>
         template<typename I>
         std::shared_ptr<I> ResolveShared() {
@@ -145,6 +185,36 @@ namespace swktool {
         I* ResolveRaw() {
             return ResolveShared<I>().get();
         }
+
+        // Resolve with constructor arguments (perfect forwarding)
+        template<typename I, typename... Args>
+        std::shared_ptr<I> ResolveWithArgs(Args&&... args) {
+            const std::type_index key(typeid(I));
+
+            std::lock_guard<std::mutex> lock(mutex_);
+
+            auto it = registrations_.find(key);
+            if (it == registrations_.end()) {
+                throw std::runtime_error("IOCContainer: interface not registered");
+            }
+
+            Registration& reg = it->second;
+
+            // Singleton cannot accept args after first construction
+            if (reg.lifetime == object_type::Singleton) {
+                if (!reg.singletonInstance) {
+                    auto tuple = std::make_tuple(std::forward<Args>(args)...);
+                    reg.singletonInstance = reg.factory(static_cast<void*>(&tuple));
+                }
+                return std::static_pointer_cast<I>(reg.singletonInstance);
+            }
+
+            // Instance: always create new
+            auto tuple = std::make_tuple(std::forward<Args>(args)...);
+            auto obj = reg.factory(static_cast<void*>(&tuple));
+            return std::static_pointer_cast<I>(obj);
+        }
+
 
         // TryResolve variant that returns nullptr instead of throwing
         template<typename I>
