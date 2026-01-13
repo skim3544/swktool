@@ -1,111 +1,128 @@
-//#pragma once
-//
-//#include <list>
-//#include "Window.h"
-//#include "WinEventHandler.h"
-//
-//
-//namespace swktool {
-//
-//	class MDIFrameWindow : public Window
-//	{
-//		typedef std::list < std::shared_ptr<AWindow>> MDIClientList;
-//
-//
-//	protected:
-//		HWND hwndClient;
-//		CLIENTCREATESTRUCT clientcreate_;
-//		MDIClientList  mdiClientList_;
-//
-//	public:
-//		MDIFrameWindow(LPCWSTR lpClassName, LPCWSTR lpWindowName, HINSTANCE hInstance) :
-//			swktool::Window(lpClassName, lpWindowName, hInstance), clientcreate_{}, hwndClient(nullptr)
-//		{
-//			Style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN;
-//		}
-//
-//		HWND Create(std::shared_ptr<Window>& pWin) override
-//		{
-//			// Downcast the pointer to MDIFrameWindow
-//			std::shared_ptr<MDIFrameWindow> pFrameWin =
-//				std::dynamic_pointer_cast<MDIFrameWindow> (pWin);
-//
-//			if (pFrameWin != nullptr) {
-//				// Preregister the window
-//				WinEventHandler::GetInst()->PreRegisterMDIFramedWindow(pFrameWin);
-//
-//				// Create window, this will start message pumping into the message Processer
-//				hwndWindow = ::CreateWindow(szWindowClass, szTitle, Style,
-//					x, y, Width, Height, hWndParent, hMenu, hInst, NULL);
-//
-//
-//				return hwndWindow;
-//			}
-//			else {
-//				return nullptr;
-//			}		
-//		}
-//
-//		virtual BOOL OnCreate(LPCREATESTRUCT lpCreateStruct) override {
-//			clientcreate_.hWindowMenu = hMenu;
-//			clientcreate_.idFirstChild = 50000;
-//
-//			// On Create, create MDIClient window
-//			hwndClient = ::CreateWindow(
-//				TEXT("MDICLIENT"), 
-//				NULL, 
-//				WS_CHILD | WS_CLIPCHILDREN | WS_VISIBLE,
-//				0, 0, 0, 0, 
-//				GetWindowHWND(), 
-//				(HMENU)NULL, 
-//				hInst, 
-//				(void*)&clientcreate_);
-//
-//			return TRUE;
-//		}
-//
-//		HWND GetMDIClientHWND() const {
-//			return hwndClient;
-//		}
-//
-//		virtual void OnSize(UINT state, int nWidth, int nHeight) override {
-//			Width = nWidth;
-//			Height = nHeight;
-//
-//			RECT rcClient;
-//			::GetClientRect(this->GetWindowHWND(), &rcClient);
-//			::MoveWindow(hwndClient, 0, 0, rcClient.right, rcClient.bottom, TRUE);
-//		}
-//
-//
-//		BOOL OnExit() {
-//
-//			return TRUE;
-//		}
-//
-//		BOOL OnWindowTile() {
-//			::SendMessage(hwndClient, WM_MDITILE, 0, 0);
-//			return TRUE;
-//		}
-//
-//		BOOL OnWindowCascade() {
-//			::SendMessage(hwndClient, WM_MDICASCADE, 0, 0);
-//			return TRUE;
-//		}
-//
-//		BOOL OnWindowArrange()
-//		{
-//			::SendMessage(hwndClient, WM_MDIICONARRANGE, 0, 0);
-//			return TRUE;
-//		}
-//
-//		BOOL OnCloseAll() {
-//			EnumChildWindows(hwndClient, CloseAllEnumProc, 0);
-//			return TRUE;
-//		}
-//
-//		static BOOL CALLBACK CloseAllEnumProc(HWND hWnd, LPARAM lParam);
-//		LRESULT ProcessMessage(WORD msg, WPARAM wParam, LPARAM lParam) override;
-//	};
-//
-//}
+#pragma once
+#include "Window.h"
+//#include "MDIChildWindow.h"
+
+namespace swktool {
+    class MDIChildWindow;
+
+    class MDIFrameWindow : public Window
+    {
+        using MDIChildren = std::vector<swktool::MDIChildWindow*>;
+
+    public:
+        PCWSTR ClassName() const override { return L"SWKUI_MDI_FRAME"; }
+
+        void PreRegisterWindow(WindowRegisterClass& wc) override
+        {
+            wc.style = CS_HREDRAW | CS_VREDRAW;
+            wc.hbrBackground = (HBRUSH)(COLOR_APPWORKSPACE + 1);
+            wc.hInstance = ::GetModuleHandle(nullptr);
+
+            // Framework default: no menu.
+            // Applications may override PreRegisterWindow() to set lpszMenuName.
+            wc.lpszMenuName = nullptr;
+        }
+
+        LRESULT OnCreate(CREATESTRUCT* cs) override
+        {
+            CLIENTCREATESTRUCT ccs{};
+            ccs.hWindowMenu = GetDefaultWindowMenu();
+            ccs.idFirstChild = GetFirstChildId();
+
+            _hMdiClient = CreateWindowEx(
+                0,
+                L"MDICLIENT",
+                nullptr,
+                WS_CHILD | WS_CLIPCHILDREN | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE,
+                0, 0, 0, 0,
+                GetHwnd(),
+                (HMENU)1,
+                GetModuleHandle(nullptr),
+                &ccs
+            );
+
+            return _hMdiClient != nullptr;
+        }
+
+        LRESULT OnSize(UINT, int cx, int cy) override
+        {
+            if (_hMdiClient)
+                MoveWindow(_hMdiClient, 0, 0, cx, cy, TRUE);
+
+            return TRUE;
+        }
+
+        LRESULT OnCommand(WORD id, WORD code, HWND control) override
+        {
+            // Framework default: do nothing.
+            // Applications override this to handle menu commands.
+            return FALSE;
+        }
+
+        void OnClose() override
+        {
+            DestroyWindow(GetHwnd());
+        }
+        void OnDestroy() override 
+        { 
+            PostQuitMessage(0); 
+        }
+
+        void RemoveChild(MDIChildWindow* child)
+        {
+            auto it = std::find(_children.begin(), _children.end(), child);
+            if (it != _children.end())
+                _children.erase(it);
+        }
+
+    protected:
+        // Applications may override this to provide a menu for the MDI client.
+        virtual HMENU GetDefaultWindowMenu()
+        {
+            HMENU hMenu = GetMenu(GetHwnd());
+            return hMenu ? GetSubMenu(hMenu, 0) : nullptr;
+        }
+
+        // Applications may override this to change the first child ID.
+        virtual UINT GetFirstChildId() const { return 100; }
+
+        template<typename TChildWindow>
+        TChildWindow* CreateMdiChild(const wchar_t* title)
+        {
+            auto* child = new TChildWindow();
+            child->SetMDIFrameWindow(this);
+            child->Register();            
+
+            MDICREATESTRUCT mcs{};
+            mcs.szClass = child->ClassName();
+            mcs.szTitle = title;
+            mcs.hOwner = GetModuleHandle(nullptr);
+            mcs.x = mcs.cx = CW_USEDEFAULT;
+            mcs.y = mcs.cy = CW_USEDEFAULT;
+            mcs.style = WS_VISIBLE | WS_CHILD | WS_OVERLAPPEDWINDOW;
+
+            HWND hwndChild = (HWND)SendMessage(_hMdiClient, WM_MDICREATE, 0, (LPARAM)&mcs);
+
+            if (!hwndChild) {
+                delete child;
+                return nullptr;
+            }
+
+            child->Subclass(hwndChild);
+            AddChild(child);
+            return child;
+        }
+
+        void AddChild(MDIChildWindow* child)
+        {
+            _children.push_back(child);
+        }
+
+
+
+    private:
+        HWND _hMdiClient = nullptr;
+        MDIChildren _children;
+    };
+
+} // namespace swktool

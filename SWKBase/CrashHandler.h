@@ -3,7 +3,7 @@
 #include "Logger.h"
 #include <DbgHelp.h>
 #include <string>
-#include "AppBootstreap.h"
+#include "AppBootstrap.h"
 
 namespace swktool 
 {    
@@ -28,6 +28,10 @@ namespace swktool
     /// <summary>
     ///  Exception crash handler
     ///  based on https://www.codeproject.com/Articles/207464/Exception-Handling-in-Visual-Cplusplus
+    ///  Modernized by AI
+    ///  1. Use Install function to hook into current process/thread
+    ///  2. when runnign a separate thread, you would need to call SetThreadExceptionHandlers to hook thread 
+    ///  
     /// </summary>
     class CCrashHandler : public ICrashHandler
     {

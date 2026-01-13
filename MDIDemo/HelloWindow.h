@@ -3,7 +3,40 @@
 #include "MDIDemo.h"
 #include "..\SWKUI\MDIChildWindow.h"
 #include "..\SWKUI\WinMenu.h"
+#include "..\SWKUI\Window.h"
+#include "..\SWKUI\MsgProcs.h"
 #include "resource.h"
+
+
+class MDIHelloWindow : public swktool::MDIChildWindow
+{
+public:
+    PCWSTR ClassName() const override { return L"SWKUI_MDI_HELLO"; }
+
+    void PreRegisterWindow(WindowRegisterClass& wc) override
+    {
+        MDIChildWindow::PreRegisterWindow(wc);
+        wc.lpszClassName = ClassName();
+    }
+
+    LRESULT OnCreate(CREATESTRUCT* cs) override
+    {
+        return TRUE;
+    }
+    
+    LRESULT OnPaint() override
+    {
+        swktool::PaintDeviceContext PDC(this);
+      		   
+   		RECT rect;
+   		::GetClientRect(GetHwnd(), &rect);
+   	
+   		PDC.DrawTextW(TEXT("Hello World!"), &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+                
+        return TRUE;
+    }
+};
+
 
 //swktool::WinMenu GetHelloMenu();
 //swktool::WinMenu GetInitMenu();

@@ -1,7 +1,7 @@
 
 #include "pch.h"
 #include "Logger.h"
-#include "AppBootstreap.h"
+#include "AppBootstrap.h"
 #include "CrashHandler.h"
 #include "TraceBuffer.h"
 #include "TraceMacros.h"
@@ -13,9 +13,11 @@ namespace swktool
 		using namespace swktool;
 		TRACE_SCOPE();
 		TRACE("Registering Services");
-		// register logger
+		// register loggers
 		AppContext::IOC().Register<ICrashLogger, CCrashLogger>(object_type::Singleton);
 		AppContext::IOC().Register<IAppLogger, CAppLogger>(object_type::Singleton);
+
+		// Register Crash handler
 		AppContext::IOC().Register<ICrashHandler, CCrashHandler>(object_type::Singleton);
 	}
 
@@ -29,7 +31,7 @@ namespace swktool
 		auto crashLogger = AppContext::IOC().ResolveShared<ICrashLogger>(); 
 		crashLogger->init(LogFileName); 
 
-		auto crash = AppContext::IOC().ResolveRaw<swktool::ICrashHandler>();
+		auto crash = AppContext::IOC().ResolveShared<swktool::ICrashHandler>();
 
 		// we want the memory mini dump
 		TRACE("Setting up Crash Handler options");
@@ -50,6 +52,5 @@ namespace swktool
 
 		auto crashLogger = AppContext::IOC().ResolveShared<IAppLogger>();
 		crashLogger->init(LogFileName);
-
 	}
 }

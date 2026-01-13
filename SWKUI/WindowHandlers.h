@@ -56,7 +56,8 @@ namespace swktool
 
                 // Return system brush
                 //return (LRESULT)GetSysColorBrush(COLOR_WINDOW);
-                static HBRUSH hbrRed = CreateSolidBrush(RGB(255, 0, 0)); return (LRESULT)hbrRed;
+                static HBRUSH hbrRed = CreateSolidBrush(RGB(255, 0, 0)); 
+                return (LRESULT)hbrRed;                
             }
             break;
 
@@ -66,13 +67,14 @@ namespace swktool
                 SetTextColor(hdc, RGB(0, 255, 255));   // cyan text
                 SetBkColor(hdc, RGB(0, 0, 128));       // dark blue background
                 static HBRUSH hbrBlue = CreateSolidBrush(RGB(0, 0, 128));
-                return (LRESULT)hbrBlue;
+                return (LRESULT)hbrBlue;                
             }
             break;
 
 
             }
-            return DefWindowProc(hwnd_, msg, wParam, lParam);
+            
+            return IWindowHandler::NOT_HANDLED;
         }
 
         LRESULT OnPaint() override
@@ -107,6 +109,7 @@ namespace swktool
     public:
         DialogHandlerBase() : hwnd_(nullptr), hostWindow_(nullptr), dpi_(0) {}
         virtual ~DialogHandlerBase() = default;
+        WNDPROC GetOriginalWndProc() const override { return originalWndProc_; }
 
         void SetHwnd(HWND hwnd) override { hwnd_ = hwnd; }
         HWND GetHwnd() const override { return hwnd_; }
@@ -142,8 +145,6 @@ namespace swktool
         HWND hwnd_;
         IWindow* hostWindow_;   // NEW
         UINT dpi_;
+        WNDPROC originalWndProc_ = nullptr;
     };
-
-
 }
-

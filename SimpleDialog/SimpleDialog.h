@@ -14,38 +14,43 @@ public:
         return L"Sample Window";
     }
 
-    virtual void PreRegisterWindow(WindowRegisterClass& wc) override {
+    virtual void PreRegisterWindow(WindowRegisterClass& wc) override 
+{
         wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wc.hInstance = ::GetModuleHandle(NULL);
+        // add menu
         wc.lpszMenuName = MAKEINTRESOURCE(IDC_SIMPLEDIALOG);
         wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_SIMPLEDIALOG));
-        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        //(PCWSTR) L"IDC_SIMPLEDIALOG";
-        wc.lpszMenuName = ClassName();
+        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);                
     }
 
-    virtual LRESULT OnCommand(WPARAM wParam, LPARAM lParam) 
+    LRESULT OnCommand(WORD id, WORD code, HWND control) override 
     {
-        INT_PTR result = 0;
-        switch (wParam)
+        // by default, let DefWinProcess to take care of this message
+        LRESULT CmdHandled = FALSE;
+        switch (id)
         {
         case IDM_ABOUT:
             {
                 swktool::DialogWindow w(IDD_ABOUTBOX, this);
                 w.SetCaption(L"About Simple Window");
-                result = w.ShowDialog();
+                auto result = w.ShowDialog();                 
             }
+            CmdHandled = TRUE;
             break;
 
         case IDM_EXIT:
             OnClose();
             break;
-
-        default:
-            return DefWindowProc(GetHwnd(), WM_COMMAND, wParam, lParam);
         }
-        return 0L;
+        return CmdHandled;
     }
+
+    void OnDestroy() override
+    {
+        PostQuitMessage(0);
+    }
+
 
 };

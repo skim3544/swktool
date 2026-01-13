@@ -7,13 +7,20 @@
 
 class MainWindow : public swktool::Window {
 public:
+    // This is the Windows App registration name.  Must be unique
     PCWSTR  ClassName() const { 
         return L"Sample Window"; 
     }
-
-    virtual void PreRegisterWindow(WNDCLASSEX& wc) override {
+    
+    virtual void PreRegisterWindow(WNDCLASSEX& wc) override 
+    {
         wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    }
+
+    void OnDestroy() override 
+    {
+        PostQuitMessage(0);
     }
 };
 
@@ -33,8 +40,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    ShowWindow(win.GetHwnd(), nCmdShow);
-    UpdateWindow(win.GetHwnd());
+    win.Show(nCmdShow);
 
     // Run the message loop.
     swktool::AppMsgLoop MsgLoop;

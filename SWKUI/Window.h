@@ -15,6 +15,8 @@
 
 namespace swktool 
 {
+
+
 	LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	class Window :
@@ -70,14 +72,12 @@ namespace swktool
 		}
 
 		void OnClose() override { DestroyWindow(GetHwnd()); }
-		void OnDestroy() override {
-			PostQuitMessage(0);
-		}
+		void OnDestroy() override { 	}
 
 
 		//
-		// Commands & Notifications
-		//
+		// Commands & Notifications*.*
+		// Function must return TRUE when handled.  FALSE and allow DefWindowProc to handle
 		LRESULT OnCommand(WORD id, WORD code, HWND control) override { return 0; }
 		LRESULT OnNotify(int idCtrl, NMHDR* hdr) override { return 0; }
 
@@ -156,6 +156,49 @@ namespace swktool
 			binder_->PropagateTheme(theme);
 		}
 
+		void Show(int nCmdShow) 
+		{ 
+			::ShowWindow(GetHwnd(), nCmdShow); 
+			::UpdateWindow(GetHwnd()); 
+		}
+
+		// To register MDI child class
+		bool Register() 
+		{ 
+			WNDCLASSEX wc = {}; 
+			PreRegisterWindow(wc); 
+			return RegisterClassEx(&wc); 
+		}
+
+		bool Subclass(HWND hwnd)
+		{
+			//DebugBreak();
+
+			if (!hwnd)
+				return false;
+			
+			SetHwnd(hwnd);
+
+			WindowHandlerRegistry::Instance().RegisterHandler(hwnd, this);
+
+			// Store 'this' so SWKUI can route messages
+			SetWindowLongPtr(GetHwnd(), GWLP_USERDATA, (LONG_PTR)this);
+
+			// Replace the window procedure with SWKUI's
+			originalWndProc_ = (WNDPROC)SetWindowLongPtr(
+				GetHwnd(),
+				GWLP_WNDPROC,
+				(LONG_PTR)&SWKWindowProc
+			);
+
+			return true;
+		}
+
+		WNDPROC GetOriginalWndProc() const override { return originalWndProc_; }
+
+		protected:
+
+		WNDPROC originalWndProc_ = nullptr;
 	};
 
 	class CaptionFadeWindow : public swktool::Window

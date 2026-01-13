@@ -198,6 +198,11 @@ public:
         auto val = dlg.ShowDialog();   // clean, simple, and consistent
     }
 
+    void OnDestroy() override
+    {
+        PostQuitMessage(0);
+    }
+
 };
 
 

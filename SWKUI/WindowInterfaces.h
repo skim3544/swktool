@@ -33,6 +33,9 @@ namespace swktool
     class IWindowHandler
     {
     public:
+        static constexpr LRESULT HANDLED = 1;
+        static constexpr LRESULT NOT_HANDLED = -1;
+
         virtual ~IWindowHandler() = default;
 
         //
@@ -102,6 +105,10 @@ namespace swktool
         virtual LRESULT OnNcCalcSize(BOOL calcValidRects, NCCALCSIZE_PARAMS* params) { return 0; }
         virtual LRESULT OnNcPaint(HRGN hrgn) { return 0; }
         virtual LRESULT OnNcHitTest(POINT pt) { return HTCLIENT; }
+        virtual LRESULT OnNcDestroy() { return 0;  };
+
+        //
+        virtual WNDPROC GetOriginalWndProc() const = 0;
 
         //
         // ---- Default Message Router ----

@@ -9,7 +9,7 @@
 #include "../SWKBase/TraceBuffer.h"
 #include "../SWKBase/TraceMacros.h"
  
-#include "../SWKBase/AppBootstreap.h"
+#include "../SWKBase/AppBootstrap.h"
 
 class AppBootStrap : public swktool::DefaultAppBootstrap 
 {

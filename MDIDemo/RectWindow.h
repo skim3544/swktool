@@ -21,8 +21,30 @@
 //RECDATA, * PRECTDATA;
 //
 //
-//class RectWindow : public swktool::MDIChildWindow
-//{
+class RectChildWindow : public swktool::MDIChildWindow
+{
+public:
+    PCWSTR ClassName() const override { return L"SWKUI_MDI_RECT"; }
+
+    void PreRegisterWindow(WindowRegisterClass& wc) override
+    {
+        MDIChildWindow::PreRegisterWindow(wc);
+        wc.lpszClassName = ClassName();
+    }
+
+    LRESULT OnCreate(CREATESTRUCT* cs) override
+    {
+        return TRUE;
+    }
+
+    LRESULT OnPaint() override
+    {
+        swktool::PaintDeviceContext PDC(this);
+        return TRUE;
+    }
+};
+
+
 //protected:
 //	std::unique_ptr<RECDATA>  pRectData_;
 //

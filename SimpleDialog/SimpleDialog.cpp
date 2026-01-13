@@ -30,8 +30,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return 0;
     }
 
-    ShowWindow(win.GetHwnd(), nCmdShow);
-    UpdateWindow(win.GetHwnd());
+    win.Show(nCmdShow);
 
     // Run the message loop.
     swktool::AppMsgLoop MsgLoop;

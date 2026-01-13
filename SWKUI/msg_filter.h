@@ -16,13 +16,8 @@
 #define PROC_DLG_MSG(hwnd, message, fn) \
 	case (message): return (SetDlgMsgResult(hwnd, message, PROCDLG_##message((wParam), (lParam), (fn))))
 
-/*OnCommand(int id, HWND hwndCtl, UINT codeNotify) */
-// ID = (int)(LOWORD(wParam));
-// hWND = (HWND)(lParam);
-// IDNotify = (UINT)HIWORD(wParam)
 #define PROC_WM_COMMAND(wParam, lParam, fn) \
-    ((fn)((WPARAM)(WPARAM(wParam)), (LPARAM)(lParam)), 0L)
-//  ((fn)((WPARAM)(LOWORD(wParam)), (LPARAM)(lParam)), 0L)
+  ((fn)(LOWORD(wParam), HIWORD(wParam), (HWND)(lParam)), 0L)
 
 /* BOOL Cls_OnCreate(LPCREATESTRUCT lpCreateStruct) */
 #define PROC_WM_CREATE(wParam, lParam, fn) \

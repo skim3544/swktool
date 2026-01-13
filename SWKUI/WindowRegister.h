@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "MsgProcs.h"
 
 namespace swktool
 {
@@ -18,8 +19,6 @@ namespace swktool
             virtual void PreRegisterWindow(WindowRegisterClass& wc) = 0;
         };
 
-        LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-        LRESULT CALLBACK SWKMDIFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
         class WindowsDefaultRegister
         {
@@ -68,6 +67,19 @@ namespace swktool
                 wc.hIconSm = wc.hIcon;
                 wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
+                return wc;
+            }
+
+            static WindowRegisterClass CreateMDIChild(LPCWSTR className)
+            {
+                WindowRegisterClass wc = {};
+                wc.cbSize = sizeof(WindowRegisterClass);
+                wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+                wc.lpfnWndProc = DefMDIChildProc;  // MDI child class are subclassed, default to DefMDIChildProc at start, then subclassed
+                wc.hInstance = GetModuleHandle(nullptr);
+                wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+                wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+                wc.lpszClassName = className;
                 return wc;
             }
 

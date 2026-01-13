@@ -20,6 +20,11 @@ public:
 	LRESULT OnSize(UINT type, int cx, int cy) override;
 	LRESULT OnPaint() override;
 
+	void OnDestroy() override
+	{
+		PostQuitMessage(0);
+	}
+
 private:
 	int	cxClient_;
 	int cyClient_;

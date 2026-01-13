@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MsgHandler.h"
 #include "../SWKBase/DebugStream.h"
+#include "Window.h"
 #include <iomanip>
 
 namespace swktool 
@@ -107,20 +108,35 @@ namespace swktool
 			WindowHandlerRegistry::Instance().UnregisterHandler(hwnd);
 			return 0;
 
-		case WM_NCDESTROY:
-			// Final cleanup
+		case WM_NCDESTROY:	
+			auto* pHandle = handler;
+			if (pHandle)
+			{
+				pHandle->OnNcDestroy();
+			}
 			WindowHandlerRegistry::Instance().UnregisterHandler(hwnd);
 			return 0;
 		}
 
-		// Fallback for unhandled messages
-		return handler->OnMessage(msg, wParam, lParam);
+		LRESULT result = handler->OnMessage(msg, wParam, lParam);
+		WNDPROC orig = handler->GetOriginalWndProc();
+
+		// if message has been handled, then return 0
+		if (result != IWindowHandler::NOT_HANDLED)
+		{
+			return result;
+		}
+		
+		// if message not handled, and subclassed
+		if (orig)
+		{
+			return CallWindowProc(handler->GetOriginalWndProc(), hwnd, msg, wParam, lParam);
+		}
+
+		// Fallback for unhandled messages, no subclass		
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
 
-
-
-	// Pre‑registered dialog handler waiting for its HWND.
-	inline thread_local IWindowHandler* g_pendingDialogHandler = nullptr;
 
 	INT_PTR CALLBACK SWKDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 	{
@@ -252,5 +268,22 @@ namespace swktool
 		return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
 	}
 
+	/// <summary>
+	/// Processing msg for MDI child window
+	/// </summary>
+	/// <param name="hwnd"></param>
+	/// <param name="msg"></param>
+	/// <param name="wp"></param>
+	/// <param name="lp"></param>
+	/// <returns></returns>
+	LRESULT CALLBACK SWKMDIChildProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+	{
+		using namespace swktool;
+		Window* self = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
+		if (self)
+			return self->OnMessage(msg, wp, lp);
+
+		return DefMDIChildProc(hwnd, msg, wp, lp);
+	}
 }
