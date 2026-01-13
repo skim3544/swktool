@@ -3,7 +3,6 @@
 // Used by MDIDemo.rc
 //
 #define IDC_MYICON                      2
-#define MDIMENURECT                     4
 #define IDD_MDIDEMO_DIALOG              102
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
@@ -12,14 +11,12 @@
 #define IDI_MDIDEMO                     107
 #define IDI_SMALL                       108
 #define IDC_MDIDEMO                     109
-#define MDIMENUINIT                     109
 #define IDR_MAINFRAME                   128
 #define MDIMENUHELLO                    129
 #define IDR_MENU1                       130
 #define ID_FILE_NEWHE                   32771
 #define ID_FILE_NEWRECTANGLE            32772
 #define IDM_FILE_NEWHELLO               32773
-#define IDM_FILE_NEWRECTANGLE           32774
 #define ID_FILE_CLOSE                   32775
 #define IDM_FILE_CLOSE                  32776
 #define ID_COLOR_BLACK                  32777
@@ -45,7 +42,6 @@
 #define IDM_FILE_NEWRECT                32797
 #define ID_FILE_CLOSE32798              32798
 #define ID_FILE_EXIT                    32799
-#define IDM_FILE_EXIT                   32800
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

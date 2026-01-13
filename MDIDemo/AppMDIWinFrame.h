@@ -34,11 +34,12 @@ public:
         case IDM_FILE_NEWHELLO:
             CreateMdiChild<MDIHelloWindow>(TEXT("Hello"));
             return TRUE;
+
         case IDM_FILE_NEWRECT:
             CreateMdiChild<RectChildWindow>(TEXT("Rectangle"));
             return TRUE;
 
-        case IDM_FILE_EXIT:
+        case IDM_EXIT:
             OnClose();
             return TRUE;
         }

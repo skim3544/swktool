@@ -10,7 +10,7 @@ namespace swktool
     class MDIFrame;
 	class MDIChildWindow : public Window 
 	{
-		inline static bool s_registered = false;
+		//inline static bool s_registered = false;
 
         MDIFrameWindow* Frame_ = nullptr;
 
@@ -27,21 +27,40 @@ namespace swktool
             //wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         }
 
+        //bool Register()
+        //{
+        //    WindowRegisterClass wc{};
+        //    wc.cbSize = sizeof(WindowRegisterClass);
+        //    PreRegisterWindow(wc);
+
+        //    // Only register the class once 
+        //    if (!s_registered)
+        //    {
+        //        if (!RegisterClassEx(&wc))
+        //            return false;
+
+        //        s_registered = true;
+        //    }
+        //    return true;
+        //}
+
         bool Register()
         {
-            if (s_registered)
-                return true;
-
             WindowRegisterClass wc{};
             wc.cbSize = sizeof(WindowRegisterClass);
             PreRegisterWindow(wc);
 
-            if (!RegisterClassEx(&wc))
-                return false;
+            ATOM atom = RegisterClassEx(&wc);
+            if (atom == 0)
+            {
+                DWORD err = GetLastError();
+                if (err != ERROR_CLASS_ALREADY_EXISTS)
+                    return false;
+            }
 
-            s_registered = true;
             return true;
         }
+
 
         bool AttachToMDI(HWND hwnd) { 
             return Subclass(hwnd); 

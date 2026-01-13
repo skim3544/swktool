@@ -109,7 +109,7 @@ namespace swktool
 
         //
         virtual WNDPROC GetOriginalWndProc() const = 0;
-
+        virtual bool IsMDIFrame() const { return false; }
         //
         // ---- Default Message Router ----
         //

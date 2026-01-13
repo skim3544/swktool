@@ -3,6 +3,7 @@
 #include "../SWKBase/DebugStream.h"
 #include "Window.h"
 #include <iomanip>
+#include "MDIFrameWindow.h"
 
 namespace swktool 
 {
@@ -37,7 +38,7 @@ namespace swktool
 			WindowHandlerRegistry::Instance().RegisterHandler(hwnd, handler);
 
 			// Give the handler a chance to process creation
-			handler->OnCreate(cs);
+			//handler->OnCreate(cs);
 
 			return TRUE;
 		}
@@ -49,10 +50,54 @@ namespace swktool
 		if (!handler)
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 
+		// ============================================================
+		   // ⭐ INSERT THIS BLOCK RIGHT HERE — BEFORE THE switch(msg)
+		   // ============================================================
+		if (auto* frame = dynamic_cast<MDIFrameWindow*>(handler))
+		{
+			HWND hClient = frame->GetMDIClientHWND();
+
+			switch (msg)
+			{
+				// These MUST go to DefFrameProc
+			case WM_INITMENU:
+			case WM_INITMENUPOPUP:
+			case WM_MENUSELECT:
+			case WM_MEASUREITEM:
+			case WM_DRAWITEM:
+			case WM_MENUCHAR:
+				return DefFrameProc(hwnd, hClient, msg, wParam, lParam);
+
+			case WM_COMMAND:
+			{
+				// Let DefFrameProc try first (for MDI child commands)
+				if (DefFrameProc(hwnd, hClient, msg, wParam, lParam))
+					return 0;
+
+				// If DefFrameProc did NOT handle it, this is a frame command
+				WORD id = LOWORD(wParam);
+				WORD code = HIWORD(wParam);
+				HWND ctrl = reinterpret_cast<HWND>(lParam);
+
+				return frame->OnCommand(id, code, ctrl);
+			}
+			}
+		}
+
 		switch (msg)
 		{
+		case WM_CREATE:
+		{
+			auto* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+			return handler->OnCreate(cs);
+		}
+
 		case WM_COMMAND:
 		{
+			// If this is an MDI frame, DefFrameProc already handled it above.
+			if (dynamic_cast<MDIFrameWindow*>(handler))
+				break;
+
 			WORD id = LOWORD(wParam);
 			WORD code = HIWORD(wParam);
 			HWND ctrl = reinterpret_cast<HWND>(lParam);
@@ -162,6 +207,8 @@ namespace swktool
 
 		switch (msg)
 		{
+
+
 		case WM_COMMAND:
 		{
 			WORD id = LOWORD(wParam);
@@ -194,96 +241,96 @@ namespace swktool
 	}
 
 
-	LRESULT CALLBACK SWKMDIFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		HWND hClient = nullptr;
+	//LRESULT CALLBACK SWKMDIFrameProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	//{
+	//	HWND hClient = nullptr;
 
-		// Retrieve the MDI client handle stored in GWLP_USERDATA or wherever SWKUI keeps it.
-		// If you store it differently, adjust this line.
-		hClient = (HWND)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	//	// Retrieve the MDI client handle stored in GWLP_USERDATA or wherever SWKUI keeps it.
+	//	// If you store it differently, adjust this line.
+	//	hClient = (HWND)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
-		switch (msg)
-		{
-		case WM_CREATE:
-		{
-			// Extract CLIENTCREATESTRUCT from CREATESTRUCT
-			auto* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
-			auto* ccs = reinterpret_cast<CLIENTCREATESTRUCT*>(cs->lpCreateParams);
+	//	switch (msg)
+	//	{
+	//	case WM_CREATE:
+	//	{
+	//		// Extract CLIENTCREATESTRUCT from CREATESTRUCT
+	//		auto* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+	//		auto* ccs = reinterpret_cast<CLIENTCREATESTRUCT*>(cs->lpCreateParams);
 
-			// Create the MDI client window
-			hClient = CreateWindowEx(
-				0,
-				L"MDICLIENT",
-				nullptr,
-				WS_CHILD | WS_CLIPCHILDREN | WS_VISIBLE,
-				0, 0, 0, 0,
-				hWnd,
-				nullptr,
-				(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-				ccs
-			);
+	//		// Create the MDI client window
+	//		hClient = CreateWindowEx(
+	//			0,
+	//			L"MDICLIENT",
+	//			nullptr,
+	//			WS_CHILD | WS_CLIPCHILDREN | WS_VISIBLE,
+	//			0, 0, 0, 0,
+	//			hWnd,
+	//			nullptr,
+	//			(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+	//			ccs
+	//		);
 
-			if (!hClient)
-				return -1;
+	//		if (!hClient)
+	//			return -1;
 
-			// Store client handle for later use
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)hClient);
-			return 0;
-		}
+	//		// Store client handle for later use
+	//		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)hClient);
+	//		return 0;
+	//	}
 
-		case WM_COMMAND:
-			if (hClient)
-			{
-				// Let MDI handle menu commands (like Window → Tile, Cascade, etc.)
-				if (DefFrameProc(hWnd, hClient, msg, wParam, lParam))
-					return 0;
-			}
-			break;
+	//	case WM_COMMAND:
+	//		if (hClient)
+	//		{
+	//			// Let MDI handle menu commands (like Window → Tile, Cascade, etc.)
+	//			if (DefFrameProc(hWnd, hClient, msg, wParam, lParam))
+	//				return 0;
+	//		}
+	//		break;
 
-		case WM_MENUSELECT:
-		case WM_INITMENU:
-		case WM_INITMENUPOPUP:
-			if (hClient)
-				return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
-			break;
+	//	case WM_MENUSELECT:
+	//	case WM_INITMENU:
+	//	case WM_INITMENUPOPUP:
+	//		if (hClient)
+	//			return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
+	//		break;
 
-		case WM_SIZE:
-			if (hClient)
-			{
-				MoveWindow(hClient, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
-			}
-			return 0;
+	//	case WM_SIZE:
+	//		if (hClient)
+	//		{
+	//			MoveWindow(hClient, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
+	//		}
+	//		return 0;
 
-		case WM_CLOSE:
-			// You can intercept shutdown here if SWKUI needs cleanup
-			DestroyWindow(hWnd);
-			return 0;
+	//	case WM_CLOSE:
+	//		// You can intercept shutdown here if SWKUI needs cleanup
+	//		DestroyWindow(hWnd);
+	//		return 0;
 
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			return 0;
-		}
+	//	case WM_DESTROY:
+	//		PostQuitMessage(0);
+	//		return 0;
+	//	}
 
-		// Default MDI frame message handling
-		return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
-	}
+	//	// Default MDI frame message handling
+	//	return DefFrameProc(hWnd, hClient, msg, wParam, lParam);
+	//}
 
-	/// <summary>
-	/// Processing msg for MDI child window
-	/// </summary>
-	/// <param name="hwnd"></param>
-	/// <param name="msg"></param>
-	/// <param name="wp"></param>
-	/// <param name="lp"></param>
-	/// <returns></returns>
-	LRESULT CALLBACK SWKMDIChildProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
-	{
-		using namespace swktool;
-		Window* self = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	///// <summary>
+	///// Processing msg for MDI child window
+	///// </summary>
+	///// <param name="hwnd"></param>
+	///// <param name="msg"></param>
+	///// <param name="wp"></param>
+	///// <param name="lp"></param>
+	///// <returns></returns>
+	//LRESULT CALLBACK SWKMDIChildProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
+	//{
+	//	using namespace swktool;
+	//	Window* self = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
-		if (self)
-			return self->OnMessage(msg, wp, lp);
+	//	if (self)
+	//		return self->OnMessage(msg, wp, lp);
 
-		return DefMDIChildProc(hwnd, msg, wp, lp);
-	}
+	//	return DefMDIChildProc(hwnd, msg, wp, lp);
+	//}
 }

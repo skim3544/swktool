@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.h"
-//#include "MDIChildWindow.h"
+
 
 namespace swktool {
     class MDIChildWindow;
@@ -10,6 +10,9 @@ namespace swktool {
         using MDIChildren = std::vector<swktool::MDIChildWindow*>;
 
     public:
+        virtual bool IsMDIFrame() const { return true; }
+        HWND GetMDIClientHWND() const { return _hMdiClient; }
+
         PCWSTR ClassName() const override { return L"SWKUI_MDI_FRAME"; }
 
         void PreRegisterWindow(WindowRegisterClass& wc) override
