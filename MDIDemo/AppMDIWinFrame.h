@@ -3,12 +3,14 @@
 #include "../SWKUI/Window.h"
 #include "../SWKUI/WindowRegister.h"
 #include "../SWKUI/MDIFrameWindow.h"
+#include "../SWKUI/MDIFrameHelper.h"
 #include "resource.h"
 #include "HelloWindow.h"
 #include "RectWindow.h"
 
+
 class MdiMainWindow : public swktool::MDIFrameWindow
-{   
+{
 public:
     PCWSTR ClassName() const override { return L"SWKUI_MDI_MAIN_DEMO"; }
     void PreRegisterWindow(WindowRegisterClass& wc) override    
@@ -29,6 +31,7 @@ public:
 
     LRESULT OnCommand(WORD id, WORD code, HWND control) override
     {
+        using namespace swktool;
         switch (id)
         {
         case IDM_FILE_NEWHELLO:
@@ -42,6 +45,11 @@ public:
         case IDM_EXIT:
             OnClose();
             return TRUE;
+
+        case IDM_WINDOW_CASCADE:            
+            MDIWindowHelper::Cascade(GetMDIClientHWnd());
+            return 0;
+
         }
         return FALSE;
     }

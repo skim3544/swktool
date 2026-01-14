@@ -114,9 +114,6 @@
     <ClInclude Include="Controls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ComboBoxExCtrl.h">
       <Filter>Controls</Filter>
     </ClInclude>
@@ -210,6 +207,15 @@
     <ClInclude Include="FileEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MDIFrameHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -225,9 +231,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WinRegistration.cpp">

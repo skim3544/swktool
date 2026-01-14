@@ -21,11 +21,12 @@
   <ItemGroup>
     <ClInclude Include="..\SWKBase\ui.h" />
     <ClInclude Include="AnimationCtrl.h" />
-    <ClInclude Include="AWindow.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Brush.h" />
     <ClInclude Include="ComboBoxExCtrl.h" />
     <ClInclude Include="FileEnums.h" />
+    <ClInclude Include="FormLayout.h" />
+    <ClInclude Include="FormWindow.h" />
     <ClInclude Include="GDIObject.h" />
     <ClInclude Include="HeaderCtrl.h" />
     <ClInclude Include="ImageList.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="ListViewCtrl.cpp" />
     <ClCompile Include="MDIChildWindow.cpp" />
     <ClCompile Include="MDIClientWindow.cpp" />
+    <ClInclude Include="MDIFrameHelper.h" />
     <ClCompile Include="MDIFrameWindow.cpp" />
     <ClCompile Include="MonthCalendarCtrl.cpp" />
     <ClInclude Include="MsgHandler.h">
@@ -133,7 +135,6 @@
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="WinClipboard.cpp" />
     <ClCompile Include="WindowHandlers.cpp" />
-    <ClCompile Include="WinFrame.cpp" />
     <ClCompile Include="WinMemory.cpp" />
     <ClCompile Include="WinRegistration.cpp" />
   </ItemGroup>

@@ -1,6 +1,8 @@
 #ifndef ___DEVICE_CONTEXT_H___
 #define ___DEVICE_CONTEXT_H___
 
+#pragma once
+
 #include <Windows.h>
 #include <string>
 #include <memory>
@@ -9,7 +11,6 @@
 #include "Bitmap.h"
 
 namespace swktool {
-	class AWindow;
 	class Brush;
 	class DialogWindow;
 	class Window;
@@ -32,7 +33,8 @@ namespace swktool {
 		ANISOTROPIC = MM_ANISOTROPIC
 	};
 
-	class DeviceContext {
+	class DeviceContext 
+	{
 	protected:
 		HDC hDC;
 		HWND hWndOwner;
@@ -565,8 +567,6 @@ namespace swktool {
 		COLORREF SetTextColor(COLORREF oColor) {
 			return ::SetTextColor(hDC, oColor);
 		}
-
-
 	};
 
 

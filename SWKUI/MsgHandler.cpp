@@ -55,7 +55,7 @@ namespace swktool
 		   // ============================================================
 		if (auto* frame = dynamic_cast<MDIFrameWindow*>(handler))
 		{
-			HWND hClient = frame->GetMDIClientHWND();
+			HWND hClient = frame->GetMDIClientHWnd();
 
 			switch (msg)
 			{
