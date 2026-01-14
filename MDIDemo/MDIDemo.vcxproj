@@ -147,21 +147,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AppLog.h" />
-    <ClInclude Include="AppWinFrame.h" />
+    <ClInclude Include="AppMDIWinFrame.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HelloWindow.h" />
     <ClInclude Include="MDIDemo.h" />
     <ClInclude Include="RectWindow.h" />
-    <ClInclude Include="TestMDIFrameWindow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AppLog.cpp" />
     <ClCompile Include="MDIDemo.cpp" />
-    <ClCompile Include="AppWinFrame.cpp" />
-    <ClCompile Include="TestMDIFrameWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MDIDemo.rc" />

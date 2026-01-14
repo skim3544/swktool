@@ -27,10 +27,7 @@
     <ClInclude Include="MDIDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AppWinFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMDIFrameWindow.h">
+    <ClInclude Include="AppMDIWinFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HelloWindow.h">
@@ -39,21 +36,9 @@
     <ClInclude Include="RectWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AppLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MDIDemo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AppWinFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMDIFrameWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AppLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -75,7 +75,7 @@
     <ClInclude Include="TraceMacros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AppBootstreap.h">
+    <ClInclude Include="AppBootstrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ServiceProvider.h">
@@ -110,7 +110,7 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Exception.cpp">
+    <ClCompile Include="CrashHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WinFile.cpp">
