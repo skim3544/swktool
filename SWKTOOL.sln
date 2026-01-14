@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32526.322
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11408.92 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SWKBase", "SWKBase\SWKBase.vcxproj", "{05E74ED0-9D44-4DB9-9F63-F9DDEFE01C6C}"
 EndProject
@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DialogControls", "DialogCon
 		{05E74ED0-9D44-4DB9-9F63-F9DDEFE01C6C} = {05E74ED0-9D44-4DB9-9F63-F9DDEFE01C6C}
 		{225BC5F9-897B-482D-AF55-72780D6407F2} = {225BC5F9-897B-482D-AF55-72780D6407F2}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormWindowDemo", "FormWindowDemo\FormWindowDemo.vcxproj", "{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,14 @@ Global
 		{E6CC1E7E-A61E-40A1-82C2-E2686E6FF481}.Release|x64.Build.0 = Release|x64
 		{E6CC1E7E-A61E-40A1-82C2-E2686E6FF481}.Release|x86.ActiveCfg = Release|Win32
 		{E6CC1E7E-A61E-40A1-82C2-E2686E6FF481}.Release|x86.Build.0 = Release|Win32
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Debug|x64.ActiveCfg = Debug|x64
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Debug|x64.Build.0 = Debug|x64
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Debug|x86.Build.0 = Debug|Win32
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Release|x64.ActiveCfg = Release|x64
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Release|x64.Build.0 = Release|x64
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Release|x86.ActiveCfg = Release|Win32
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +134,7 @@ Global
 		{43B8DEE1-05ED-4AEF-8B5A-33D34362A3F4} = {07587CFD-2A8E-4311-964B-C7BE00FC2613}
 		{A75D79BD-F820-44B3-ABC7-906494C57873} = {07587CFD-2A8E-4311-964B-C7BE00FC2613}
 		{E6CC1E7E-A61E-40A1-82C2-E2686E6FF481} = {07587CFD-2A8E-4311-964B-C7BE00FC2613}
+		{7B11FC6D-077E-467D-BFA5-06F744C1C6A2} = {07587CFD-2A8E-4311-964B-C7BE00FC2613}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD4F6676-D1D4-4177-97AB-4A706DA9ED5B}
