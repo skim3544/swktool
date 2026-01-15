@@ -17,7 +17,8 @@
 
 
 
-namespace swktool {
+namespace swktool 
+{
 	Ctrl::Ctrl(IWindow* pParent) :
 		parentWindow(pParent), hInst(nullptr), hwndCtrl(nullptr), hParent(nullptr), ID(-1) 
 	{
@@ -54,6 +55,13 @@ namespace swktool {
 			hParent = pParent->GetHwnd();
 		}
 	}
+
+	Ctrl::~Ctrl()
+	{
+		if (binder_)
+			binder_->Remove(this);
+	}
+
 
 	void Ctrl::Enable() {
 		::EnableWindow(hwndCtrl, TRUE);

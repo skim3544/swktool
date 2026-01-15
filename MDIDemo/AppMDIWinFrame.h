@@ -50,6 +50,16 @@ public:
             MDIWindowHelper::Cascade(GetMDIClientHWnd());
             return 0;
 
+        case IDM_WINDOW_TILE:
+            MDIWindowHelper::TileHorizontal(GetMDIClientHWnd());
+            return 0;
+        case IDM_WINDOW_ARRANGEICONS:
+            MDIWindowHelper::ArrangeIcons(GetMDIClientHWnd());
+            return 0;
+
+        case IDM_WINDOW_CLOSEALL:
+            MDIWindowHelper::CloseAll(GetMDIClientHWnd());
+            return 0;
         }
         return FALSE;
     }

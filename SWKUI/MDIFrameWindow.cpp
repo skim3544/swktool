@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Window.h"
 #include "MDIFrameWindow.h"
+#include "MDIChildWindow.h"
+
 //
 namespace swktool 
 {
@@ -55,5 +57,10 @@ namespace swktool
         return hMenu ? GetSubMenu(hMenu, 0) : nullptr;
     }
 
+    void MDIFrameWindow::PropagateThemeToChildren(const Theme& theme)
+    {
+        for (auto* child : children_)
+            child->PropagateTheme(theme);
+    }
 }
 

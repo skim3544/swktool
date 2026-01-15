@@ -177,6 +177,8 @@
     <ClInclude Include="TraceBuffer.h" />
     <ClInclude Include="TraceMacros.h" />
     <ClInclude Include="WinFile.h" />
+    <ClInclude Include="WinReg.h" />
+    <ClInclude Include="WinRegOpenOptions.h" />
     <ClInclude Include="xml.h" />
   </ItemGroup>
   <ItemGroup>

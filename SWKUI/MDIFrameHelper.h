@@ -78,5 +78,49 @@ namespace swktool
             RedrawWindow(hMdiClient, nullptr, nullptr,
                 RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
         }
+
+        static void CloseAll(HWND hMdiClient)
+        {
+            if (!hMdiClient)
+                return;
+
+            // Snapshot all current MDI child windows
+            std::vector<HWND> children;
+
+            EnumChildWindows(hMdiClient, [](HWND hwnd, LPARAM lParam) -> BOOL {
+                // MDI child windows have WS_EX_MDICHILD
+                LONG_PTR styleEx = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+                if (styleEx & WS_EX_MDICHILD) {
+                    reinterpret_cast<std::vector<HWND>*>(lParam)->push_back(hwnd);
+                }
+                return TRUE;
+                }, reinterpret_cast<LPARAM>(&children));
+
+            // Now walk the snapshot in order
+            for (HWND hwndChild : children)
+            {
+                if (!IsWindow(hwndChild))
+                    continue; // already closed somehow
+
+                // Make it active (optional but nice for UX)
+                SendMessage(hMdiClient, WM_MDIACTIVATE, (WPARAM)hwndChild, 0);
+
+                // Ask it to close itself (this will hit your OnClose/OnQueryClose)
+                SendMessage(hwndChild, WM_CLOSE, 0, 0);
+
+                // If it's still alive, user probably canceled -> stop Close All
+                if (IsWindow(hwndChild))
+                    break;
+            }
+
+            RedrawWindow(
+                hMdiClient,
+                nullptr,
+                nullptr,
+                RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW
+            );
+        }
+
+
     };
 } // namespace swktool

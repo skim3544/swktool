@@ -74,7 +74,7 @@ namespace swktool {
             int y = wa.top + (screenH - height) / 2;
 
             SetWindowPos(GetHwnd(), nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-            Show(nCmdShow);
+            Window::Show(nCmdShow);
         }
 
         // --- SWKUI virtuals ---
@@ -88,8 +88,45 @@ namespace swktool {
             _layout.OnSize(GetHwnd());
             return 0;
         }
+        /*
+        */
+        void Show() { Window::Show(SW_SHOW); }
+        void Hide() { Window::Show(SW_HIDE); }
+        void Close() { ::DestroyWindow(GetHwnd()); }
 
+        void CenterToScreen() { ShowCentered(); }
 
+        void SetBounds(int x, int y, int width, int height) {
+            SetWindowPos(GetHwnd(), nullptr, x, y, width, height, SWP_NOZORDER);
+        }
+
+        void SetClientSize(int width, int height) {
+            RECT rc = { 0, 0, width, height };
+            AdjustWindowRectEx(&rc, GetWindowStyle(GetHwnd()), FALSE, GetWindowExStyle(GetHwnd()));
+            SetBounds(0, 0, rc.right - rc.left, rc.bottom - rc.top);
+        }
+
+        void Activate() {
+            SetForegroundWindow(GetHwnd());
+        }
+
+        void Focus() {
+            ::SetFocus(GetHwnd());
+        }
+
+        void Invalidate() {
+            InvalidateRect(GetHwnd(), nullptr, TRUE);
+        }
+
+        void SuspendLayout() {
+            SendMessage(GetHwnd(), WM_SETREDRAW, FALSE, 0);
+        }
+
+        void ResumeLayout() {
+            SendMessage(GetHwnd(), WM_SETREDRAW, TRUE, 0);
+            RedrawWindow(GetHwnd(), nullptr, nullptr,
+                RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        }
 
     private:
         FormLayoutEngine _layout;

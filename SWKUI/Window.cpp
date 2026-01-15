@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <memory>
 #include "Window.h"
+#include "Theme.h"
+#include "../SWKBase/WinRegOpenOptions.h"
 
 #ifdef _DEBUG
 #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
@@ -11,6 +13,49 @@
 
 namespace swktool 
 {
+	bool Window::IsSystemInDarkMode()
+	{
+		using namespace swktool;
+
+		WinRegOpenOptions opts;
+		opts.Read();
+
+		auto reg = opts.Open(
+			HKEY_CURRENT_USER,
+			L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
+		);
+
+		if (!reg.IsValid())
+			return false; // default to light
+
+		DWORD value = 1; // default: light
+		if (reg.ReadDWORD(L"AppsUseLightTheme", value))
+			return value == 0; // 0 = dark
+
+		return false;
+	}
+
+
+	LRESULT Window::OnMessage(UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (msg)
+		{
+		case WM_SETTINGCHANGE:
+		{
+			if (lParam && wcscmp((LPCWSTR)lParam, L"ImmersiveColorSet") == 0)
+			{
+				Theme t;
+				t.DarkMode = IsSystemInDarkMode();   // using your WinReg wrapper
+				SetTheme(t);                     // triggers your theme pipeline
+				return 0;                        // handled
+			}
+			break;
+		}
+		}
+		// your other message handlers...			
+		return WindowHandlerBase::OnMessage(msg, wParam, lParam);
+	}
+
 
 	//LRESULT Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//{

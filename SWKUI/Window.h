@@ -137,26 +137,40 @@ namespace swktool
 			return DefWindowProc(GetHwnd(), WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y));
 		}
 
+		bool IsSystemInDarkMode();
+
 		//
 		// Fallback
 		//
-		LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override
-		{
-			return WindowHandlerBase::OnMessage(msg, wParam, lParam);
+		LRESULT OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) override;
+		
+		void SetTheme(const Theme& theme) 
+		{ 
+			currentTheme_ = theme; 
+			PropagateTheme(theme); 
 		}
 
-		void ApplyTheme(const Theme& theme)
+		virtual void ApplyTheme(const Theme& theme)
 		{
 			currentTheme_ = theme;
-
-			// Repaint window background
 			InvalidateRect(GetHwnd(), nullptr, TRUE);
-
-			// Propagate to all controls
-			binder_->PropagateTheme(theme);
+			if (binder_)
+				binder_->PropagateTheme(theme);
 		}
 
-		void Show(int nCmdShow) 
+		virtual void PropagateThemeToChildren(const Theme& theme) 
+		{ 
+			// default: no children 
+		}
+		
+		void PropagateTheme(const Theme & theme)
+		{
+			ApplyTheme(theme);
+			PropagateThemeToChildren(theme);
+		}
+
+
+		void Show(int nCmdShow)
 		{ 
 			::ShowWindow(GetHwnd(), nCmdShow); 
 			::UpdateWindow(GetHwnd()); 
@@ -199,6 +213,8 @@ namespace swktool
 		protected:
 
 		WNDPROC originalWndProc_ = nullptr;
+		Theme currentTheme_{};
+
 	};
 
 	class CaptionFadeWindow : public swktool::Window

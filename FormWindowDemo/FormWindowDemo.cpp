@@ -6,8 +6,6 @@
 #include "../SWKUI/FormWindow.h"
 #include "../SWKUI/MsgLoop.h"
 
-#define MAX_LOADSTRING 100
-
 
 #pragma comment(lib, "SWKBase.lib")
 #pragma comment(lib, "SWKUI.lib")
@@ -49,7 +47,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (!form.CreateForm(L"Simple Form Window"))
         return 0;
 
-    form.ShowCentered();
+    form.CenterToScreen();
 
     // Run the message loop.
     AppMsgLoop MsgLoop;

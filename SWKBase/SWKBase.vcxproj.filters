@@ -84,6 +84,12 @@
     <ClInclude Include="AppContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WinReg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WinRegOpenOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

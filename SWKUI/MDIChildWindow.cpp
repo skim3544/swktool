@@ -42,4 +42,12 @@ namespace swktool
 
         return true;
     }
+
+    void MDIChildWindow::OnClose() 
+    {
+        if (!OnQueryClose()) 
+            return; // cancel close
+
+        DestroyWindow(GetHwnd());
+    }
 }

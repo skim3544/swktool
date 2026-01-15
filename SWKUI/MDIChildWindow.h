@@ -17,9 +17,12 @@ namespace swktool
         bool Register();
 
         LRESULT OnNcDestroy() override;
+        virtual bool OnQueryClose() { return true; } 
 
         // used for subclassing 
         bool AttachToMDI(HWND hwnd);
+
+        void OnClose() override;
 	};
 
 }

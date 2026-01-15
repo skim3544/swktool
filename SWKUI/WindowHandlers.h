@@ -20,7 +20,10 @@ namespace swktool
         , public IWindow
     {
     public:
-        WindowHandlerBase() : hwnd_(nullptr), hInstance_(nullptr), hostWindow_(nullptr), dpi_(0) {}
+        WindowHandlerBase() : hwnd_(nullptr), hInstance_(nullptr), hostWindow_(nullptr), dpi_(0) 
+        {
+            binder_ = std::make_unique<ControlBinder>();
+        }
         virtual ~WindowHandlerBase() = default;
 
         HWND GetHwnd() const override { return hwnd_; }

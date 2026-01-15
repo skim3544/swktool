@@ -1,12 +1,16 @@
 ﻿#include "pch.h"
 #include "MsgHandler.h"
 #include "../SWKBase/DebugStream.h"
+#include "../SWKBase/WinRegOpenOptions.h"
 #include "Window.h"
 #include <iomanip>
 #include "MDIFrameWindow.h"
 
 namespace swktool 
 {
+
+
+
 	// For regular windows
 	LRESULT CALLBACK SWKWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
@@ -91,6 +95,7 @@ namespace swktool
 			auto* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
 			return handler->OnCreate(cs);
 		}
+
 
 		case WM_COMMAND:
 		{

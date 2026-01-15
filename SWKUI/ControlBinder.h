@@ -4,9 +4,11 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include <assert.h>
 
 #include "Theme.h"
 #include "Controls.h"
+#include "Ctrl.h"
 
 
 namespace swktool {
@@ -27,7 +29,20 @@ namespace swktool {
 	private:
 		TControlList ControlList_;
 
+
 	public:
+		/// <summary>
+		///  Adds control to the binder
+		/// </summary>
+		/// <param name="ctrl"></param>
+		void Add(std::unique_ptr<Ctrl> ctrl)
+		{
+			// set backward pointer, set binder pointer (this) to the control
+			ctrl->SetBinder(this);
+			ControlList_.push_back(std::move(ctrl));
+		}
+
+
 		// Binds Dialog resource control with the control
 		template <class CtrlItem, class TParent = IWindow>
 		CtrlItem* Bind(UINT ID, TParent* pParent) 
@@ -38,7 +53,8 @@ namespace swktool {
 			auto ctrl = std::make_unique<CtrlItem>(ID, pParent);
 			if (ctrl->GetCtrlHandle() == nullptr)
 				return nullptr;
-
+			
+			ctrl->SetBinder(this);
 			CtrlItem* raw = ctrl.get(); 
 			ControlList_.push_back(std::move(ctrl)); 
 			return raw;
@@ -52,6 +68,7 @@ namespace swktool {
 			static_assert(std::is_base_of_v<IWindow, TParent>, "TParent must derive from IWindow");
 
 			std::unique_ptr<CtrlItem> data = std::make_unique<CtrlItem>(Caption, dwStyle, x, y, Height, Width, pParent, CtrlID);
+			data->SetBinder(this);
 			CtrlItem* raw = data.get();
 
 			ControlList_.push_back(std::move(data));
@@ -126,6 +143,18 @@ namespace swktool {
 			return false;
 		}
 
+		bool Remove(Ctrl* ctrl)
+		{
+			auto it = std::find_if(ControlList_.begin(), ControlList_.end(),
+				[ctrl](const auto& ptr) { return ptr.get() == ctrl; });
+
+			if (it != ControlList_.end()) {
+				ControlList_.erase(it);
+				return true;
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Returns collection of one specific type for group processing
 		/// Example:
@@ -153,8 +182,12 @@ namespace swktool {
 		/// <param name="theme"></param>
 		void PropagateTheme(const Theme& theme)
 		{
-			for (auto& ctrl : ControlList_)
+			auto size = ControlList_.size();
+			for (auto& ctrl : ControlList_) {
+				assert(ctrl != nullptr);
+				assert(IsWindow(ctrl->GetCtrlHandle()));
 				ctrl->ApplyTheme(theme);
+			}
 		}
 
 		auto begin() { return ControlList_.begin(); }

@@ -5,12 +5,13 @@
 #include <windowsx.h>
 #include <string>
 #include "Theme.h"
+#include "ControlBinder.h"
 
 
 namespace swktool 
 {	
 	class IWindow;
-
+	class ControlBinder;
 	class Ctrl 
 	{
 		const int STRING_BUF_SIZE = 255;
@@ -33,7 +34,7 @@ namespace swktool
 		Ctrl(IWindow* pParent);
 		Ctrl(UINT CtrlID, IWindow* pParent);
 		Ctrl(HWND ExistingHandle, IWindow* pParent);
-		virtual ~Ctrl() = default;
+		virtual ~Ctrl();
 
 		HWND GetCtrlHandle() const {
 			return hwndCtrl;
@@ -103,6 +104,15 @@ namespace swktool
 
 		virtual void OnSize(UINT state, int nWidth, int nHeight) {}
 		virtual void ApplyTheme(const Theme& theme) {};
+		void SetBinder(ControlBinder* binder) 
+		{ 
+			binder_ = binder; 
+		}
+
+
+	protected:
+		ControlBinder* binder_ = nullptr;
+
 	};
 }
 

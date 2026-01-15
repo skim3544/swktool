@@ -44,12 +44,31 @@ namespace swktool
         void OnDestroy() override;
         void RemoveChild(MDIChildWindow* child);
 
+        const MDIChildren& GetChildren() const
+        {
+            return children_;
+        }
+        size_t GetChildCount() const
+        {
+            return children_.size();
+        }
+        MDIChildWindow* GetChildAt(size_t index)
+        {
+            return children_[index];
+        }
+
+        void PropagateThemeToChildren(const Theme& theme) override;
+
+
     protected:
         // Applications may override this to provide a menu for the MDI client.
         virtual HMENU GetDefaultWindowMenu();
 
         // Applications may override this to change the first child ID.
-        virtual UINT GetFirstChildId() const { return 100; }
+        virtual UINT GetFirstChildId() const 
+        { 
+            return 100; 
+        }
 
         template<typename TChildWindow>
         TChildWindow* CreateMdiChild(const wchar_t* title)
@@ -85,9 +104,10 @@ namespace swktool
 
 
 
+
     private:
         HWND hMdiClient_ = nullptr;
-        MDIChildren children_;
+        MDIChildren children_;    
     };
 
 } // namespace swktool
