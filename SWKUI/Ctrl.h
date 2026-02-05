@@ -32,6 +32,7 @@ namespace swktool
 	public:
 		Ctrl() = default;
 		Ctrl(IWindow* pParent);
+		// to use with dialog template with control ID
 		Ctrl(UINT CtrlID, IWindow* pParent);
 		Ctrl(HWND ExistingHandle, IWindow* pParent);
 		virtual ~Ctrl();

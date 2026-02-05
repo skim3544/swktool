@@ -192,7 +192,5 @@ namespace swktool {
 
 		auto begin() { return ControlList_.begin(); }
 		auto end() { return ControlList_.end(); }
-
-
 	};
 }

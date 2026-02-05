@@ -22,6 +22,10 @@ namespace swktool {
 			sync();
 		}
 
+		WinFile& GetFile() {
+			return File_;
+		}
+
 		int sync()
 		{
 			// Grab the buffer contents once

@@ -28,12 +28,15 @@ namespace swktool {
 
 	DEFINE_ENUM_FLAG_OPERATORS(EditCtrlStyle);
 
-	class EditCtrl : public Ctrl {
+	class EditCtrl : public Ctrl 
+	{
 		const int STRING_BUF_SIZE = 255;
 
 	public:
 		EditCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		EditCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
 		EditCtrl(UINT CtrlID, IWindow* pParent);		
+
 		virtual ~EditCtrl() { ; }
 
 		void LimitText(int cchMax)  {

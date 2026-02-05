@@ -12,7 +12,7 @@
 #include <string_view>
 #include <iosfwd>
 #include <memory>
-
+#include <unordered_map>
 
 #include "..\SWKUI\WinKernel.h"
 #include "WinFile.h"
@@ -62,6 +62,7 @@ namespace swktool
 	/// </summary>
 	class NoLogger : public ILogger
 	{
+	public:
 		void init(LPCTSTR LogFileName) { ; }
 		void Register(const char* FunctionFullName, LogLevel nLevel) { ; }
 		void SetLogLevel(LogLevel Level) { ; }
@@ -82,38 +83,38 @@ namespace swktool
 	/// <summary>
 	///  Used for Class level logging
 	/// </summary>
-	class ClassLoggingData
-	{
-	private:
-		std::string ClassName_;
-		LogLevel     LogLevel_;
+	//class ClassLoggingData
+	//{
+	//private:
+	//	std::string ClassName_;
+	//	LogLevel     LogLevel_;
 
-	public:
-		ClassLoggingData(LogLevel Level, std::string sClassName) :
-			LogLevel_(Level), ClassName_(sClassName) {
-		}
+	//public:
+	//	ClassLoggingData(LogLevel Level, std::string sClassName) :
+	//		LogLevel_(Level), ClassName_(sClassName) {
+	//	}
 
-		ClassLoggingData(const ClassLoggingData& Data) :
-			LogLevel_(Data.LogLevel_), ClassName_(Data.ClassName_) {
-		}
+	//	ClassLoggingData(const ClassLoggingData& Data) :
+	//		LogLevel_(Data.LogLevel_), ClassName_(Data.ClassName_) {
+	//	}
 
-		const std::string& GetName() const {
-			return ClassName_;
-		}
+	//	const std::string& GetName() const {
+	//		return ClassName_;
+	//	}
 
-		LogLevel GetLogLevel() const {
-			return LogLevel_;
-		}
-	};
+	//	LogLevel GetLogLevel() const {
+	//		return LogLevel_;
+	//	}
+	//};
 
 
 	class LoggerStream;
 	class CriticalSection;
 	class Logger : public virtual ILogger 
 	{
-		using LogLevelList = std::vector<ClassLoggingData>;
+		using ClassMap = std::unordered_map<std::string, LogLevel>;
 		//using LogLevelList = std::unordered_set<std::string>
-		using LogLevelListItr = LogLevelList::iterator;
+		using LogLevelListItr = ClassMap::iterator;
 
 	protected:
 		LogLevel currentLevel_ = LogLevel::STATUS;
@@ -122,7 +123,7 @@ namespace swktool
 		bool bInitialized = false;
 
 		//  list of Class, level pair.
-		LogLevelList    ClassList_;
+		ClassMap    ClassMap_;
 
 		// default logging level
 		LogLevel        DefaultLogLevel_;
@@ -163,16 +164,10 @@ namespace swktool
 		{
 			if (!bInitialized) return;
 
-			auto ClassNamePair = GetClassNamePair(FunctionFullName);
-			auto& ClassName = ClassNamePair.first;
-			//auto& MethodName = ClassNamePair.second;
-
+			auto [ClassName, MethodName] = GetClassNamePair(FunctionFullName);
 			std::lock_guard<CriticalSection> lg(cs_);
-			// register only if new class
-			if (IsClassRegistered(ClassName) == false)
-			{
-				ClassList_.emplace_back(nLevel, ClassName);
-			}
+
+			ClassMap_.try_emplace(ClassName, nLevel);
 		}
 
 		void Log(LPCSTR Msg) override
@@ -196,31 +191,24 @@ namespace swktool
 				// Only protect access to ClassList_ and DefaultLogLevel_
 				std::lock_guard<CriticalSection> lg(cs_);
 
-				auto it = std::find_if(
-					ClassList_.begin(), ClassList_.end(),
-					[&](const auto& Data) { return Data.GetName() == ClassName; }
-				);
 
-				if (it != ClassList_.end()) {
-					auto classLevel = it->GetLogLevel();
-					if ((int)Level <= (int)classLevel || (int)Level <= (int)DefaultLogLevel_) {
-						shouldLog = true;
-					}
+				auto it = ClassMap_.find(ClassName);
+				LogLevel effectiveLevel = (it != ClassMap_.end()) ? it->second : DefaultLogLevel_;
+
+				if ((int)Level <= (int)effectiveLevel || (int)Level <= (int)currentLevel_) {
+					shouldLog = true;
 				}
 			}
 
-			if (!shouldLog)
+			if (!shouldLog) 
 				return;
-
-			// Build message outside lock
-			std::string outputmsg;
-			outputmsg.reserve(strlen(FunctionFullName) + strlen(msg) + 4);
-			outputmsg.append(FunctionFullName).append(" - ").append(msg);
 
 			{
 				std::lock_guard<CriticalSection> lg(cs_);
-				*pStream_ << outputmsg << std::endl;
+				// Write to stream while holding the lock to prevent interleaved logs
+				*pStream_ << FunctionFullName << " - " << msg << std::endl;
 			}
+
 		}
 
 		void Log(const char* FunctionFullName, LogLevel Level, const std::string& msg) override {
@@ -287,16 +275,11 @@ namespace swktool
 		}
 
 
-		bool IsClassRegistered(const std::string& ClassName)
+		bool IsClassRegistered(const std::string& ClassName) const
 		{
-			if (std::find_if(ClassList_.begin(), ClassList_.end(), [&ClassName](const auto& Data) { return Data.GetName() == ClassName; }) != ClassList_.end())
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			// lock_guard should be used if this is called outside of an already-locked scope
+			// std::unordered_map::find is O(1) average complexity
+			return ClassMap_.find(ClassName) != ClassMap_.end();
 		}
 	};
 

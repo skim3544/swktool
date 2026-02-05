@@ -10,8 +10,8 @@ namespace swktool
 	class LoggerStream : public std::ostream
 	{
 		FileStreamBuf* buffer_ = nullptr;
-		std::streambuf* pOldbuf;
-		LPCTSTR FileName_;
+		std::streambuf* pOldbuf = nullptr;
+		LPCTSTR FileName_ = nullptr;
 
 	public:
 		LoggerStream();

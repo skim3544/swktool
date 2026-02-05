@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "ProgressBarCtrl.h"
 
-namespace swktool {
+namespace swktool 
+{
+    ProgressBarCtrl::ProgressBarCtrl(IWindow* pParent) : Ctrl(pParent)
+    {
+    }
+
 	ProgressBarCtrl::ProgressBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) {		
 		hParent = pParent->GetHwnd();
         hInst = reinterpret_cast<HINSTANCE>(GetWindowLongPtr(hParent, GWLP_HINSTANCE));
@@ -16,7 +21,7 @@ namespace swktool {
         int x, int y, int Height, int Width, UINT CtrlID)
     {
         hInst = hInstance;
-        hParent = hParent;
+        this->hParent = hParent;
         ID = CtrlID;
 
         hwndCtrl = ::CreateWindowEx(
@@ -32,9 +37,7 @@ namespace swktool {
         );
     }
 
-	ProgressBarCtrl::ProgressBarCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
+	ProgressBarCtrl::ProgressBarCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) 
+    {
 	}
-
-	//ProgressBarCtrl::ProgressBarCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-	//}
 }

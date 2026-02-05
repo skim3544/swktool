@@ -1,14 +1,16 @@
 #pragma once
 
-#include <CommCtrl.h>
 #include "Ctrl.h"
 
 
-namespace swktool {
+namespace swktool 
+{
 	class IWindow;
-	class AnimationCtrl : public Ctrl {
+	class AnimationCtrl : public Ctrl 
+	{
 	public:
 		AnimationCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		AnimationCtrl(HWND hParent, HINSTANCE hInst, std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, UINT CtrlID = 0);
 		AnimationCtrl(UINT CtrlID, IWindow* pParent);
 		~AnimationCtrl() { ; }
 

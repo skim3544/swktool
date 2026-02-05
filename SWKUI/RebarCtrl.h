@@ -11,7 +11,6 @@ namespace swktool
 	public:
 		RebarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
 		RebarCtrl(IWindow* pParent);
-		//RebarCtrl(DialogWindow* pParent);
 		~RebarCtrl() { ; }
 	};
 }

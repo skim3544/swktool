@@ -7,9 +7,11 @@
 #include "Ctrl.h"
 #include "Theme.h"
 
-namespace swktool {
 
-	//class BaseDialog;
+namespace swktool 
+{
+
+
 
 	class ButtonCtrl : public Ctrl {
 		const int STRING_BUF_SIZE = 255;
@@ -63,7 +65,8 @@ namespace swktool {
 	};
 
 
-	class CheckboxCtrl : public Ctrl {
+	class CheckboxCtrl : public Ctrl 
+	{
 	public:
 		enum class CheckState {
 			Checked = BST_CHECKED,
@@ -73,6 +76,7 @@ namespace swktool {
 
 	public:
 		CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		CheckboxCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
 		CheckboxCtrl(UINT CtrlID, IWindow* pParent);
 		~CheckboxCtrl() { ; }
 
@@ -96,11 +100,14 @@ namespace swktool {
 	};
 
 
-	class RadioCtrl : public Ctrl {
+	
+	class RadioCtrl : public Ctrl 
+	{
 
 	public:
 		// WS_VISIBLE | WS_CHILD|BS_GROUPBOX
 		RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		RadioCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
 		RadioCtrl(UINT CtrlID, IWindow* pParent);
 		~RadioCtrl() { ; }
 

@@ -10,6 +10,7 @@ namespace swktool
 	public:
 		// Common Style WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP
 		TooltipCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		TooltipCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
 		TooltipCtrl(UINT CtrlID, IWindow* pParent);
 		~TooltipCtrl() { ; }
 

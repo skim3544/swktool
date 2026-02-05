@@ -12,10 +12,7 @@ namespace swktool {
 			hParent, (HMENU)(UINT_PTR)ID, hInst, NULL);
 	}
 
-	ComboboxCtrl::ComboboxCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) {
+	ComboboxCtrl::ComboboxCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent) 
+	{
 	}
-	//ComboboxCtrl::ComboboxCtrl(UINT CtrlID, DialogWindow* pParent) : Ctrl(CtrlID, pParent) {
-	//}
-
-
 }

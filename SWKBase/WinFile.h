@@ -12,7 +12,7 @@ namespace swktool {
 
     class WinFile {
         HANDLE hFile_ = INVALID_HANDLE_VALUE;
-        DWORD  lastError_ = 0;
+        mutable DWORD  lastError_ = 0;
 
     public:
         WinFile() = default;
@@ -47,9 +47,14 @@ namespace swktool {
         DWORD Write(const void* buffer, DWORD bytesToWrite, LPOVERLAPPED ov = nullptr);
 
         bool Seek(LARGE_INTEGER offset, FileSeekMethod method, LARGE_INTEGER* newPos = nullptr);
-        LARGE_INTEGER GetFileSize();
+        LARGE_INTEGER GetFileSize() const;
 
         bool CancelIO(LPOVERLAPPED ov = nullptr);
+
+        bool GetLastWriteTime(SYSTEMTIME& stLocal) const;
+        bool GetLastWriteTime(FILETIME& ftWrite) const;
+
+
     };
 
 } // namespace swktool

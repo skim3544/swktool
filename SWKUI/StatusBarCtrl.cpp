@@ -29,7 +29,9 @@ namespace swktool {
 		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
-	StatusBarCtrl::StatusBarCtrl(IWindow* pParent) : Ctrl(pParent) {
+
+	StatusBarCtrl::StatusBarCtrl(IWindow* pParent) : Ctrl(pParent) 
+	{
 		INITCOMMONCONTROLSEX iccx{};
 		iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		iccx.dwICC = ICC_BAR_CLASSES;
@@ -51,27 +53,8 @@ namespace swktool {
 		::GetClientRect(pParent->GetHwnd(), &rectClient_);
 	}
 
-	//StatusBarCtrl::StatusBarCtrl(DialogWindow* pParent) : Ctrl(pParent) {
-	//	INITCOMMONCONTROLSEX iccx{};
-	//	iccx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-	//	iccx.dwICC = ICC_BAR_CLASSES;
-	//	bool bInit = InitCommonControlsEx(&iccx);
+	StatusBarCtrl::StatusBarCtrl(UINT CtrlID, IWindow* pParent) : Ctrl(CtrlID, pParent)
+	{
 
-	//	// Create the status bar.
-	//	hwndCtrl = CreateWindowEx(
-	//		0,                       // no extended styles
-	//		STATUSCLASSNAME,         // name of status bar class
-	//		(PCTSTR)NULL,           // no text when first created
-	//		SBARS_SIZEGRIP |         // includes a sizing grip
-	//		WS_CHILD | WS_VISIBLE,   // creates a visible child window
-	//		0, 0, 0, 0,              // ignores size and position
-	//		hParent,              // handle to parent window
-	//		(HMENU)0,       // child window identifier
-	//		hInst,                   // handle to application instance
-	//		NULL);                   // no window creation data
-
-	//	::GetClientRect(pParent->GetHwnd(), &rectClient_);
-	//}
-
-
+	}
 }

@@ -6,7 +6,8 @@
 #pragma comment(lib, "uxtheme.lib")
 
 
-namespace swktool {
+namespace swktool 
+{
 	ButtonCtrl::ButtonCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
@@ -37,6 +38,10 @@ namespace swktool {
 	}
 
 
+
+
+
+
 	CheckboxCtrl::CheckboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
@@ -54,6 +59,10 @@ namespace swktool {
 
 
 
+
+
+
+
 	RadioCtrl::RadioCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID) :
 		Ctrl(pParent)
 	{
@@ -67,6 +76,4 @@ namespace swktool {
 	RadioCtrl::RadioCtrl(UINT CtrlID, IWindow* pParent) :
 		Ctrl(CtrlID, pParent) {		
 	}
-
-
 }

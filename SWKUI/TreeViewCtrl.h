@@ -11,6 +11,7 @@ namespace swktool {
 
 	public:
 		TreeViewCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		TreeViewCtrl(IWindow* pParent) : Ctrl(pParent) { ; }
 		TreeViewCtrl(UINT CtrlID, IWindow* pParent);
 		~TreeViewCtrl() { ; }
 

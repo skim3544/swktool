@@ -12,6 +12,7 @@ namespace swktool {
 	public:
 		// set default style to WS_BORDER | WS_CHILD | WS_VISIBLE | DTS_SHOWNONE
 		DateTimePickerCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		DateTimePickerCtrl(IWindow* pParent) : Ctrl(pParent) {}
 		DateTimePickerCtrl(UINT CtrlID, IWindow* pParent);
 		~DateTimePickerCtrl() { ;  }
 	};

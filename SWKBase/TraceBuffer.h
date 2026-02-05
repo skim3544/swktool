@@ -15,7 +15,9 @@
 
 namespace swktool 
 {
+    //Can modify this to get larger history buffer
     static constexpr size_t TRACE_CAPACITY = 4096;
+
     static constexpr size_t TRACE_MSG_CAP = 128;     // max chars per chunk
     static constexpr size_t TRACE_MSG_BUF = TRACE_MSG_CAP + 1; // +1 for '\0'
 

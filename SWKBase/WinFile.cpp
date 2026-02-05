@@ -127,7 +127,7 @@ namespace swktool {
     // File size
     // ---------------------------
 
-    LARGE_INTEGER WinFile::GetFileSize() {
+    LARGE_INTEGER WinFile::GetFileSize() const {
         LARGE_INTEGER size = {};
         lastError_ = 0;
 
@@ -152,5 +152,51 @@ namespace swktool {
 
         return true;
     }
+
+    bool WinFile::GetLastWriteTime(FILETIME& ftWrite) const
+    {
+        if (!IsOpen())
+            return false;
+
+        FILETIME ftCreate, ftAccess;
+        if (!::GetFileTime(hFile_, &ftCreate, &ftAccess, &ftWrite))
+        {
+            lastError_ = ::GetLastError();
+            return false;
+        }
+        return true;
+    }
+
+    bool WinFile::GetLastWriteTime(SYSTEMTIME& stLocal) const
+    {
+        if (!IsOpen())
+            return false;
+
+        FILETIME ftCreate{}, ftAccess{}, ftWrite{};
+        if (!::GetFileTime(hFile_, &ftCreate, &ftAccess, &ftWrite))
+        {
+            lastError_ = ::GetLastError();
+            return false;
+        }
+
+        // Convert FILETIME → SYSTEMTIME (UTC)
+        SYSTEMTIME stUTC{};
+        if (!::FileTimeToSystemTime(&ftWrite, &stUTC))
+        {
+            lastError_ = ::GetLastError();
+            return false;
+        }
+
+        // Convert UTC → Local time
+        if (!::SystemTimeToTzSpecificLocalTime(nullptr, &stUTC, &stLocal))
+        {
+            lastError_ = ::GetLastError();
+            return false;
+        }
+
+        return true;
+    }
+
+
 
 } // namespace swktool

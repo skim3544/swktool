@@ -2,7 +2,8 @@
 
 #include "ctrl.h"
 
-namespace swktool {	
+namespace swktool 
+{	
 	class IWindow;
 
 	class ComboboxCtrl : public Ctrl {
@@ -10,6 +11,7 @@ namespace swktool {
 
 	public:
 		ComboboxCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);
+		ComboboxCtrl(IWindow* pParent) : Ctrl(pParent) {};
 		ComboboxCtrl(UINT CtrlID, IWindow* pParent);
 		~ComboboxCtrl() { ; }
 

@@ -28,7 +28,12 @@ namespace swktool
 	public:
 		StatusBarCtrl(IWindow* pParent);		
 		StatusBarCtrl(std::wstring Caption, DWORD Style, int x, int y, int Height, int Width, IWindow* pParent, UINT CtrlID);		
+		StatusBarCtrl(UINT CtrlID, IWindow* pParent);
 		~StatusBarCtrl() { ; }
+
+		
+		
+		
 
 		// Must chain to Parent/Owner window's OnSize message
 		// 3 parameters are not used, but match the calling Windows parameters

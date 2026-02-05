@@ -10,7 +10,8 @@ namespace swktool
 
 	public:
 		UpDownCtrl(std::wstring Caption, DWORD Style, int x, int y, int Width, int Height,  IWindow* pParent, UINT CtrlID);
-		UpDownCtrl(UINT CtrlID, IWindow* pParent);
+		UpDownCtrl(IWindow* pParent) : Ctrl(pParent) { ; };
+		UpDownCtrl(UINT CtrlID, IWindow* pParent);		
 		~UpDownCtrl() { ; }
 
 
